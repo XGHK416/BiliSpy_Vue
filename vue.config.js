@@ -31,12 +31,23 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: true,
+    open: false,
     overlay: {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    proxy: {
+      '/bili-api': { //与后端根路径一直 及项目名称
+          target: 'http://localhost:8080',
+          ws: true,
+          changeOrigin: true, //跨域
+          pathRewrite: {
+              '^/bili-api': '/bili-api' //填写项目名称
+          }
+      }
+  },
+    // before: require('./mock/mock-server.js')
+    before: app => {}
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

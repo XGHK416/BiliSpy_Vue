@@ -32,7 +32,8 @@ router.beforeEach(async(to, from, next) => {
       } else {
         try {
           // get user info
-          await store.dispatch('user/getInfo')
+          // 这是要进行token验证的
+          // await store.dispatch('user/getInfo')
 
           next()
         } catch (error) {

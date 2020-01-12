@@ -33,11 +33,16 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
+        console.log('ddd' + response)
+        // 解构赋值，相当于const data = response.data
         const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        // 模拟设置token
+        console.log('ddd' + data)
+        commit('SET_TOKEN', data.name)
+        setToken(data.name)
         resolve()
       }).catch(error => {
+        console.log(error)
         reject(error)
       })
     })
