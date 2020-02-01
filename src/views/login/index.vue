@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">Bili Spy</h3>
       </div>
 
       <el-form-item prop="username">
@@ -25,6 +25,7 @@
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
+        <!-- @keyup.enter.native回车事件 -->
         <el-input
           :key="passwordType"
           ref="password"
@@ -41,23 +42,48 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:20px;" @click.native.prevent="handleLogin">Login</el-button>
 
-      <div class="tips">
+      <!-- <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
         <span> password: any</span>
+      </div> -->
+      <div style="position:relative;float:right" class="otherOption">
+        <el-button class="register-button" type="success" size="mini" @click="registerDialogVisible=true">
+          注册
+        </el-button>
+        <el-button class="social-button" type="primary" circle icon="el-icon-edit" size="mini" @click="socialDialogVisible=true" />
       </div>
-
     </el-form>
+    <el-dialog
+      :visible.sync="registerDialogVisible"
+      width="30%"
+    >
+      <RegisterSign />
+    </el-dialog>
+    <el-dialog
+      title="Or connect with"
+      :visible.sync="socialDialogVisible"
+    >
+      <social-sign />
+    </el-dialog>
   </div>
 </template>
 
 <script>
+// 引用外部规则
 import { validUsername } from '@/utils/validate'
+import SocialSign from './components/SocialSign'
+import RegisterSign from './components/RegisterSign'
 
 export default {
   name: 'Login',
+  components: {
+    SocialSign,
+    RegisterSign
+  },
   data() {
+    // 自定义验证规则
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
         callback(new Error('Please enter the correct user name'))
@@ -73,9 +99,11 @@ export default {
       }
     }
     return {
+      registerDialogVisible: false,
+      socialDialogVisible: false,
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -170,6 +198,9 @@ $cursor: #fff;
     border-radius: 5px;
     color: #454545;
   }
+  .el-dialog {
+    background-color: $bg
+  }
 }
 </style>
 
@@ -204,7 +235,6 @@ $light_gray:#eee;
       }
     }
   }
-
   .svg-container {
     padding: 6px 5px 6px 15px;
     color: $dark_gray;
