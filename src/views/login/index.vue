@@ -42,7 +42,7 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:20px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:20px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <!-- <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
@@ -57,15 +57,15 @@
     </el-form>
     <el-dialog
       :visible.sync="registerDialogVisible"
-      width="30%"
+      width="400px"
     >
       <RegisterSign />
     </el-dialog>
     <el-dialog
-      title="Or connect with"
       :visible.sync="socialDialogVisible"
+      width="400px"
     >
-      <social-sign />
+      <SocialSign />
     </el-dialog>
   </div>
 </template>
@@ -134,8 +134,10 @@ export default {
       })
     },
     handleLogin() {
+      // 固定写法
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          // do something
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             console.log('get it!!')

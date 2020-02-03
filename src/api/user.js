@@ -14,7 +14,7 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/vue-admin-template/user/info',
+    url: '/bili-api/info',
     method: 'get',
     params: { token }
   })
@@ -22,7 +22,18 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/vue-admin-template/user/logout',
+    url: '/bili-api/logout',
     method: 'post'
+  })
+}
+
+export function register(data) {
+  return request({
+    url: '/bili-api/test2',
+    method: 'get',
+    params: {
+      nickname: data.nickname,
+      password: data.password
+    }
   })
 }

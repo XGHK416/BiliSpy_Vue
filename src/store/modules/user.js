@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, register } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -33,16 +33,31 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        console.log('ddd' + response)
+        alert('ddd' + response)
         // 解构赋值，相当于const data = response.data
         const { data } = response
         // 模拟设置token
-        console.log('ddd' + data)
         commit('SET_TOKEN', data.name)
         setToken(data.name)
         resolve()
       }).catch(error => {
-        console.log(error)
+        reject(error)
+      })
+    })
+  },
+
+  // user register
+  register({ commit }, registerInfo) {
+    const { nickname, password } = registerInfo
+    return new Promise((resolve, reject) => {
+      register({ nickname: nickname.trim(), password: password }).then(response => {
+        // 解构赋值，相当于const data = response.data
+        const { data } = response
+        // 模拟设置token
+        commit('SET_TOKEN', data.name)
+        setToken(data.name)
+        resolve()
+      }).catch(error => {
         reject(error)
       })
     })
@@ -59,6 +74,7 @@ const actions = {
         }
 
         const { name, avatar } = data
+        console.log(avatar)
 
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)

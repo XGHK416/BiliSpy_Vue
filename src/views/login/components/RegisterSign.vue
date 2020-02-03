@@ -36,7 +36,7 @@
           ref="password"
           v-model="registerForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="注册密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -45,7 +45,7 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:20px;">提交</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:20px;" @click.native.prevent="handleRegister">提交</el-button>
     </el-form>
   </div>
 </template>
@@ -83,7 +83,8 @@ export default {
           { required: true, trigger: 'blur', validator: validatePassword }
         ]
       },
-      passwordType: false
+      passwordType: false,
+      loading: false
     }
   },
   methods: {
@@ -95,6 +96,26 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.password.focus()
+      })
+    },
+    handleRegister() {
+      this.$refs.registerForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('user/register', this.registerForm).then(() => {
+            console.log('get it!!')
+            this.$message('注册成功')
+            setTimeout(function() {
+              this.$router.push({ path: this.redirect || '/' })
+            }, 1000)
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     }
   }
