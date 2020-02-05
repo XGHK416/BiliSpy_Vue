@@ -6,33 +6,33 @@
         <h3 class="title">Bili Spy</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="identityId">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          ref="identityId"
+          v-model="loginForm.identityId"
+          placeholder="用户id/邮箱/电话"
+          name="identityId"
           type="text"
           tabindex="1"
           auto-complete="on"
         />
       </el-form-item>
 
-      <el-form-item prop="password">
+      <el-form-item prop="credential">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
         <!-- @keyup.enter.native回车事件 -->
         <el-input
           :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
+          ref="credential"
+          v-model="loginForm.credential"
           :type="passwordType"
-          placeholder="Password"
-          name="password"
+          placeholder="密码"
+          name="credential"
           tabindex="2"
           auto-complete="on"
           @keyup.enter.native="handleLogin"
@@ -52,7 +52,6 @@
         <el-button class="register-button" type="success" size="mini" @click="registerDialogVisible=true">
           注册
         </el-button>
-        <el-button class="social-button" type="primary" circle icon="el-icon-edit" size="mini" @click="socialDialogVisible=true" />
       </div>
     </el-form>
     <el-dialog
@@ -61,53 +60,44 @@
     >
       <RegisterSign />
     </el-dialog>
-    <el-dialog
-      :visible.sync="socialDialogVisible"
-      width="400px"
-    >
-      <SocialSign />
-    </el-dialog>
   </div>
 </template>
 
 <script>
 // 引用外部规则
 import { validUsername } from '@/utils/validate'
-import SocialSign from './components/SocialSign'
 import RegisterSign from './components/RegisterSign'
 
 export default {
   name: 'Login',
   components: {
-    SocialSign,
     RegisterSign
   },
   data() {
     // 自定义验证规则
-    const validateUsername = (rule, value, callback) => {
+    const validateIdentityId = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入账号'))
       } else {
         callback()
       }
     }
-    const validatePassword = (rule, value, callback) => {
+    const validateCredential = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码长度需要大于6'))
       } else {
         callback()
       }
     }
     return {
       registerDialogVisible: false,
-      socialDialogVisible: false,
       loginForm: {
-        username: '',
-        password: ''
+        identityId: '',
+        credential: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        identityId: [{ required: true, trigger: 'blur', validator: validateIdentityId }],
+        credential: [{ required: true, trigger: 'blur', validator: validateCredential }]
       },
       loading: false,
       passwordType: 'password',
@@ -130,7 +120,7 @@ export default {
         this.passwordType = 'password'
       }
       this.$nextTick(() => {
-        this.$refs.password.focus()
+        this.$refs.credential.focus()
       })
     },
     handleLogin() {

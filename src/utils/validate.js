@@ -15,6 +15,5 @@ export function isExternal(path) {
  * @returns {Boolean}
  */
 export function validUsername(str) {
-  // todo 登录验证
-  return 1
+  return str.length > 0
 }

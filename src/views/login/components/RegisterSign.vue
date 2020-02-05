@@ -105,8 +105,9 @@ export default {
           this.$store.dispatch('user/register', this.registerForm).then(() => {
             console.log('get it!!')
             this.$message('注册成功')
+            var self = this
             setTimeout(function() {
-              this.$router.push({ path: this.redirect || '/' })
+              self.$router.push({ path: this.redirect || '/' })
             }, 1000)
             this.loading = false
           }).catch(() => {
