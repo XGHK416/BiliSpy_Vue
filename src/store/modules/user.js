@@ -5,11 +5,11 @@ import { resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     token: getToken(),
-    name: '',
-    avatar: ''
+    user_id: '',
+    base_info: {},
+    auths: {}
   }
 }
-
 const state = getDefaultState()
 
 const mutations = {
@@ -19,11 +19,14 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  SET_USER_ID: (state, user_id) => {
+    state.user_id = user_id
   },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+  SET_BASE_INFO: (state, base_info) => {
+    state.base_info = base_info
+  },
+  SET_AUTHS: (state, auths) => {
+    state.auths = auths
   }
 }
 
@@ -37,6 +40,7 @@ const actions = {
         const { data } = response
         // 模拟设置token
         commit('SET_TOKEN', data.token)
+        commit('SET_USER_ID', data.userId)
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -54,6 +58,7 @@ const actions = {
         const { data } = response
         // 模拟设置token
         commit('SET_TOKEN', data.token)
+        commit('SET_USER_ID', data.userId)
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -65,16 +70,15 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      console.log(state.user_id)
+      getInfo(state.user_id).then(response => {
         const { data } = response
-
+        const { base_info, auths } = data
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-
-        const { nickName, profile } = data
-        commit('SET_NAME', nickName)
-        commit('SET_AVATAR', profile)
+        commit('SET_BASE_INFO', base_info)
+        commit('SET_AUTHS', auths)
         resolve(data)
       }).catch(error => {
         reject(error)
