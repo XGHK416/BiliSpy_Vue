@@ -23,7 +23,7 @@
           auto-complete="on"
         />
       </el-form-item>
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:20px;" @click.native.prevent="handleRegister">提交</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:20px;" @click.native.prevent="handleIt">提交</el-button>
     </el-form>
   </div>
 </template>
@@ -31,7 +31,7 @@
 <script>
 
 export default {
-  name: 'RegisterSign',
+  name: 'BandUserInfo',
   data() {
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
@@ -54,18 +54,11 @@ export default {
     }
   },
   methods: {
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
-    },
-    handleRegister() {
+    handleIt() {
       alert('change!!')
+      console.log(this.bandtype)
+      // this.loading = true
+      console.log(this.$store.state.user.user_id)
     //   this.$refs.registerForm.validate(valid => {
     //     if (valid) {
     //       this.loading = true

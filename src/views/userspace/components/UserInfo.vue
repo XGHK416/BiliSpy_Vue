@@ -4,7 +4,7 @@
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
         <div class="card-panel-profile-wrapper">
           <div class="card-panel-profile-change" @mouseover="profileTextShow()" @mouseout="profileTextHide()">
-            <span v-show="profile_text" class="card-panel-profile-change-text">修改图像</span>
+            <span v-show="profile_text" class="card-panel-profile-change-text" @click="UploadProfileVisible = !UploadProfileVisible">修改图像</span>
           </div>
           <el-avatar class="card-panel-profile" shape="square" :size="80" :src="info.profile" />
         </div>
@@ -30,7 +30,7 @@
         <div class="card-panel-description">
           <div class="card-panel-text">
             手机：{{ message_value(auths.phone) }}
-            <el-button type="text" class="card-panel-option" @click="bandPhone">修改</el-button>
+            <el-button type="text" class="card-panel-option" @click="bandFunction('phone')">修改</el-button>
           </div>
         </div>
       </div>
@@ -43,7 +43,7 @@
         <div class="card-panel-description">
           <div class="card-panel-text">
             邮箱：{{ message_value(auths.email) }}
-            <el-button type="text" class="card-panel-option" @click="bandEmail">修改</el-button>
+            <el-button type="text" class="card-panel-option" @click="bandFunction('email')">修改</el-button>
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@
         <div class="card-panel-description">
           <div class="card-panel-text">
             B站：{{ message_value(auths.bili) }}
-            <el-button type="text" class="card-panel-option" @click="changeInfoDialogVisible = true">修改</el-button>
+            <el-button type="text" class="card-panel-option">修改</el-button>
           </div>
         </div>
       </div>
@@ -67,15 +67,40 @@
     >
       <BandUserInfoDialog />
     </el-dialog>
+
+    <el-dialog
+      :visible.sync="changeBandDialogVisible"
+      width="400px"
+    >
+      <BandDialog :bandtype="band_type" />
+    </el-dialog>
+    <div id="uploadProfile">
+      <MyUpload
+        v-model="UploadProfileVisible"
+        :width="300"
+        :height="300"
+        url="/upload"
+        img-format="png"
+        @crop-success="cropSuccess"
+        @crop-upload-success="cropUploadSuccess"
+        @crop-upload-fail="cropUploadFail"
+      />
+      <img :src="imgDataUrl">
+    </div>
   </el-row>
 </template>
 
 <script>
 import BandUserInfoDialog from './Dialog/BandUserInfoDialog'
+import BandDialog from './Dialog/BandDialog'
+import 'babel-polyfill' // es6 shim
+import MyUpload from 'vue-image-crop-upload'
 export default {
   name: 'UserInfo',
   components: {
-    BandUserInfoDialog
+    BandUserInfoDialog,
+    BandDialog,
+    MyUpload
   },
   props: {
     info: {
@@ -100,7 +125,16 @@ export default {
     return {
       profile_text: false,
       dialogVisible: false,
-      changeInfoDialogVisible: false
+      changeInfoDialogVisible: false,
+      changeBandDialogVisible: false,
+      UploadProfileVisible: false,
+      band_list: {
+        'phone': 'PHONE',
+        'email': 'EMAIL'
+      },
+      band_type: '123',
+      imgDataUrl: ''
+
     }
   },
   methods: {
@@ -118,39 +152,38 @@ export default {
         return msg
       } else return '未绑定'
     },
-    bandEmail() {
-      this.$prompt('请输入邮箱', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        inputErrorMessage: '邮箱格式不正确'
-      }).then(({ value }) => {
-        this.$message({
-          type: 'success',
-          message: '你的邮箱是: ' + value
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
-      })
+    bandFunction(type) {
+      this.band_type = this.band_list[type]
+      this.changeBandDialogVisible = true
     },
-    bandPhone() {
-      this.$prompt('请输入电话', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(({ value }) => {
-        this.$message({
-          type: 'success',
-          message: '你的电话是: ' + value
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
-      })
+    handleProfileDialogStatus() {
+      this.UploadProfileVisible = !this.UploadProfileVisible
+    },
+    cropSuccess(imgDataUrl, field) {
+      console.log('-------- crop success --------')
+      this.imgDataUrl = imgDataUrl
+    },
+    /**
+     * upload success
+     *
+     * [param] jsonData   服务器返回数据，已进行json转码
+     * [param] field
+     */
+    cropUploadSuccess(jsonData, field) {
+      console.log('-------- upload success --------')
+      console.log(jsonData)
+      console.log('field: ' + field)
+    },
+    /**
+     * upload fail
+     *
+     * [param] status    server api return error status, like 500
+     * [param] field
+     */
+    cropUploadFail(status, field) {
+      console.log('-------- upload fail --------')
+      console.log(status)
+      console.log('field: ' + field)
     }
   }
 }
@@ -214,7 +247,6 @@ export default {
     }
     .card-panel-role{
       padding-top: 16px;
-      padding-left: 3px;
       float: left;
     }
     .card-panel-icon {
