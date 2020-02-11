@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-editor-container">
-    <UserInfo :info="base_info" @handleSetLineChartData="handleSetLineChartData" />
+    <UserInfo :info="base_info" :auths="auths" @handleSetLineChartData="handleSetLineChartData" />
 
     <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
@@ -71,7 +71,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'base_info'
+      'base_info',
+      'auths'
     ])
   },
   methods: {

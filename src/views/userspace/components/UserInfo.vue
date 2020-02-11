@@ -1,6 +1,6 @@
 <template>
   <el-row :gutter="40" class="panel-group">
-    <el-col class="card-panel-col" :lg="6">
+    <el-col class="card-panel-col" :lg="6" :md="12">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
         <div class="card-panel-profile-wrapper">
           <div class="card-panel-profile-change" @mouseover="profileTextShow()" @mouseout="profileTextHide()">
@@ -8,10 +8,13 @@
           </div>
           <el-avatar class="card-panel-profile" shape="square" :size="80" :src="info.profile" />
         </div>
+        <div class="card-panel-role">
+          <el-tag type="success" size="small">用户</el-tag>
+        </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
             用户：{{ info.nickName }}
-            <span class="card-panel-option">修改</span>
+            <el-button type="text" class="card-panel-option" @click="changeInfoDialogVisible = true">修改</el-button>
           </div>
           <div class="card-panel-text">
             id：{{ info.userId }}
@@ -19,48 +22,61 @@
         </div>
       </div>
     </el-col>
-    <el-col class="card-panel-col" :lg="6">
+    <el-col class="card-panel-col" :lg="6" :md="12">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
-        <div class="card-panel-icon-wrapper icon-people">
+        <div class="card-panel-icon-wrapper icon-phone">
           <svg-icon icon-class="phone" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            用户：{{ info.nickName }}
+            手机：{{ message_value(auths.phone) }}
+            <el-button type="text" class="card-panel-option" @click="bandPhone">修改</el-button>
           </div>
         </div>
       </div>
     </el-col>
-    <el-col class="card-panel-col" :lg="6">
+    <el-col class="card-panel-col" :lg="6" :md="12">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-email">
+          <svg-icon icon-class="email" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            用户：{{ info.nickName }}
+            邮箱：{{ message_value(auths.email) }}
+            <el-button type="text" class="card-panel-option" @click="bandEmail">修改</el-button>
           </div>
         </div>
       </div>
     </el-col>
-    <el-col class="card-panel-col" :lg="6">
+    <el-col class="card-panel-col" :lg="6" :md="12">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-bili">
+          <svg-icon icon-class="bili" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            用户：{{ info.nickName }}
+            B站：{{ message_value(auths.bili) }}
+            <el-button type="text" class="card-panel-option" @click="changeInfoDialogVisible = true">修改</el-button>
           </div>
         </div>
       </div>
     </el-col>
+    <el-dialog
+      :visible.sync="changeInfoDialogVisible"
+      width="400px"
+    >
+      <BandUserInfoDialog />
+    </el-dialog>
   </el-row>
 </template>
 
 <script>
+import BandUserInfoDialog from './Dialog/BandUserInfoDialog'
 export default {
   name: 'UserInfo',
+  components: {
+    BandUserInfoDialog
+  },
   props: {
     info: {
       type: Object,
@@ -69,11 +85,22 @@ export default {
           nickName: 'dd'
         }
       }
+    },
+    auths: {
+      type: Object,
+      default: () => {
+        return {
+          bili: '- -',
+          email: '- -'
+        }
+      }
     }
   },
   data() {
     return {
-      profile_text: false
+      profile_text: false,
+      dialogVisible: false,
+      changeInfoDialogVisible: false
     }
   },
   methods: {
@@ -85,6 +112,45 @@ export default {
     },
     profileTextHide() {
       this.profile_text = false
+    },
+    message_value(msg) {
+      if (msg !== '') {
+        return msg
+      } else return '未绑定'
+    },
+    bandEmail() {
+      this.$prompt('请输入邮箱', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+        inputErrorMessage: '邮箱格式不正确'
+      }).then(({ value }) => {
+        this.$message({
+          type: 'success',
+          message: '你的邮箱是: ' + value
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    bandPhone() {
+      this.$prompt('请输入电话', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        this.$message({
+          type: 'success',
+          message: '你的电话是: ' + value
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
     }
   }
 }
@@ -106,34 +172,20 @@ export default {
     background: #fff;
     box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
     border-color: rgba(0, 0, 0, .05);
-    &:hover {
-      .card-panel-icon-wrapper {
+    .card-panel-icon-wrapper {
         color: #fff;
       }
-      .icon-people {
-        background: #40c9c6;
-      }
-      .icon-message {
-        background: #36a3f7;
-      }
-      .icon-money {
-        background: #f4516c;
-      }
-      .icon-shopping {
-        background: #34bfa3
-      }
+    .icon-phone {
+      // color: #40c9c6;
+      background: #40c9c6;
     }
-    .icon-people {
-      color: #40c9c6;
+    .icon-email {
+      // color: #36a3f7;
+      background: #36a3f7;
     }
-    .icon-message {
-      color: #36a3f7;
-    }
-    .icon-money {
-      color: #f4516c;
-    }
-    .icon-shopping {
-      color: #34bfa3
+    .icon-bili {
+      // color: #ff788e;
+      background: #f4516c;
     }
     .card-panel-icon-wrapper {
       float: left;
@@ -160,6 +212,11 @@ export default {
       }
       }
     }
+    .card-panel-role{
+      padding-top: 16px;
+      padding-left: 3px;
+      float: left;
+    }
     .card-panel-icon {
       float: left;
       font-size: 48px;
@@ -167,19 +224,20 @@ export default {
     .card-panel-description {
       float: right;
       font-weight: bold;
-      margin: 26px;
+      margin: 10px;
       margin-left: 0px;
+      margin-right: 40px;
       .card-panel-text {
         line-height: 18px;
         color: rgba(0, 0, 0, 0.45);
-        font-size: 16px;
+        font-size: 20px;
         margin-bottom: 12px;
       }
       .card-panel-option {
-        cursor: pointer;
+        display: inline;
         margin-left: 10px;
         color: #36a3f7;
-        font-size: 13px;
+        font-size: 20px;
       }
       .card-panel-num {
         font-size: 20px;
