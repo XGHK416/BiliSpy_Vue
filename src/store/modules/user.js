@@ -1,4 +1,4 @@
-import { login, logout, getInfo, register } from '@/api/user'
+import { login, logout, getInfo, register, bandIdentity, updateInfo, updateProfile } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -27,6 +27,12 @@ const mutations = {
   },
   SET_AUTHS: (state, auths) => {
     state.auths = auths
+  },
+  SET_ONES_BASE_INFO: (state, base_info_item_type, base_info_item_value) => {
+    state.base_info[base_info_item_type] = base_info_item_value
+  },
+  SET_ONES_AUTHS: (state, auths_item_type, auths_item_value) => {
+    state.auths[auths_item_type] = auths_item_value
   }
 }
 
@@ -60,6 +66,50 @@ const actions = {
         commit('SET_TOKEN', data.token)
         commit('SET_USER_ID', data.userId)
         setToken(data.token)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // user bandIdentity
+  bandIdentity({ commit }, bandInfo) {
+    const { identityType, identityId, userId } = bandInfo
+    return new Promise((resolve, reject) => {
+      bandIdentity({ identityType: identityType, identityId: identityId, userId: userId }).then(response => {
+        if (identityType === 'PHONE') {
+          commit('SET_ONES_AUTHS', 'phone', identityId)
+        } else if (identityType === 'EMAIL') {
+          commit('SET_ONES_AUTHS', 'email', identityId)
+        }
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // user updateInfo
+  updateInfo({ commit }, updateInfoMsg) {
+    const { nickName, userId } = updateInfoMsg
+    return new Promise((resolve, reject) => {
+      updateInfo({ nickName: nickName, userId: userId }).then(response => {
+        commit('SET_ONES_BASE_INFO', 'nick_name', nickName)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // user updateProfile
+  updateProfile({ commit }, profileInfo) {
+    const { profile, userId } = profileInfo
+    return new Promise((resolve, reject) => {
+      updateProfile({ profile: profile, userId: userId }).then(response => {
+        const { data } = response
+        commit('SET_ONES_BASE_INFO', 'profile', data.url)
         resolve()
       }).catch(error => {
         reject(error)

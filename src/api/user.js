@@ -38,3 +38,37 @@ export function register(data) {
     }
   })
 }
+
+export function bandIdentity(data) {
+  return request({
+    url: '/bili-api/space/bandIdentity',
+    method: 'post',
+    params: {
+      identityType: data.identityType,
+      identityId: data.identityId,
+      userId: data.userId
+    }
+  })
+}
+
+export function updateInfo(data) {
+  return request({
+    url: '/bili-api/space/updateInfo',
+    method: 'put',
+    params: {
+      nickName: data.nickName,
+      userId: data.userId
+    }
+  })
+}
+
+export function updateProfile(data) {
+  return request({
+    url: '/bili-api/space/updateProfile',
+    method: 'put',
+    params: {
+      profile: data.profile,
+      userId: data.userId
+    }
+  })
+}

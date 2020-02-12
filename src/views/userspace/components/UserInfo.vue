@@ -159,6 +159,7 @@ export default {
     handleProfileDialogStatus() {
       this.UploadProfileVisible = !this.UploadProfileVisible
     },
+    // 上传图片
     cropSuccess(imgDataUrl, field) {
       console.log('-------- crop success --------')
       this.imgDataUrl = imgDataUrl
