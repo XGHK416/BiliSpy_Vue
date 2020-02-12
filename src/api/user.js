@@ -43,11 +43,7 @@ export function bandIdentity(data) {
   return request({
     url: '/bili-api/space/bandIdentity',
     method: 'post',
-    params: {
-      identityType: data.identityType,
-      identityId: data.identityId,
-      userId: data.userId
-    }
+    data: data
   })
 }
 
@@ -55,7 +51,7 @@ export function updateInfo(data) {
   return request({
     url: '/bili-api/space/updateInfo',
     method: 'put',
-    params: {
+    data: {
       nickName: data.nickName,
       userId: data.userId
     }

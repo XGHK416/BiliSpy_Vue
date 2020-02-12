@@ -79,8 +79,11 @@
         v-model="UploadProfileVisible"
         :width="300"
         :height="300"
-        url="/upload"
+        method="PUT"
+        :params="profileUploadParam"
+        url="http://localhost:8080/bili-api/space/updateProfile"
         img-format="png"
+        :withCredentials="withCredentials"
         @crop-success="cropSuccess"
         @crop-upload-success="cropUploadSuccess"
         @crop-upload-fail="cropUploadFail"
@@ -133,7 +136,11 @@ export default {
         'email': 'EMAIL'
       },
       band_type: '123',
-      imgDataUrl: ''
+      imgDataUrl: '',
+      withCredentials: true,
+      profileUploadParam: {
+        'userId': this.$store.state.user.user_id
+      }
 
     }
   },
@@ -162,7 +169,6 @@ export default {
     // 上传图片
     cropSuccess(imgDataUrl, field) {
       console.log('-------- crop success --------')
-      this.imgDataUrl = imgDataUrl
     },
     /**
      * upload success
@@ -172,6 +178,7 @@ export default {
      */
     cropUploadSuccess(jsonData, field) {
       console.log('-------- upload success --------')
+      this.$store.dispatch('user/updateProfile',jsonData['data'])
       console.log(jsonData)
       console.log('field: ' + field)
     },

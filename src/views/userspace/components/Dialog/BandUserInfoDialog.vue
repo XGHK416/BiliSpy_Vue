@@ -55,8 +55,19 @@ export default {
   },
   methods: {
     handleIt() {
-      alert('change!!')
-      console.log(this.bandtype)
+      var baseInfo = {
+        'nickName': this.changeInfoForm.nickname,
+        'userId': this.$store.state.user.user_id
+      }
+      this.$store.dispatch('user/updateInfo',baseInfo).then((response) => {
+        this.loading = true
+        this.$message({
+          'message': "修改成功",
+          'type': 'success'
+        })
+      }).catch(() => {
+          this.loading = false
+        })
       // this.loading = true
       console.log(this.$store.state.user.user_id)
     //   this.$refs.registerForm.validate(valid => {

@@ -28,10 +28,14 @@ const mutations = {
   SET_AUTHS: (state, auths) => {
     state.auths = auths
   },
-  SET_ONES_BASE_INFO: (state, base_info_item_type, base_info_item_value) => {
+  SET_ONES_BASE_INFO: (state, newInfo) => {
+    const {base_info_item_type, base_info_item_value} = newInfo
+    console.log(base_info_item_type, base_info_item_value)
+    console.log(state.base_info)
     state.base_info[base_info_item_type] = base_info_item_value
   },
-  SET_ONES_AUTHS: (state, auths_item_type, auths_item_value) => {
+  SET_ONES_AUTHS: (state, newAuths) => {
+    const {auths_item_type, auths_item_value} = newAuths
     state.auths[auths_item_type] = auths_item_value
   }
 }
@@ -79,7 +83,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       bandIdentity({ identityType: identityType, identityId: identityId, userId: userId }).then(response => {
         if (identityType === 'PHONE') {
-          commit('SET_ONES_AUTHS', 'phone', identityId)
+          commit('SET_ONES_AUTHS',{'auths_item_type': 'phone','auths_item_value': identityId} )
+
         } else if (identityType === 'EMAIL') {
           commit('SET_ONES_AUTHS', 'email', identityId)
         }
@@ -95,7 +100,10 @@ const actions = {
     const { nickName, userId } = updateInfoMsg
     return new Promise((resolve, reject) => {
       updateInfo({ nickName: nickName, userId: userId }).then(response => {
-        commit('SET_ONES_BASE_INFO', 'nick_name', nickName)
+        commit('SET_ONES_BASE_INFO', {
+          'base_info_item_type': 'nickName',
+          'base_info_item_value': nickName
+        })
         resolve()
       }).catch(error => {
         reject(error)
@@ -104,16 +112,10 @@ const actions = {
   },
 
   // user updateProfile
-  updateProfile({ commit }, profileInfo) {
-    const { profile, userId } = profileInfo
-    return new Promise((resolve, reject) => {
-      updateProfile({ profile: profile, userId: userId }).then(response => {
-        const { data } = response
-        commit('SET_ONES_BASE_INFO', 'profile', data.url)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+  updateProfile({ commit }, profileUrl) {
+    commit('SET_ONES_BASE_INFO', {
+      'base_info_item_type': 'profile',
+      'base_info_item_value': profileUrl
     })
   },
 

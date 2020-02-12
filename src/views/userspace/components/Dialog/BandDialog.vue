@@ -63,9 +63,20 @@ export default {
   },
   methods: {
     handleIt() {
-      console.log(this.bandtype)
-      // this.loading = true
-      console.log(this.$store.state.user.user_id)
+      var bandInfo = {
+        identityType: this.bandtype,
+        identityId: this.changeBandForm.b_value,
+        userId: this.$store.state.user.user_id
+      }
+      this.$store.dispatch('user/bandIdentity', bandInfo).then((response) => {
+        this.loading = false
+        this.$message({
+          message: "绑定成功",
+          type: 'success'
+        })
+      }).catch(() => {
+          this.loading = false
+        }) 
     }
   }
 }
