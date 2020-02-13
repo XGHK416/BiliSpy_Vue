@@ -86,7 +86,7 @@ const actions = {
           commit('SET_ONES_AUTHS',{'auths_item_type': 'phone','auths_item_value': identityId} )
 
         } else if (identityType === 'EMAIL') {
-          commit('SET_ONES_AUTHS', 'email', identityId)
+          commit('SET_ONES_AUTHS', {'auths_item_type': 'email','auths_item_value': identityId})
         }
         resolve()
       }).catch(error => {

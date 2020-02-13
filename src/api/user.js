@@ -5,10 +5,10 @@ export function login(data) {
     // url: '/vue-admin-template/user/login',
     url: '/bili-api/login',
     method: 'post',
-    params: {
-      identityId: data.identityId,
-      credential: data.credential,
-      identityType: data.identityType
+    data: {
+      'identityId': data.identityId,
+      'credential': data.credential,
+      'identityType': data.identityType
     }
   })
 }
@@ -17,7 +17,7 @@ export function getInfo(user_id) {
   return request({
     url: '/bili-api/space/getBaseInfo',
     method: 'get',
-    params: { user_id }
+    params: { 'userId': user_id }
   })
 }
 
@@ -32,9 +32,9 @@ export function register(data) {
   return request({
     url: '/bili-api/register',
     method: 'post',
-    params: {
-      nickname: data.nickname,
-      password: data.password
+    data: {
+      'nickname': data.nickname,
+      'password': data.password
     }
   })
 }
@@ -52,8 +52,8 @@ export function updateInfo(data) {
     url: '/bili-api/space/updateInfo',
     method: 'put',
     data: {
-      nickName: data.nickName,
-      userId: data.userId
+      'nickName': data.nickName,
+      'userId': data.userId
     }
   })
 }
@@ -62,9 +62,9 @@ export function updateProfile(data) {
   return request({
     url: '/bili-api/space/updateProfile',
     method: 'put',
-    params: {
-      profile: data.profile,
-      userId: data.userId
+    data: {
+      'profile': data.profile,
+      'userId': data.userId
     }
   })
 }
