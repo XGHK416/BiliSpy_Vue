@@ -5,11 +5,29 @@
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <LineChart :chart-data="lineChartData" />
     </el-row>
+    <el-row :gutter="32">
+      <el-col :xs="24" :sm="24" :lg="8">
+        <div class="chart-wrapper">
+          <PieChart></PieChart>
+        </div>
+      </el-col>
+      <el-col :xs="24" :sm="24" :lg="8">
+        <div class="chart-wrapper">
+          <PieChart/>
+        </div>
+      </el-col>
+      <el-col :xs="24" :sm="24" :lg="8">
+        <div class="chart-wrapper">
+          <PieChart/>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
-import TopInfo from "./components/TopInfo";
+import TopInfo from "./components/TopInfo"
 import LineChart from "./components/LineChart"
+import PieChart from "./components/PieChart"
 const lineChartData = {
   newVisitis: {
     expectedData: [100, 120, 161, 134, 105, 160, 165],
@@ -32,7 +50,8 @@ const lineChartData = {
 export default {
   components: {
     TopInfo,
-    LineChart
+    LineChart,
+    PieChart
   },
   data() {
     return {
@@ -52,4 +71,9 @@ export default {
   background-color: rgb(240, 242, 245);
   position: relative;
 }
+.chart-wrapper {
+    background: #fff;
+    padding: 16px 16px 0;
+    margin-bottom: 32px;
+  }
 </style>
