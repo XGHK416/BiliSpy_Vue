@@ -56,6 +56,18 @@ export const constantRoutes = [
   },
 
   {
+    path: '/baseAnalysis',
+    component: Layout,
+    redirect: '/baseAnalysis',
+    children: [{
+      path: 'baseAnalysis',
+      name: 'BaseAnalysis',
+      component: () => import('@/views/baseAnalysis/index'),
+      meta: { title:'BaseAnalysis', icon: 'bili' }
+    }]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
