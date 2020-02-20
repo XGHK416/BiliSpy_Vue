@@ -35,6 +35,9 @@ export default {
     title: {
       type: String,
       default: ""
+    },
+    chartData: {
+      type: Object,
     }
   },
   data() {
@@ -155,7 +158,7 @@ export default {
       this.chart = echarts.init(this.$el, "macarons");
       const option = {
         title: {
-          text: "this.title",
+          text: "视频标签词云",
           x: "center"
         },
         backgroundColor: "#fff",
