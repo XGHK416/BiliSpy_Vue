@@ -3,31 +3,31 @@
     <TopInfo></TopInfo>
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <LineChart :chart-data="lineChartData" />
+      <VideoSpiderBar/>
     </el-row>
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <PieChart></PieChart>
+          <VideoSectionPie></VideoSectionPie>
         </div>
       </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
+      <el-col :xs="24" :sm="24" :lg="16">
         <div class="chart-wrapper">
-          <PieChart/>
+          <WorldCloud></WorldCloud>
         </div>
       </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <PieChart/>
-        </div>
-      </el-col>
+    </el-row>
+    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+      <UploaderFansBar/>
     </el-row>
   </div>
 </template>
 <script>
 import TopInfo from "./components/TopInfo"
-import LineChart from "./components/LineChart"
-import PieChart from "./components/PieChart"
+import UploaderFansBar from "./components/UploaderFansBar"
+import VideoSectionPie from "./components/VideoSectionPie"
+import VideoSpiderBar from "./components/VideoSpiderBar"
+import WorldCloud from "./components/WorldCloud"
 const lineChartData = {
   newVisitis: {
     expectedData: [100, 120, 161, 134, 105, 160, 165],
@@ -50,8 +50,10 @@ const lineChartData = {
 export default {
   components: {
     TopInfo,
-    LineChart,
-    PieChart
+    UploaderFansBar,
+    VideoSectionPie,
+    VideoSpiderBar,
+    WorldCloud
   },
   data() {
     return {

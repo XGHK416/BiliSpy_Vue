@@ -19,7 +19,7 @@ export default {
     },
     height: {
       type: String,
-      default: '350px'
+      default: '400px'
     },
     autoResize: {
       type: Boolean,
@@ -63,7 +63,7 @@ export default {
     setOptions({ expectedData, actualData } = {}) {
       this.chart.setOption({
         title: {
-        text: '某站点用户访问来源',
+        text: 'B站视频分类',
         subtext: '纯属虚构',
         left: 'center'
     },
