@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             检测up主
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" /> 名
+          <count-to :start-val="0" :end-val="topInfo.total_uploader" :duration="2600" class="card-panel-num" /> 名
         </div>
       </div>
     </el-col>
@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             总视频数
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" /> 个
+          <count-to :start-val="0" :end-val="topInfo.total_video" :duration="3000" class="card-panel-num" /> 个
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             今日爬取视频
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" /> 个
+          <count-to :start-val="0" :end-val="topInfo.today_video" :duration="3200" class="card-panel-num" /> 个
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             爬虫运行时间
           </div>
-          <count-to :start-val="0" :end-val="2983" :duration="3600" class="card-panel-num" /> Sec
+          <count-to :start-val="0" :end-val="topInfo.run_time_second" :duration="3600" class="card-panel-num" /> Sec
         </div>
       </div>
     </el-col>
@@ -61,10 +61,19 @@ export default {
   components: {
     CountTo
   },
+  props: {
+    topInfo: {
+      type: Object,
+      required: true,
+    }
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
-    }
+    },
+    getTopInfo(topInfo){
+      this.topInfo = topInfo
+    },
   }
 }
 </script>

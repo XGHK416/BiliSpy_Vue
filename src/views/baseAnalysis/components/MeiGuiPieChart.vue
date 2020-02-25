@@ -56,10 +56,10 @@ export default {
       this.chart = echarts.init(this.$el, "macarons");
       this.setOptions(this.chartData);
     },
-    setOptions({ titleText, legendData, seriesData } = {}) {
+    setOptions({ title_text, legend_data, series_data } = {}) {
       this.chart.setOption({
         title: {
-          text: titleText,
+          text: title_text,
           subtext: "纯属虚构",
           left: "center"
         },
@@ -70,7 +70,7 @@ export default {
         legend: {
           left: "center",
           bottom: "10",
-          data: legendData
+          data: legend_data
         },
         series: [
           {
@@ -79,7 +79,7 @@ export default {
             roseType: "radius",
             radius: [15, 95],
             center: ["50%", "38%"],
-            data: seriesData,
+            data: series_data,
             animationEasing: "cubicInOut",
             animationDuration: 2600
           }

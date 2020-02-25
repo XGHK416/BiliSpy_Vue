@@ -3,87 +3,111 @@
 </template>
 
 <script>
-import echarts from 'echarts'
-require('echarts/theme/macarons') // echarts theme
-import resize from './mixins/resize'
-const animationDuration = 6000
+import echarts from "echarts";
+require("echarts/theme/macarons"); // echarts theme
+import resize from "./mixins/resize";
+const animationDuration = 6000;
 export default {
   mixins: [resize],
   props: {
     className: {
       type: String,
-      default: 'chart'
+      default: "chart"
     },
     width: {
       type: String,
-      default: '100%'
+      default: "100%"
     },
     height: {
       type: String,
-      default: '350px'
+      default: "350px"
+    },
+    barData: {
+      type: Object,
+      required: true
     }
   },
   data() {
     return {
       chart: null
-    }
+    };
   },
   mounted() {
+    // this.initChart();
     this.$nextTick(() => {
-      this.initChart()
-    })
+      this.initChart();
+    });
   },
   beforeDestroy() {
     if (!this.chart) {
-      return
+      return;
     }
-    this.chart.dispose()
-    this.chart = null
+    this.chart.dispose();
+    this.chart = null;
+  },
+  watch: {
+    barData: {
+      deep: true,
+      handler(val) {
+        this.setOptions(val);
+      }
+    }
   },
   methods: {
-    initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
+    setOptions({ title_text, x_axis, series_data } = {}) {
       this.chart.setOption({
-          title: {
-            text: 'B站用户数粉丝top10',
-            subtext: '纯属虚构',
-            left: 'center'
+        title: {
+          text: title_text,
+          subtext: "纯属虚构",
+          left: "center"
         },
         tooltip: {
-          trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          trigger: "axis",
+          axisPointer: {
+            // 坐标轴指示器，坐标轴触发有效
+            type: "line" // 默认为直线，可选为：'line' | 'shadow'
           }
         },
         grid: {
-          left: '2%',
-          right: '2%',
-          bottom: '3%',
+          left: "1%",
+          right: "1%",
+          bottom: "3%",
           containLabel: true
         },
-        xAxis: [{
-          type: 'category',
-          data: ['EdemZhang', '小绝', '闻香师', 'KB呆又呆', 'Asakii', '怕上火就爆王老菊', '黑山大叔'],
-          axisTick: {
-            alignWithLabel: true
+        xAxis: [
+          {
+            type: "category",
+            data: x_axis,
+            axisTick: {
+              alignWithLabel: true
+            }
           }
-        }],
-        yAxis: [{
-          type: 'value',
-          axisTick: {
-            show: false
+        ],
+        yAxis: [
+          {
+            type: "value",
+            axisTick: {
+              show: false
+            }
           }
-        }],
-        series: [{
-          name: '粉丝数',
-          type: 'bar',
-        //   stack: 'vistors',
-          barWidth: '10%',
-          data: [79, 52, 200, 788, 987, 1000, 1200],
-          animationDuration
-        }]
-      })
+        ],
+        series: [
+          {
+            name: "粉丝数",
+            type: "bar",
+            stack: 'vistors',
+            barWidth: "10%",
+            data: series_data,
+            animationDuration
+          }
+        ]
+      });
+    },
+    initChart() {
+      this.chart = echarts.init(this.$el, "macarons");
+      console.log(this.barData["x_axis"]);
+      this.setOptions(this.barData);
     }
   }
-}
+};
 </script>
