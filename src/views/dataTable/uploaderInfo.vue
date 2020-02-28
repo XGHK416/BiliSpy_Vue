@@ -2,7 +2,7 @@
   <div>
     <TopInfo></TopInfo>
 
-      {{this.$route.params}}
+      <!-- {{this.$route.params}} -->
   </div>
 </template>
 
