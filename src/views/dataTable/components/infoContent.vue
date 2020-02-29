@@ -26,19 +26,75 @@
     </div>
     <el-divider></el-divider>
     <div class="fans-change-wrapper">
-        <CrossChart></CrossChart>
+      <CrossChart></CrossChart>
+    </div>
+    <el-divider></el-divider>
+    <div class="video-publish-table-wrapper">
+      <span>最近发文</span>
+      <el-table :data="tableData" stripe style="width: 100%" script>
+        <el-table-column label="aid" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.aid }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="标题" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.title }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="分区" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.tname }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="标签" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.dynamic }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="观看数" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.view }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="点赞" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.like }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="收藏" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.favorite }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="投币" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.coins }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="发布时间" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.publish_date }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center">
+          <template slot-scope="{row}">
+            <el-button type="primary" size="mini" plain @click="collection(row.aid)">分析</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
 
 <script>
 import PieChart from "../../baseAnalysis/components/PieChart";
-import CrossChart from "../../baseAnalysis/components/CrossChart"
+import CrossChart from "../../baseAnalysis/components/CrossChart";
 export default {
   name: "InfoContent",
   components: {
-    "PieChart": PieChart,
-    "CrossChart": CrossChart
+    PieChart: PieChart,
+    CrossChart: CrossChart
   },
   data() {
     return {
@@ -53,7 +109,53 @@ export default {
           { value: 59, name: "Forecasts" }
         ],
         legend_data: ["Industries", "Technology", "Forex", "Gold", "Forecasts"]
-      }
+      },
+      tableData: [
+        {
+          aid:'2222',
+          title:'明日方舟啊啊啊',
+          tname:'游戏',
+          dynamic: "明日方舟#游戏#喜之郎",
+          view: 29000,
+          favorite:2231,
+          like:2222,
+          coins:12121,
+          publish_date:"2010-2-2",
+        },
+        {
+          aid:'2222',
+          title:'明日方舟啊啊啊',
+          tname:'游戏',
+          dynamic: "明日方舟#游戏#喜之郎",
+          view: 29000,
+          favorite:2231,
+          like:2222,
+          coins:12121,
+          publish_date:"2010-2-2",
+        },
+        {
+          aid:'2222',
+          title:'明日方舟啊啊啊',
+          tname:'游戏',
+          dynamic: "明日方舟#游戏#喜之郎",
+          view: 29000,
+          favorite:2231,
+          like:2222,
+          coins:12121,
+          publish_date:"2010-2-2",
+        },
+        {
+          aid:'2222',
+          title:'明日方舟啊啊啊',
+          tname:'游戏',
+          dynamic: "明日方舟#游戏#喜之郎",
+          view: 29000,
+          favorite:2231,
+          like:2222,
+          coins:12121,
+          publish_date:"2010-2-2",
+        },
+      ]
     };
   },
   methods: {
@@ -85,8 +187,11 @@ export default {
   .video-date-publish-wrapper {
     padding: 20px;
   }
-  .fans-change-wrapper{
-      padding: 20px;
+  .fans-change-wrapper {
+    padding: 20px;
+  }
+  .video-publish-table-wrapper {
+    padding: 20px;
   }
 }
 </style>

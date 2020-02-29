@@ -67,14 +67,6 @@
         <span class="context" style="display:inline">哈哈哈哈哈哈哈我是神</span>
       </div>
     </div>
-    <div class="main-info-container">
-      <el-tabs class="main-tab" v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="内容分析" name="Content">
-          <InfoContent></InfoContent>
-        </el-tab-pane>
-        <el-tab-pane label="竞品分析" name="Competing">配置管理</el-tab-pane>
-      </el-tabs>
-    </div>
   </div>
 </template>
 
@@ -82,9 +74,7 @@
 import InfoContent from './infoContent'
 export default {
   name: "TopInfo",
-  components: {
-    "InfoContent": InfoContent,
-  },
+  
   data() {
     return {
       activeName: "Content",
@@ -156,13 +146,5 @@ export default {
     text-align: left;
   }
 }
-.main-info-container {
-  padding: 32px;
-  padding-top: 0;
-  background-color: rgb(240, 242, 245);
-  .main-tab{
-    padding: 10px 20px 20px 20px;
-    background-color: #ffffff;
-  }
-}
+
 </style>
