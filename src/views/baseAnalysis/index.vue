@@ -3,7 +3,7 @@
     <TopInfo :top-info="TopInfo"></TopInfo>
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <VideoSpiderBar :chart-data="VideoSpiderBarData"/>
+      <VideoSpiderBar :bar-data="VideoSpiderBarData"/>
     </el-row>
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">

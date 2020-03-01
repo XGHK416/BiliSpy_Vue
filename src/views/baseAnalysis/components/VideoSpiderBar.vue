@@ -1,5 +1,5 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <div :class="className" :style="{height:height,width:width}"/>
 </template>
 
 <script>
@@ -22,7 +22,7 @@ export default {
       type: String,
       default: '350px'
     },
-    chartData: {
+    barData: {
       type:Object,
       required: true,
     }
@@ -34,7 +34,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.initChart()
+      this.initChart();
     })
   },
   beforeDestroy() {
@@ -53,10 +53,6 @@ export default {
     }
   },
   methods: {
-    initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
-      this.setOptions(this.chartData)
-    },
     setOptions({ title_text, x_axis, series_total,series_current } = {}){
       this.chart.setOption({
           title: {
@@ -106,6 +102,10 @@ export default {
         }]
       })
     },
+    initChart() {
+      this.chart = echarts.init(this.$el, 'macarons')
+      this.setOptions(this.chartData)
+    }
   }
 }
 </script>

@@ -105,7 +105,6 @@ export default {
     },
     initChart() {
       this.chart = echarts.init(this.$el, "macarons");
-      console.log(this.barData["x_axis"]);
       this.setOptions(this.barData);
     }
   }

@@ -78,7 +78,7 @@ export const constantRoutes = [{
     name: 'DataTable',
     meta: {
       title: '数据研究院',
-      icon: 'analysis'
+      icon: 'data-college'
     },
     children: [{
         hidden:true,

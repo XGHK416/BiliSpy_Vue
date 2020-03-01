@@ -179,6 +179,7 @@ export default {
     this.getList();
   },
   methods: {
+    //跳转页面
     info(userId){
       let url = '/dataTable/uploaderInfo/'+userId
       this.$router.push({ path: url });
@@ -192,10 +193,7 @@ export default {
     return_href(uid) {
       return 'https://space.bilibili.com/'+uid
     },
-    //跳转页面
-    hreftwo() {
-      this.$router.push({ path: "/dataTable/uploaderInfo/33223" });
-    },
+    
     getList() {
       getUploaderList(this.listQuery.page,this.listQuery.pageSize).then(response => {
         this.list = response['data']

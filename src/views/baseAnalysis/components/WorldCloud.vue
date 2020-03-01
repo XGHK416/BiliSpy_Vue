@@ -1,5 +1,5 @@
 <template>
-  <div :id="id" :class="className" :style="{ height:height,width:width }" />
+  <div :id="id" :class="className" :style="{ height:height,width:width }"/>
 </template>
 
 <script>
@@ -7,7 +7,7 @@ import echarts from "echarts";
 require("echarts/theme/macarons"); // echarts theme
 import resize from "./mixins/resize";
 import "echarts-wordcloud/dist/echarts-wordcloud";
-// import "echarts-wordcloud/dist/echarts-wordcloud.min";
+import "echarts-wordcloud/dist/echarts-wordcloud.min";
 
 export default {
   mixins: [resize],
@@ -28,20 +28,19 @@ export default {
       type: String,
       default: "400px"
     },
-    // data: {
-    //   type: Array,
-    //   default: []
-    // },
     title: {
       type: String,
       default: ""
     },
     wcData: {
-      type: Object
+      type: Object,
+      required: true
     }
   },
   mounted() {
-    this.initChart();
+     this.$nextTick(() => {
+      this.initChart()
+    })
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -59,10 +58,6 @@ export default {
     }
   },
   methods: {
-    initChart() {
-      this.chart = echarts.init(this.$el, "macarons");
-      this.setOptions(this.wcData);
-    },
     setOptions({ cloud_data } = {}) {
       this.chart.setOption({
         title: {
@@ -118,7 +113,11 @@ export default {
           }
         ]
       });
-    }
+    },
+    initChart() {
+      this.chart = echarts.init(this.$el, "macarons");
+      this.setOptions(this.wcData);
+    },
   }
 };
 </script>
