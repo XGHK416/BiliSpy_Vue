@@ -4,29 +4,34 @@
       <el-row :gutter="10" type="flex">
         <el-col :span="3" class="day-publish-count-wrapper">
           <div class="wday-publish-count day-publish-count">
-            <el-progress type="dashboard" :percentage="percentage" :format="format"></el-progress>
+            <el-progress type="dashboard" :percentage="percentage" :format="formatWday"></el-progress>
             <div class="day-publish-title">七日总发视频数</div>
           </div>
           <div class="mday-publish-count day-publish-count">
-            <el-progress type="dashboard" color="#e6a23c" :percentage="percentage" :format="format"></el-progress>
+            <el-progress
+              type="dashboard"
+              color="#e6a23c"
+              :percentage="percentage"
+              :format="formatMday"
+            ></el-progress>
             <div class="day-publish-title">月总发视频数</div>
           </div>
         </el-col>
         <el-col :span="10">
           <div class="video-section-count-wrapper">
-            <PieChart :chart-data="SectionPieData"></PieChart>
+            <PieChart :chart-data="videoAnaData.section_data"></PieChart>
           </div>
         </el-col>
         <el-col :span="10">
           <div class="video-date-publish-wrapper">
-            <PieChart :chart-data="SectionPieData"></PieChart>
+            <PieChart :chart-data="videoAnaData.publish_data"></PieChart>
           </div>
         </el-col>
       </el-row>
     </div>
     <el-divider></el-divider>
     <div class="fans-change-wrapper">
-      <CrossChart></CrossChart>
+      <CrossChart :cross-data="fansCrossData"></CrossChart>
     </div>
     <el-divider></el-divider>
     <div class="video-publish-table-wrapper">
@@ -34,12 +39,12 @@
       <el-table :data="tableData" stripe style="width: 100%" script>
         <el-table-column label="aid" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.aid }}</span>
+            <span>{{ row.videoId }}</span>
           </template>
         </el-table-column>
         <el-table-column label="标题" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.title }}</span>
+            <span>{{ row.videoTitle }}</span>
           </template>
         </el-table-column>
         <el-table-column label="分区" align="center">
@@ -54,17 +59,17 @@
         </el-table-column>
         <el-table-column label="观看数" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.view }}</span>
+            <span>{{ row.videoView }}</span>
           </template>
         </el-table-column>
         <el-table-column label="点赞" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.like }}</span>
+            <span>{{ row.videoLike }}</span>
           </template>
         </el-table-column>
         <el-table-column label="收藏" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.favorite }}</span>
+            <span>{{ row.videoFavorite }}</span>
           </template>
         </el-table-column>
         <el-table-column label="投币" align="center">
@@ -74,7 +79,7 @@
         </el-table-column>
         <el-table-column label="发布时间" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.publish_date }}</span>
+            <span>{{ row.createTime }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
@@ -90,6 +95,7 @@
 <script>
 import PieChart from "../../baseAnalysis/components/PieChart";
 import CrossChart from "../../baseAnalysis/components/CrossChart";
+import {fansChange,getRecentVideo,getVideoAna} from "@/api/uploaderAna"
 export default {
   name: "InfoContent",
   components: {
@@ -98,69 +104,94 @@ export default {
   },
   data() {
     return {
+      mid:this.$route.params['id'],
+      name:"XGHK416",
       percentage: 100,
-      SectionPieData: {
-        title_text: "视频分区统计",
-        series_data: [
-          { value: 320, name: "Industries" },
-          { value: 240, name: "Technology" },
-          { value: 149, name: "Forex" },
-          { value: 100, name: "Gold" },
-          { value: 59, name: "Forecasts" }
-        ],
-        legend_data: ["Industries", "Technology", "Forex", "Gold", "Forecasts"]
+      w_day:0,
+      m_day:0,
+      // 视频分析
+      videoAnaData:{
+        weak_count : 0,
+        month_count : 0,
+        section_data : {},
+        publish_data : {}
+
+      },
+      // 视频列表
+      pageCount:{
+        pageSize:7,
+        currentPage:1,
+        totalNum:0
       },
       tableData: [
-        {
-          aid:'2222',
-          title:'明日方舟啊啊啊',
-          tname:'游戏',
-          dynamic: "明日方舟#游戏#喜之郎",
-          view: 29000,
-          favorite:2231,
-          like:2222,
-          coins:12121,
-          publish_date:"2010-2-2",
-        },
-        {
-          aid:'2222',
-          title:'明日方舟啊啊啊',
-          tname:'游戏',
-          dynamic: "明日方舟#游戏#喜之郎",
-          view: 29000,
-          favorite:2231,
-          like:2222,
-          coins:12121,
-          publish_date:"2010-2-2",
-        },
-        {
-          aid:'2222',
-          title:'明日方舟啊啊啊',
-          tname:'游戏',
-          dynamic: "明日方舟#游戏#喜之郎",
-          view: 29000,
-          favorite:2231,
-          like:2222,
-          coins:12121,
-          publish_date:"2010-2-2",
-        },
-        {
-          aid:'2222',
-          title:'明日方舟啊啊啊',
-          tname:'游戏',
-          dynamic: "明日方舟#游戏#喜之郎",
-          view: 29000,
-          favorite:2231,
-          like:2222,
-          coins:12121,
-          publish_date:"2010-2-2",
-        },
-      ]
-    };
+     
+      ],
+      // 折线图数据
+      fansCrossData: {
+        title_text:"粉丝增长变化",
+        legend:[],
+        x_axis:[],
+        series:[]
+      },
+      fansSeries:{
+            name: "",
+            type: "line",
+            stack: "总量",
+            areaStyle: {},
+            data: []
+        }
+    }
+  },
+  created(){
+    this.initFansCross()
+    this.initCurrentVideo()
+    this.initVideoAna()
+
   },
   methods: {
-    format() {
-      return "213个";
+    initFansCross(){
+      fansChange(this.mid,7).then(response=>{
+        var data = response['data']
+        this.fansCrossData.legend.push(this.name)
+        this.fansSeries.name=this.name
+
+        for(let item of Object.values(data['fans']['series_data'])){
+          var {name,value} = item
+          this.fansCrossData.x_axis.push(name)
+          this.fansSeries.data.push(value)
+        }
+        this.fansCrossData.series.push(this.fansSeries)
+      })
+    },
+    initCurrentVideo(){
+      getRecentVideo(this.mid,this.pageCount.currentPage,this.pageCount.pageSize).then(response=>{
+        var data = response['data']['list']
+        this.tableData = data
+      })
+    },
+    initVideoAna(){
+      getVideoAna(this.mid).then(response=>{
+        let data = response['data']
+        this.videoAnaData.weak_count = data['wday_count']
+        this.videoAnaData.month_count = data['mday_count']
+        this.videoAnaData.section_data = data['section']
+        this.videoAnaData.publish_data = data['publish']
+      })
+    },
+    resetFansSeries(){
+      this.fansSeries={
+            name: "",
+            type: "line",
+            stack: "总量",
+            areaStyle: {},
+            data: []
+        }
+    },
+    formatWday() {
+      return ""+this.videoAnaData.weak_count;
+    },
+    formatMday() {
+      return ""+this.videoAnaData.month_count;
     }
   }
 };

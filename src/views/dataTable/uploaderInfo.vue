@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TopInfo></TopInfo>
+    <TopInfo :info-data="topInfoData"></TopInfo>
     <div class="main-info-container">
       <el-tabs class="main-tab" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="内容分析" name="Content">
@@ -20,6 +20,9 @@
 import TopInfo from "./components/topInfo";
 import InfoContent from "./components/infoContent"
 import Competing from "./components/competing"
+
+import {getBasicInfo,getVideoAna} from "@/api/uploaderAna"
+import { init } from 'echarts/lib/echarts';
 export default {
   name: "Info",
   components: {
@@ -31,12 +34,28 @@ export default {
     return {
       lazy:true,
       activeName: "Content",
+      mid:this.$route.params['id'],
+      topInfoData:{},
+      videoAnaData:{},
     };
   },
+  created() {  
+    this.initTopInfo()
+  },
   methods: {
+     return_profile(url) {
+      return 'https://images.weserv.nl/?url='+url
+    },
     handleClick(tab, event) {
       console.log(tab, event);
-    }
+    },
+    initTopInfo(){
+      getBasicInfo(this.mid).then(response=>{
+        let data = response['data']
+        this.topInfoData= data
+        this.topInfoData['profile']= this.return_profile(this.topInfoData['profile'])
+      })
+    },
   }
 };
 </script>

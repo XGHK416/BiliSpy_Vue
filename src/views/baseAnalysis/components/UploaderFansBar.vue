@@ -58,7 +58,6 @@ export default {
       this.chart.setOption({
         title: {
           text: title_text,
-          subtext: "纯属虚构",
           left: "center"
         },
         tooltip: {

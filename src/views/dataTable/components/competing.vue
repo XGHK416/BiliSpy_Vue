@@ -9,6 +9,11 @@
             <div>{{ row.nickname}}</div>
           </template>
         </el-table-column>
+        <el-table-column label="排名" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.rank }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="粉丝数" align="center">
           <template slot-scope="{row}">
             <span>{{ row.fans }}</span>
@@ -32,7 +37,7 @@
         <el-table-column label="操作" align="center">
           <template slot-scope="{row}">
             <el-tag type="danger" v-if="row.isOri" size="small">本体</el-tag>
-            <el-popconfirm v-else title="这是一段内容确定删除吗？" @onConfirm="test">
+            <el-popconfirm v-else title="这是一段内容确定删除吗？" @onConfirm="handleConfirm()">
               <el-button type="info" plain size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -41,22 +46,61 @@
       <div class="option-panel-wrapper">
         <div class="option-panel">
           <el-tooltip class="item" effect="dark" content="有系统推荐与之相类似的up主" placement="left-start">
-            <el-button type="success" plain>推荐加入</el-button>
+            <el-button type="success" plain @click="addRecommend">推荐加入</el-button>
           </el-tooltip>
-          <el-button type="info" plain>手动添加</el-button>
+          <el-button type="info" plain @click="addMyself">手动添加</el-button>
         </div>
       </div>
     </div>
     <el-divider></el-divider>
     <div class="competing-cross-wrapper">
       每日对比
-      <CrossChart></CrossChart>
+      <!-- <CrossChart></CrossChart> -->
     </div>
+    <!-- 加入dialog -->
+    <el-dialog
+      class="addDialog-wrapper"
+      :title="add_Dialog.title"
+      :visible.sync="add_Dialog.visible"
+      width="30%"
+    >
+      <el-input v-model="add_Dialog.search_input" placeholder="请输入up主" style="width:70%"></el-input>
+      <el-button type="primary">搜索</el-button>
+      <div class="addList-wrapper">
+        <el-row :gutter="30">
+          <el-col :span="12" v-for="item in add_TableList" :key="item.mid+''">
+            <div class="list-item">
+              <div style="display:inline-block">
+                <el-avatar shape="square" :size="45" :src="item.profile"></el-avatar>
+              </div>
+              <div class="item-cotent-wrapper">
+                <div class="item-cotent">
+                  <span class="item-title">{{item.name}}</span>
+                  <div class="item-select">
+                    <el-button type="success" size="mini" v-if="isInAddList(item.mid)" @click="addInList(item.mid)">添加</el-button>
+                    <el-button type="warning" size="mini" v-else @click="cancleInList(item.mid)">取消</el-button>
+                  </div>
+                </div>
+                <div class="item-abstract">
+                <span>{{item.abstract}}</span>
+              </div>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="add_Dialog.visible = false">取 消</el-button>
+        <el-button type="primary" @click="add_Dialog.visible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import CrossChart from "../../baseAnalysis/components/CrossChart";
+import { getUploader, getCompetingData } from "@/api/uploaderAna";
 export default {
   name: "Competing",
   components: {
@@ -64,11 +108,59 @@ export default {
   },
   data() {
     return {
+      // 添加列表
+      add_inList:[],
+      add_TableList:[],
+      add_TableData:{
+        mid:12322,
+        profile:'https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png',
+        name:'明日方舟',
+        abstract:'ssss'
+      },
+      add_TableState: {
+        page:1,
+        pageSize:6,
+      },
+
+      add_Dialog: {
+        search_input: "",
+        visible: false,
+        title: "推荐加入"
+      },
+      // 折线图数据
+      option: [7, 30],
+      currentOption: 7,
+      CrossData: {
+        title_text: "粉丝增长变化",
+        legend: [],
+        x_axis: [],
+        series: []
+      },
+      Series: {
+        name: "",
+        type: "line",
+        stack: "总量",
+        areaStyle: {},
+        data: []
+      },
+      // 列表
+      clounm: {
+        follower: "粉丝",
+        followerRate: "粉丝增长数",
+        rank: "排名",
+        avage_watch: "最新视频平均"
+      },
+      tableState: {
+        show_clounm: "follwer",
+        total: 1,
+        max_show: 5
+      },
       tableData: [
         {
           profile:
             "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
           nickname: "明日方舟官方",
+          rank: 1,
           fans: 2222,
           video_publish: 290,
           //   粉丝增长率
@@ -81,6 +173,7 @@ export default {
           profile:
             "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
           nickname: "明日方舟官方",
+          rank: 1,
           fans: 2222,
           video_publish: 290,
           //   粉丝增长率
@@ -92,8 +185,47 @@ export default {
       ]
     };
   },
+  created(){
+      this.add_TableList.push(this.add_TableData)
+    },
   methods: {
-    test() {
+    addInList(mid){
+      this.add_inList.push(mid)
+    },
+    cancleInList(mid){
+      var index = this.add_inList.indexOf(mid)
+      this.add_inList.splice(index,1)
+    },
+    isInAddList(mid){
+      var items = this.add_inList
+      if(items.length==0) return true
+      items.forEach(function(i,index){
+        if(i ===mid){
+          return false
+        }else return true
+      })
+    },
+    initCross() {
+      fansChange(this.mid, 7).then(response => {
+        var data = response["data"];
+        this.fansCrossData.legend.push(this.name);
+        this.fansSeries.name = this.name;
+
+        for (let item of Object.values(data["fans"]["series_data"])) {
+          var { name, value } = item;
+          this.fansCrossData.x_axis.push(name);
+          this.fansSeries.data.push(value);
+        }
+        this.fansCrossData.series.push(this.fansSeries);
+      });
+    },
+    addRecommend() {
+      (this.add_Dialog.visible = true), (this.add_Dialog.title = "推荐加入");
+    },
+    addMyself() {
+      (this.add_Dialog.visible = true), (this.add_Dialog.title = "手动加入");
+    },
+    handleConfirm() {
       this.$message({
         message: "success",
         type: "success"
@@ -111,5 +243,52 @@ export default {
 }
 .competing-cross-wrapper {
   padding-top: 50px;
+}
+.addDialog-wrapper {
+  text-align: center;
+  .el-dialog__footer {
+    background-color: #f9f9f9;
+  }
+  .addList-wrapper {
+    padding-top: 26px;
+    min-height: 60px;
+    .list-item {
+      margin-top: 10px;
+      padding: 10px 5px 5px 10px;
+      border: 1px solid #f0eded;
+      border-radius: 4px;
+      text-align: left;
+      display: flex;
+      .item-cotent-wrapper {
+        width: calc(100% - 45px);
+        height: 100%;
+        padding-left: 12px;
+        display: table;
+        table-layout: fixed;
+        .item-cotent {
+          height: 67%;
+          color: #333;
+          position: relative;
+          margin-bottom: 10px;
+          .item-title {
+            font-size: 17px;
+            max-width: 150px;
+            color: #333;
+          }
+          .item-select {
+            position: absolute;
+            top: 0px;
+            right: 10px;
+          }
+        }
+        .item-abstract {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          color: rgba(44, 50, 67, 0.65);
+        }
+      }
+    }
+  }
 }
 </style>

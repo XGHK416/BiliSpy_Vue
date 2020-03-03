@@ -9,25 +9,25 @@
                 <el-avatar
                   shape="square"
                   :size="100"
-                  src="https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png"
+                  :src="infoData.profile"
                 ></el-avatar>
               </div>
             </el-col>
             <el-col :span="10">
               <div style="margin-bottom:10px">
-                <span class="title">XGHK416</span>
+                <span class="title">{{infoData.nick_name}}</span>
               </div>
-              <span class="context">mid: 33333</span>
+              <span class="context">mid: {{infoData.mid}}</span>
               <span class="context">
                 身份:
-                <el-tag type="danger" size="small">年度大会员</el-tag>
+                <el-tag type="danger" size="small">{{infoData.vip}}</el-tag>
               </span>
             </el-col>
             <el-col :span="10">
               <div>
-                <span class="context">所属分区:</span>
+                <span class="context">所属分区</span>
                 <div>
-                  <span class="section">游戏区</span>
+                  <span class="section">{{infoData.belong_section}}区</span>
                 </div>
               </div>
             </el-col>
@@ -39,14 +39,14 @@
               <div>
                 <span class="context">最新视频发布:</span>
               </div>
-              <div class="publish-date">2020-1-23 12:37:23</div>
+              <div class="publish-date">{{infoData.last_publish}}</div>
             </el-col>
             <el-col :span="8">
               <div>
                 <span class="context">历史监控</span>
               </div>
               <div>
-                <span class="detect-time">10</span> 次
+                <span class="detect-time">{{infoData.detect_time}}</span> 次
               </div>
               <div class="detect-info">
                 <a href="/">查看监控历史</a>
@@ -64,7 +64,7 @@
       </el-row>
       <div class="top-bottom-container top-container-common">
         <span class="context" style="display:inline;">个人签名:</span>
-        <span class="context" style="display:inline">哈哈哈哈哈哈哈我是神</span>
+        <span class="context" style="display:inline">{{infoData.detect_time}}</span>
       </div>
     </div>
   </div>
@@ -74,16 +74,24 @@
 import InfoContent from './infoContent'
 export default {
   name: "TopInfo",
-  
+  props:{
+    infoData:{
+      type:Object,
+      required:true,
+    }
+  },
   data() {
     return {
       activeName: "Content",
     };
   },
+  created(){
+    console.log(this.infoData)
+  },
   methods: {
     handleClick(tab, event) {
       console.log(tab, event);
-    }
+    },
   }
 };
 </script>
