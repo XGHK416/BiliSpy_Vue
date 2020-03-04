@@ -143,9 +143,15 @@ export default {
     }
   },
   created(){
-    this.initFansCross()
-    this.initCurrentVideo()
-    this.initVideoAna()
+    // let tab1_promise=this.initFansCross()
+    // let tab2_promise=this.initCurrentVideo()
+    // let tab3_promise=this.initVideoAna()
+    // let arr=[tab1_promise,tab2_promise,tab3_promise]
+    Promise.all([this.initFansCross(),this.initCurrentVideo(),this.initVideoAna()]).then().catch()
+
+    // this.initFansCross()
+    // this.initCurrentVideo()
+    // this.initVideoAna()
 
   },
   methods: {

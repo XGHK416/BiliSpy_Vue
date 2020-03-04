@@ -64,8 +64,13 @@
       :visible.sync="add_Dialog.visible"
       width="30%"
     >
-      <el-input v-model="add_Dialog.search_input" placeholder="请输入up主" style="width:70%"></el-input>
-      <el-button type="primary">搜索</el-button>
+      <el-input
+        v-model="add_Dialog.search_input"
+        placeholder="请输入up主"
+        v-if="add_Dialog.title=='手动加入'"
+        style="width:70%"
+      ></el-input>
+      <el-button type="primary" v-if="add_Dialog.title=='手动加入'" @click="search_competing">搜索</el-button>
       <div class="addList-wrapper">
         <el-row :gutter="30">
           <el-col :span="12" v-for="item in add_TableList" :key="item.mid+''">
@@ -77,13 +82,18 @@
                 <div class="item-cotent">
                   <span class="item-title">{{item.name}}</span>
                   <div class="item-select">
-                    <el-button type="success" size="mini" v-if="isInAddList(item.mid)" @click="addInList(item.mid)">添加</el-button>
-                    <el-button type="warning" size="mini" v-else @click="cancleInList(item.mid)">取消</el-button>
+                    <el-button
+                      type="success"
+                      size="mini"
+                      v-if="item.status"
+                      @click="addInList(item)"
+                    >添加</el-button>
+                    <el-button type="warning" size="mini" v-else @click="cancleInList(item)">取消</el-button>
                   </div>
                 </div>
                 <div class="item-abstract">
-                <span>{{item.abstract}}</span>
-              </div>
+                  <span>{{item.abstract}}</span>
+                </div>
               </div>
             </div>
           </el-col>
@@ -100,7 +110,11 @@
 
 <script>
 import CrossChart from "../../baseAnalysis/components/CrossChart";
-import { getUploader, getCompetingData } from "@/api/uploaderAna";
+import {
+  getUploader,
+  getCompetingData,
+  getCompetingUploader
+} from "@/api/uploaderAna";
 export default {
   name: "Competing",
   components: {
@@ -109,17 +123,19 @@ export default {
   data() {
     return {
       // 添加列表
-      add_inList:[],
-      add_TableList:[],
-      add_TableData:{
-        mid:12322,
-        profile:'https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png',
-        name:'明日方舟',
-        abstract:'ssss'
+      add_inList: [],
+      add_TableList: [],
+      add_TableData: {
+        mid: 12322,
+        profile:
+          "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
+        name: "明日方舟",
+        abstract: "ssss"
       },
+      // 竞品列状态
       add_TableState: {
-        page:1,
-        pageSize:6,
+        page: 1,
+        pageSize: 6
       },
 
       add_Dialog: {
@@ -143,7 +159,7 @@ export default {
         areaStyle: {},
         data: []
       },
-      // 列表
+      // 数据列表
       clounm: {
         follower: "粉丝",
         followerRate: "粉丝增长数",
@@ -168,42 +184,64 @@ export default {
           //   视频平均观看人数
           avage_watch: 212,
           isOri: true
-        },
-        {
-          profile:
-            "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
-          nickname: "明日方舟官方",
-          rank: 1,
-          fans: 2222,
-          video_publish: 290,
-          //   粉丝增长率
-          fans_rate: 29000,
-          //   视频平均观看人数
-          avage_watch: 212,
-          isOri: false
         }
       ]
     };
   },
-  created(){
-      this.add_TableList.push(this.add_TableData)
-    },
+  created() {},
   methods: {
-    addInList(mid){
-      this.add_inList.push(mid)
+    search_competing() {
+      let key = this.add_Dialog.search_input;
+      getCompetingUploader(
+        key,
+        this.add_TableState.page,
+        this.add_TableState.pageSize
+      ).then(response => {
+        var data = response["data"];
+        const table_data = []
+        for (const key in data) {
+          if (data.hasOwnProperty(key)) {
+            let add_table_item = {}
+            add_table_item.name=data[key]['nickName'];
+            add_table_item.mid = data[key].userId;
+            add_table_item.profile ='https://images.weserv.nl/?url='+data[key].profile;
+            add_table_item.name = data[key].nickName;
+            add_table_item.abstract = data[key].sign;
+            if(this.isInAddList(add_table_item.mid)){
+               add_table_item.status = true
+            }else{
+               add_table_item.status = false
+            }
+           
+            table_data.push(add_table_item)
+            // console.log(element)
+            // this.addTo_add_Table(element)
+          }
+        }
+        this.add_TableList=table_data
+      });
     },
-    cancleInList(mid){
-      var index = this.add_inList.indexOf(mid)
-      this.add_inList.splice(index,1)
+    addInList(item) {
+      console.log(item.mid+" add")
+      this.add_inList.push(item.mid);
+      item.status = false
+      console.log(this.add_inList)
     },
-    isInAddList(mid){
-      var items = this.add_inList
-      if(items.length==0) return true
-      items.forEach(function(i,index){
-        if(i ===mid){
-          return false
-        }else return true
-      })
+    cancleInList(item) {
+      console.log(item.mid+" cancle")
+      var index = this.add_inList.indexOf(item.mid);
+      this.add_inList.splice(index, 1);
+      item.status = true
+      console.log(this.add_inList)
+    },
+    isInAddList(mid) {
+      var items = this.add_inList;
+      if (items.length == 0) return true;
+      items.forEach(function(i, index) {
+        if (i === mid) {
+          return false;
+        } else return true;
+      });
     },
     initCross() {
       fansChange(this.mid, 7).then(response => {

@@ -76,3 +76,15 @@ export function getCompetingData(mid,type) {
     }
   })
 }
+
+export function getCompetingUploader(key,page,pageSize) {
+  return request({
+    url: '/bili-api/uploader/competing/getCompetingUploader',
+    method: 'get',
+    params: {
+        'key': key,
+        'page': page,
+        'pageSize': pageSize
+    }
+  })
+}
