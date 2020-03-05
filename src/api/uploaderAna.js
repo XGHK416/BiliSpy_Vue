@@ -66,9 +66,9 @@ export function getUploader(mid,limit,type) {
   })
 }
 
-export function getCompetingData(mid,type) {
+export function getCompetingOnesData(mid,type) {
   return request({
-    url: '/bili-api/uploader/competing/getCompetingData',
+    url: '/bili-api/uploader/competing/getCompetingOnesData',
     method: 'get',
     params: {
         'mid': mid,
@@ -85,6 +85,16 @@ export function getCompetingUploader(key,page,pageSize) {
         'key': key,
         'page': page,
         'pageSize': pageSize
+    }
+  })
+}
+
+export function getCompetingData(mid) {
+  return request({
+    url: '/bili-api/uploader/competing/getCompetingData',
+    method: 'get',
+    params: {
+        'mid':mid
     }
   })
 }

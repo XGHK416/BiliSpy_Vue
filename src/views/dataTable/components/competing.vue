@@ -37,7 +37,7 @@
         <el-table-column label="操作" align="center">
           <template slot-scope="{row}">
             <el-tag type="danger" v-if="row.isOri" size="small">本体</el-tag>
-            <el-popconfirm v-else title="这是一段内容确定删除吗？" @onConfirm="handleConfirm()">
+            <el-popconfirm v-else title="这是一段内容确定删除吗？" @onConfirm="handleConfirm(row)">
               <el-button type="info" plain size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -122,16 +122,23 @@ export default {
   },
   data() {
     return {
-      // 添加列表
-      add_inList: [],
-      add_TableList: [],
-      add_TableData: {
-        mid: 12322,
-        profile:
-          "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
-        name: "明日方舟",
-        abstract: "ssss"
+      mind_mid: {
+        mid: 0,
+        status: true
       },
+      // 添加列表
+      // 已有竞品mid列表
+      add_inList: [],
+      // 查询竞品列表
+      add_TableList: [],
+      add_TableList_mid:[],
+      // add_TableData: {
+      //   mid: 12322,
+      //   profile:
+      //     "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
+      //   name: "明日方舟",
+      //   abstract: "ssss"
+      // },
       // 竞品列状态
       add_TableState: {
         page: 1,
@@ -171,25 +178,30 @@ export default {
         total: 1,
         max_show: 5
       },
+      // 精品列表
       tableData: [
-        {
-          profile:
-            "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
-          nickname: "明日方舟官方",
-          rank: 1,
-          fans: 2222,
-          video_publish: 290,
-          //   粉丝增长率
-          fans_rate: 29000,
-          //   视频平均观看人数
-          avage_watch: 212,
-          isOri: true
-        }
+        // {
+        //   profile:
+        //     "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
+        //   nickname: "明日方舟官方",
+        //   rank: 1,
+        //   fans: 2222,
+        //   video_publish: 290,
+        //   //   粉丝增长率
+        //   fans_rate: 29000,
+        //   //   视频平均观看人数
+        //   latest_watch: 212,
+        //   isOri: true
+        // }
       ]
     };
   },
-  created() {},
+  created() {
+    this.mind_mid.mid = Number(this.$route.params["id"]);
+    this.addInList(this.mind_mid);
+  },
   methods: {
+    // 查询竞品
     search_competing() {
       let key = this.add_Dialog.search_input;
       getCompetingUploader(
@@ -198,50 +210,104 @@ export default {
         this.add_TableState.pageSize
       ).then(response => {
         var data = response["data"];
-        const table_data = []
+        const table_data = [];
         for (const key in data) {
           if (data.hasOwnProperty(key)) {
-            let add_table_item = {}
-            add_table_item.name=data[key]['nickName'];
+            if(data[key].userId===this.mind_mid.mid){
+              // continue
+            }
+            let add_table_item = {};
+            add_table_item.name = data[key]["nickName"];
             add_table_item.mid = data[key].userId;
-            add_table_item.profile ='https://images.weserv.nl/?url='+data[key].profile;
+            add_table_item.profile =
+              "https://images.weserv.nl/?url=" + data[key].profile;
             add_table_item.name = data[key].nickName;
             add_table_item.abstract = data[key].sign;
-            if(this.isInAddList(add_table_item.mid)){
-               add_table_item.status = true
-            }else{
-               add_table_item.status = false
+            // 判断是否已经添加至竞品列表
+            if (this.isInAddList(add_table_item.mid)) {
+              add_table_item.status = true;
+            } else {
+              add_table_item.status = false;
             }
-           
-            table_data.push(add_table_item)
+            //  console.log(add_table_item.status)
+            // 加入到竞品列表检测名单中
+            this.add_TableList_mid.push(add_table_item.mid)
+            table_data.push(add_table_item);
             // console.log(element)
             // this.addTo_add_Table(element)
           }
         }
-        this.add_TableList=table_data
+        this.add_TableList = table_data;
       });
     },
+    // 加入到竞品选单中
     addInList(item) {
-      console.log(item.mid+" add")
-      this.add_inList.push(item.mid);
-      item.status = false
-      console.log(this.add_inList)
-    },
-    cancleInList(item) {
-      console.log(item.mid+" cancle")
-      var index = this.add_inList.indexOf(item.mid);
-      this.add_inList.splice(index, 1);
-      item.status = true
-      console.log(this.add_inList)
-    },
-    isInAddList(mid) {
-      var items = this.add_inList;
-      if (items.length == 0) return true;
-      items.forEach(function(i, index) {
-        if (i === mid) {
-          return false;
-        } else return true;
+      // 添加竞品
+      // 添加至table
+      getCompetingData(item.mid).then(response => {
+        let item_ = {};
+        let data = response.data;
+        let uploader = data.uploader;
+        let fans = data.fans.series_data;
+        let fans_avg = 0;
+        let latest_video = data.latestVideo.pop();
+        fans_avg =  parseInt((fans.pop().value - fans[0].value) / fans.length);
+        item_.mid = item.mid
+        item_.profile = this.return_profile(uploader.profile);
+        item_.nickname = uploader.nickName;
+        item_.rank = 1;
+        item_.fans = uploader.follower;
+        item_.fans_rate = fans_avg;
+        item_.video_publish = uploader.videoCount;
+        item_.latest_watch = latest_video;
+        // 判断是否本机
+        if(item.mid===this.mind_mid.mid){
+          item_.isOri = true;
+        }
+        else item_.isOri = false;
+        // 加入竞品列表
+        this.tableData.push(item_);
       });
+      // 加入已添加列表和改变竞品可选列表的状态
+      this.add_inList.push(item.mid);
+      console.log(this.add_inList);
+      item.status = false;
+    },
+    // 从竞品选单中删除
+    cancleInList(item) {
+      console.log(item.mid)
+      var index = this.add_inList.indexOf(item.mid);
+      console.log(index)
+      this.add_inList.splice(index, 1);
+      this.tableData.splice(index,1);
+      if(item.status!=undefined){
+        item.status = true;
+      }else{
+        var list_index = this.add_TableList_mid.indexOf(item.mid);
+        this.add_TableList[list_index].status = true
+      }
+    },
+    // 从竞品列表中删除
+    // cancleFromTablePanel(item){
+    //   var index = this.add_inList.indexOf(item.mid);
+    //   this.add_inList.splice(index, 1);
+    // },
+    // 验证是否已添加竞品
+    isInAddList(mid) {
+      var flag = true;
+      var items = this.add_inList;
+      if (items.length === 0) {
+        flag = true;
+      } else {
+        items.forEach(function(i, index) {
+          if (i === mid) {
+            flag = false;
+          } else {
+            flag = true;
+          }
+        });
+      }
+      return flag
     },
     initCross() {
       fansChange(this.mid, 7).then(response => {
@@ -263,11 +329,12 @@ export default {
     addMyself() {
       (this.add_Dialog.visible = true), (this.add_Dialog.title = "手动加入");
     },
-    handleConfirm() {
-      this.$message({
-        message: "success",
-        type: "success"
-      });
+    handleConfirm(item) {
+      console.log(item)
+      this.cancleInList(item)
+    },
+    return_profile(url) {
+      return "https://images.weserv.nl/?url=" + url;
     }
   }
 };
