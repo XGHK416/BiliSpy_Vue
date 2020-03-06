@@ -66,13 +66,14 @@ export function getUploader(mid,limit,type) {
   })
 }
 
-export function getCompetingOnesData(mid,type) {
+export function getCompetingOnesData(mid,type,limit) {
   return request({
     url: '/bili-api/uploader/competing/getCompetingOnesData',
     method: 'get',
     params: {
-        'mid': mid,
-        'type': type
+        'mids': mid,
+        'type': type,
+        'limit':limit
     }
   })
 }
