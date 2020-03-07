@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-
+import qs from 'qs'
 export function getUploaderList(page,pageSize) {
   return request({
     url: '/bili-api/uploader/getList',
@@ -66,15 +66,11 @@ export function getUploader(mid,limit,type) {
   })
 }
 
-export function getCompetingOnesData(mid,type,limit) {
+export function getCompetingOnesData(params) {
   return request({
-    url: '/bili-api/uploader/competing/getCompetingOnesData',
+    url: '/bili-api/uploader/competing/getCompetingOnesData?'+params,
     method: 'get',
-    params: {
-        'mids': mid,
-        'type': type,
-        'limit':limit
-    }
+    contentType : "application/json" ,
   })
 }
 

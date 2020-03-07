@@ -55,6 +55,11 @@
     <el-divider></el-divider>
     <div class="competing-cross-wrapper">
       每日对比
+      <el-tabs v-model="cross_option.current_option.key" @tab-click="crossTabsHandleClick">
+        <el-tab-pane :label="cross_option.clounms[0].name" :name="cross_option.clounms[0].key"></el-tab-pane>
+        <el-tab-pane :label="cross_option.clounms[1].name" :name="cross_option.clounms[1].key"></el-tab-pane>
+        <el-tab-pane :label="cross_option.clounms[2].name" :name="cross_option.clounms[2].key"></el-tab-pane>
+      </el-tabs>
       <CrossChart :cross-data="cross_data_unit"></CrossChart>
     </div>
     <!-- 加入dialog -->
@@ -125,6 +130,7 @@
 
 <script>
 import CrossChart from "../../baseAnalysis/components/CrossChart";
+import qs from "qs";
 import {
   getUploader,
   getCompetingData,
@@ -183,6 +189,7 @@ export default {
       },
       // 折线图选项
       cross_option: {
+        current_option: { key: "FANS", name: "粉丝" },
         day_limit: [
           { limit: 7, title: "七日表" },
           { limit: 30, title: "一月榜" }
@@ -224,9 +231,22 @@ export default {
     this.mind_mid.mid = Number(this.$route.params["id"]);
     // this.competing_mid_list.push(this.mind_mid.mid);
     this.addInList(this.mind_mid);
-    this.addToCross(this.mind_mid.mid, "FANS", 7);
+    this.addToCross(
+      [this.mind_mid.mid],
+      this.cross_option.current_option.key,
+      7
+    );
   },
   methods: {
+    // cross数据显示切换
+    crossTabsHandleClick(tab, event) {
+      var index = tab.index;
+      var label = tab.label;
+      var type = tab.name;
+      this.cross_option.current_option.key = type;
+      this.cross_option.current_option.name = label;
+      this.addToCross(this.competing_mid_list, type, 7);
+    },
     //选单切换页面
     menuPageChange(page) {
       this.menu_pagination.page = page;
@@ -234,7 +254,15 @@ export default {
     },
     // 添加cross
     addToCross(mid, type, limit) {
-      getCompetingOnesData(mid, type, limit).then(response => {
+      var params = qs.stringify(
+        {
+          mids: mid,
+          type: type,
+          limit: limit
+        },
+       {indices: false }
+      );
+      getCompetingOnesData(params).then(response => {
         var data = response["data"]["list"];
         if (data != null) {
           var legend = [];
@@ -265,8 +293,8 @@ export default {
           this.cross_data_unit.legend = legend;
           this.cross_data_unit.x_axis = x_axis;
           this.cross_data_unit.series = series_list;
+
           this.cross_data[type] = this.cross_data_unit;
-          console.log(this.cross_data_unit);
         } else {
           // 数据为空时
         }
@@ -306,32 +334,19 @@ export default {
             add_table_item.name = data[key].nickName;
             add_table_item.abstract = data[key].sign;
             // 判断是否已经添加至竞品列表
-            // if (this.isInAddList(add_table_item.mid)) {
-            //   console.log()
             if (this.menu_mid_list.indexOf(add_table_item.mid) != -1) {
               add_table_item.status = false;
             } else {
               add_table_item.status = true;
             }
-            // add_table_item.status = this.isInAddList(add_table_item.mid);
-            // console.log(add_table_item.status)
-            // console.log(add_table_item.status)
-            // } else {
-            //   add_table_item.status = false;
-            // }
-            //  console.log(add_table_item.status)
             // 加入到竞品列表检测名单中
-            // this.competing_mid_list.push(add_table_item.mid);
             table_data.push(add_table_item);
-            // console.log(element)
-            // this.addTo_add_Table(element)
           }
         }
         // 添加至选单
         this.menu_list = table_data;
         // 更新menu的总数
         this.menu_pagination.totalSize = 50;
-        // console.log(this.menu_list);
       });
     },
     // 加入到竞品选单中
@@ -379,48 +394,21 @@ export default {
         item.status = true;
       } else {
         // 从列表中删除
-        console.log(this.menu_list);
         for (const key in this.menu_list) {
           if (this.menu_list.hasOwnProperty(key)) {
-            if ((this.menu_list[key].mid == item.mid)) {
-              console.log(this.menu_list[key])
+            if (this.menu_list[key].mid == item.mid) {
               this.menu_list[key].status = true;
             }
           }
         }
-        // this.menu_list.forEach(function(item_, index) {
-
-        // });
-
-        // if(this.menu_list[index-1].mid!=item.mid){
-        //   return
-        // }else{
-        //   this.menu_list[index-1].status = true;
-        // }
       }
     },
     // 验证是否已添加竞品
     isInAddList(mid) {
-      // var flag = true;
       var items = this.menu_mid_list;
-      // console.log(items);
-      // console.log(mid)
-      // console.log(items)
       if (items.length === 0) {
         return true;
-        // flag = true;
       } else {
-        // for (const key in items) {
-        //   if (items.hasOwnProperty(key)) {
-        //     const item = items[key];
-        //     if (item === mid) {
-        //       console.log(mid);
-        //       flag = false;
-        //     } else {
-        //       flag = true;
-        //     }
-        //   }
-        // }
         let flag = null;
         items.forEach(function(i, index) {
           if (i === mid) {
