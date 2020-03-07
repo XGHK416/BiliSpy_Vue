@@ -55,25 +55,29 @@
     <el-divider></el-divider>
     <div class="competing-cross-wrapper">
       每日对比
-      <CrossChart :cross-data ="CrossData"></CrossChart>
+      <CrossChart :cross-data="cross_data_unit"></CrossChart>
     </div>
     <!-- 加入dialog -->
     <el-dialog
       class="addDialog-wrapper"
-      :title="add_Dialog.title"
-      :visible.sync="add_Dialog.visible"
+      :title="menu_option.title"
+      :visible.sync="menu_option.visible"
       width="30%"
     >
       <el-input
-        v-model="add_Dialog.search_input"
+        v-model="menu_option.search_input"
         placeholder="请输入up主"
-        v-if="add_Dialog.title=='手动加入'"
+        v-if="menu_option.title=='手动加入'"
         style="width:70%"
       ></el-input>
-      <el-button type="primary" v-if="add_Dialog.title=='手动加入'" @click="search_competing">搜索</el-button>
+      <el-button
+        type="primary"
+        v-if="menu_option.title=='手动加入'"
+        @click="search_competing('SEARCH')"
+      >搜索</el-button>
       <div class="addList-wrapper">
         <el-row :gutter="30">
-          <el-col :span="12" v-for="item in add_TableList" :key="item.mid+''">
+          <el-col :span="12" v-for="item in menu_list" :key="item.mid+''">
             <div class="list-item">
               <div style="display:inline-block">
                 <el-avatar shape="square" :size="45" :src="item.profile"></el-avatar>
@@ -99,10 +103,21 @@
           </el-col>
         </el-row>
       </div>
+      <el-pagination
+        small
+        layout="prev, pager, next"
+        v-if="menu_pagination.totalSize>0"
+        :total="menu_pagination.totalSize"
+        :page_size="menu_pagination.pageSize"
+        style="margin-top:30px"
+        @current-change="menuPageChange"
+        @prev-click="menuPageChange"
+        @next-click="menuPageChange"
+      ></el-pagination>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="add_Dialog.visible = false">取 消</el-button>
-        <el-button type="primary" @click="add_Dialog.visible = false">确 定</el-button>
+        <el-button @click="menu_option.visible = false">取 消</el-button>
+        <el-button type="primary" @click="menu_option.visible = false">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -121,94 +136,103 @@ export default {
   components: {
     CrossChart: CrossChart
   },
+  // 选单数据格式
+  //   mid: 12322,
+  //   profile:
+  //     "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
+  //   name: "明日方舟",
+  //   abstract: "ssss"
+  // },
+  // 列表数据格式
+  // {
+  //   profile:
+  //     "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
+  //   nickname: "明日方舟官方",
+  //   rank: 1,
+  //   fans: 2222,
+  //   video_publish: 290,
+  //   //   粉丝增长率
+  //   fans_rate: 29000,
+  //   //   视频平均观看人数
+  //   latest_watch: 212,
+  //   isOri: true
+  // }
   data() {
     return {
       mind_mid: {
         mid: 0,
         status: true
       },
-      // 添加列表
-      // 已有竞品mid列表
-      add_inList: [],
-      // 查询竞品列表
-      add_TableList: [],
-      add_TableList_mid: [],
-      // add_TableData: {
-      //   mid: 12322,
-      //   profile:
-      //     "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
-      //   name: "明日方舟",
-      //   abstract: "ssss"
-      // },
-      // 竞品列状态
-      add_TableState: {
+      // 选单mid的list
+      menu_mid_list: [],
+      // 选单数据列
+      menu_list: [],
+      // 竞争mid的list
+      competing_mid_list: [],
+      // 选单表状态
+      menu_pagination: {
         page: 1,
-        pageSize: 6
+        pageSize: 6,
+        totalSize: 0
       },
-
-      add_Dialog: {
+      // 选单状态
+      menu_option: {
         search_input: "",
         visible: false,
         title: "推荐加入"
       },
+      // 折线图选项
+      cross_option: {
+        day_limit: [
+          { limit: 7, title: "七日表" },
+          { limit: 30, title: "一月榜" }
+        ],
+        clounms: [
+          { key: "FANS", name: "粉丝" },
+          { key: "VIDEO", name: "视频" },
+          { key: "RANK", name: "排名" }
+        ],
+        total_data: 1,
+        max_data: 5
+      },
       // 折线图数据
-      option: [7, 30],
-      currentOption: 7,
-      CrossData: {
+      cross_data: {
+        FANS: null,
+        VIDEO: null,
+        RANK: null
+      },
+      // 折线图单元
+      cross_data_unit: {
         title_text: "粉丝增长变化",
         legend: [],
         x_axis: [],
         series: []
       },
-      Series: {
+      // 折线图单元数据
+      cross_data_unit_series: {
         name: "",
         type: "line",
         stack: "总量",
         areaStyle: {},
         data: []
       },
-      // 数据列表
-      clounms: [
-        { key: "FANS", name: "粉丝" },
-        { key: "FANS", name: "粉丝" },
-        { key: "RANK", name: "排名" }
-      ],
-      tableState: {
-        show_clounm: "FANS",
-        total: 1,
-        max_show: 5
-      },
-      // 精品列表
-      tableData: [
-        // {
-        //   profile:
-        //     "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
-        //   nickname: "明日方舟官方",
-        //   rank: 1,
-        //   fans: 2222,
-        //   video_publish: 290,
-        //   //   粉丝增长率
-        //   fans_rate: 29000,
-        //   //   视频平均观看人数
-        //   latest_watch: 212,
-        //   isOri: true
-        // }
-      ],
-      table_mids: []
+      // 列表数据
+      tableData: []
     };
   },
   created() {
     this.mind_mid.mid = Number(this.$route.params["id"]);
-    this.table_mids.push(this.mind_mid.mid);
+    // this.competing_mid_list.push(this.mind_mid.mid);
     this.addInList(this.mind_mid);
-    this.addToCross(
-      this.mind_mid.mid,
-      this.tableState.show_clounm,
-      this.currentOption
-    );
+    this.addToCross(this.mind_mid.mid, "FANS", 7);
   },
   methods: {
-    // 初始化rossdata
+    //选单切换页面
+    menuPageChange(page) {
+      this.menu_pagination.page = page;
+      this.search_competing("UPDATE");
+    },
+    // 添加cross
     addToCross(mid, type, limit) {
       getCompetingOnesData(mid, type, limit).then(response => {
         var data = response["data"]["list"];
@@ -216,10 +240,10 @@ export default {
           var legend = [];
           var date_flag = false;
           var x_axis = [];
-          var series = this.Series;
+          var series = this.cross_data_unit_series;
           var series_list = [];
 
-          this.table_mids.forEach(function(item, index) {
+          this.competing_mid_list.forEach(function(item, index) {
             // 遍历每个mid
             legend.push(item);
             series.name = item;
@@ -229,37 +253,48 @@ export default {
               data_flag = false;
             }
             // 获取具体数据
-            data[mid].forEach(function(item, index,data_flag) {
+            data[mid].forEach(function(item, index, data_flag) {
               if (data_flag) {
                 x_axis.push(item.name);
               }
-              series.data.push(item.value)
-
+              series.data.push(item.value);
             });
-            series_list.push(series)
+            series_list.push(series);
           });
-          this.CrossData.legend = legend;
-          this.CrossData.x_axis = x_axis;
-          this.CrossData.series = series_list
 
-          console.log(this.CrossData);
+          this.cross_data_unit.legend = legend;
+          this.cross_data_unit.x_axis = x_axis;
+          this.cross_data_unit.series = series_list;
+          this.cross_data[type] = this.cross_data_unit;
+          console.log(this.cross_data_unit);
         } else {
           // 数据为空时
         }
       });
     },
     // 查询竞品
-    search_competing() {
-      let key = this.add_Dialog.search_input;
+    search_competing(type) {
+      // pagination状态清空
+      if (type != "UPDATE") {
+        this.menu_pagination.page = 1;
+        (this.menu_pagination.pageSize = 6),
+          (this.menu_pagination.totalSize = 0);
+      }
+
       getCompetingUploader(
-        key,
-        this.add_TableState.page,
-        this.add_TableState.pageSize
+        this.menu_option.search_input,
+        this.menu_pagination.page,
+        this.menu_pagination.pageSize
       ).then(response => {
+        // 先将menu列表清空
+        this.menu_list = [];
+        // 将数据更新到menu中
         var data = response["data"];
         const table_data = [];
+        // let flag = true
         for (const key in data) {
           if (data.hasOwnProperty(key)) {
+            // 如果是本机那么就不用添加
             if (data[key].userId === this.mind_mid.mid) {
               continue;
             }
@@ -271,20 +306,32 @@ export default {
             add_table_item.name = data[key].nickName;
             add_table_item.abstract = data[key].sign;
             // 判断是否已经添加至竞品列表
-            if (this.isInAddList(add_table_item.mid)) {
-              add_table_item.status = true;
-            } else {
+            // if (this.isInAddList(add_table_item.mid)) {
+            //   console.log()
+            if (this.menu_mid_list.indexOf(add_table_item.mid) != -1) {
               add_table_item.status = false;
+            } else {
+              add_table_item.status = true;
             }
+            // add_table_item.status = this.isInAddList(add_table_item.mid);
+            // console.log(add_table_item.status)
+            // console.log(add_table_item.status)
+            // } else {
+            //   add_table_item.status = false;
+            // }
             //  console.log(add_table_item.status)
             // 加入到竞品列表检测名单中
-            this.add_TableList_mid.push(add_table_item.mid);
+            // this.competing_mid_list.push(add_table_item.mid);
             table_data.push(add_table_item);
             // console.log(element)
             // this.addTo_add_Table(element)
           }
         }
-        this.add_TableList = table_data;
+        // 添加至选单
+        this.menu_list = table_data;
+        // 更新menu的总数
+        this.menu_pagination.totalSize = 50;
+        // console.log(this.menu_list);
       });
     },
     // 加入到竞品选单中
@@ -311,51 +358,85 @@ export default {
         if (item.mid === this.mind_mid.mid) {
           item_.isOri = true;
         } else {
-          this.table_mids.push(item_.mid);
           item_.isOri = false;
         }
         // 加入竞品列表
         this.tableData.push(item_);
-        // console.log(this.table_mids)
       });
       // 加入已添加列表和改变竞品可选列表的状态
-      this.add_inList.push(item.mid);
-      // console.log(this.add_inList);
+      this.competing_mid_list.push(item.mid);
+      this.menu_mid_list.push(item.mid);
       item.status = false;
     },
     // 从竞品选单中删除
     cancleInList(item) {
-      var index = this.add_inList.indexOf(item.mid);
-      this.add_inList.splice(index, 1);
+      var index = this.menu_mid_list.indexOf(item.mid);
+      this.menu_mid_list.splice(index, 1);
       this.tableData.splice(index, 1);
-      this.table_mids.splice(index, 1);
+      this.competing_mid_list.splice(index, 1);
       // 从弹出框选单中取消
       if (item.status != undefined) {
         item.status = true;
       } else {
         // 从列表中删除
-        var list_index = this.add_TableList_mid.indexOf(item.mid);
-        if (list_index > 0) {
-          this.add_TableList[list_index].status = true;
+        console.log(this.menu_list);
+        for (const key in this.menu_list) {
+          if (this.menu_list.hasOwnProperty(key)) {
+            if ((this.menu_list[key].mid == item.mid)) {
+              console.log(this.menu_list[key])
+              this.menu_list[key].status = true;
+            }
+          }
         }
+        // this.menu_list.forEach(function(item_, index) {
+
+        // });
+
+        // if(this.menu_list[index-1].mid!=item.mid){
+        //   return
+        // }else{
+        //   this.menu_list[index-1].status = true;
+        // }
       }
     },
     // 验证是否已添加竞品
     isInAddList(mid) {
-      var flag = true;
-      var items = this.add_inList;
+      // var flag = true;
+      var items = this.menu_mid_list;
+      // console.log(items);
+      // console.log(mid)
+      // console.log(items)
       if (items.length === 0) {
-        flag = true;
+        return true;
+        // flag = true;
       } else {
+        // for (const key in items) {
+        //   if (items.hasOwnProperty(key)) {
+        //     const item = items[key];
+        //     if (item === mid) {
+        //       console.log(mid);
+        //       flag = false;
+        //     } else {
+        //       flag = true;
+        //     }
+        //   }
+        // }
+        let flag = null;
         items.forEach(function(i, index) {
           if (i === mid) {
+            console.log(mid);
+            // console.log(mid)
             flag = false;
+            return false;
           } else {
             flag = true;
+            return true;
           }
         });
+        return flag;
       }
-      return flag;
+      // console.log(flag)
+      // return flag;
     },
     // initCross() {
     //   fansChange(this.mid, 7).then(response => {
@@ -372,13 +453,12 @@ export default {
     //   });
     // },
     addRecommend() {
-      (this.add_Dialog.visible = true), (this.add_Dialog.title = "推荐加入");
+      (this.menu_option.visible = true), (this.menu_option.title = "推荐加入");
     },
     addMyself() {
-      (this.add_Dialog.visible = true), (this.add_Dialog.title = "手动加入");
+      (this.menu_option.visible = true), (this.menu_option.title = "手动加入");
     },
     handleConfirm(item) {
-      console.log(item);
       this.cancleInList(item);
     },
     return_profile(url) {
