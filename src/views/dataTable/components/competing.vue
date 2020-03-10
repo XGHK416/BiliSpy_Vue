@@ -60,7 +60,7 @@
         <el-tab-pane :label="cross_option.clounms[1].name" :name="cross_option.clounms[1].key"></el-tab-pane>
         <el-tab-pane :label="cross_option.clounms[2].name" :name="cross_option.clounms[2].key"></el-tab-pane>
       </el-tabs>
-      <CrossChart :cross-data="cross_data_unit"></CrossChart>
+      <CrossChart :cross-data="cross_data[cross_option.current_option.key]"></CrossChart>
     </div>
     <!-- 加入dialog -->
     <el-dialog
@@ -204,9 +204,9 @@ export default {
       },
       // 折线图数据
       cross_data: {
-        FANS: null,
-        VIDEO: null,
-        RANK: null
+        FANS: {},
+        VIDEO: {},
+        RANK: {}
       },
       // 折线图单元
       cross_data_unit: {
@@ -238,6 +238,23 @@ export default {
     );
   },
   methods: {
+    resetCrossDataUnit(){
+      return {
+        title_text: "粉丝增长变化",
+        legend: [],
+        x_axis: [],
+        series: []
+      }
+    },
+    resetCrossDataUnitSeries(){
+     return {
+        name: "",
+        type: "line",
+        stack: "总量",
+        areaStyle: {},
+        data: []
+      }
+    },
     // cross数据显示切换
     crossTabsHandleClick(tab, event) {
       var index = tab.index;
@@ -266,34 +283,38 @@ export default {
         var data = response["data"]["list"];
         if (data != null) {
           var legend = [];
-          var date_flag = false;
+          // 以第一个的横坐标为准
+          var data_flag = false;
           var x_axis = [];
-          var series = this.cross_data_unit_series;
+          var series = this.resetCrossDataUnitSeries();
           var series_list = [];
-
+          var $this = this
           this.competing_mid_list.forEach(function(item, index) {
             // 遍历每个mid
             legend.push(item);
             series.name = item;
             if (index == 0) {
-              date_flag = true;
+              data_flag = true;
             } else {
               data_flag = false;
             }
             // 获取具体数据
-            data[mid].forEach(function(item, index, data_flag) {
+            data[item].forEach(function(item, index) {
               if (data_flag) {
                 x_axis.push(item.name);
               }
               series.data.push(item.value);
             });
+            console.log(series)
             series_list.push(series);
+            series = $this.resetCrossDataUnitSeries()
           });
 
           this.cross_data_unit.legend = legend;
           this.cross_data_unit.x_axis = x_axis;
           this.cross_data_unit.series = series_list;
-
+          // console.log(this.cross_data_unit)
+          // 添加到指定选项数据中
           this.cross_data[type] = this.cross_data_unit;
         } else {
           // 数据为空时

@@ -92,9 +92,9 @@ export default {
         yAxis: [
           {
             type: "value",
-            splitNumber: 10,
+            // splitNumber: 5,
             min: function(value) {
-              return value.min ;
+              return value.min;
             },
             max: function(value) {
               return value.max;
