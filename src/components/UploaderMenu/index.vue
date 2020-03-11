@@ -110,18 +110,19 @@ export default {
         },
         handleSelect(item,index){
           this.item_id_list.push(item.mid)
-          this.$emit("handleSelect",item,this.item_id_list)
+          this.$emit("handleSelect",item,this.item_id_list,index)
         },
         handleDiselect(item,index){
-          var index = this.item_id_list.indexOf(item.mid)
-          this.item_id_list.splice(index,1)
-          this.$emit("handleDiselect",item,this.item_id_list)
+          var list_index = this.item_id_list.indexOf(item.mid)
+          this.item_id_list.splice(list_index,1)
+          this.$emit("handleDiselect",item,this.item_id_list,list_index)
         },
         handleClose(){
           this.$emit('handleClose')
         },
         handleSearch(){
-          this.$emit("handleSearch",this.search_input)
+          this.item_id_list
+          this.$emit("handleSearch",this.search_input,1,6)
         }
     },
     created(){

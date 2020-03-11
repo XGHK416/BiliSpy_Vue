@@ -35,9 +35,9 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
-          <template slot-scope="{row}">
+          <template slot-scope="{$index,row}">
             <el-tag type="danger" v-if="row.isOri" size="small">本体</el-tag>
-            <el-popconfirm v-else title="这是一段内容确定删除吗？" @onConfirm="handleConfirm(row)">
+            <el-popconfirm v-else title="这是一段内容确定删除吗？" @onConfirm="handleConfirm(row.mid,$index)">
               <el-button type="info" plain size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -60,9 +60,21 @@
         <el-tab-pane :label="cross_option.clounms[1].name" :name="cross_option.clounms[1].key"></el-tab-pane>
         <el-tab-pane :label="cross_option.clounms[2].name" :name="cross_option.clounms[2].key"></el-tab-pane>
       </el-tabs>
-      <CrossChart :cross-data="cross_data[cross_option.current_option.key]"></CrossChart>
+      <!-- <CrossChart :cross-data="cross_data[cross_option.current_option.key]"></CrossChart> -->
     </div>
     <!-- 加入dialog -->
+    <UploaderMenu
+      @handlePageChange="pageChange"
+      @handleClose="handleClose"
+      @handleSelect="handleSelect"
+      @handleDiselect="handleDiselect"
+      @handleSearch="handleSearch"
+      :data="menuItems"
+      :visiable.sync="menuVisiable"
+      :totalPage="totalPage"
+      :haveSearch="haveSearch"
+      ref="uploaderMenu"
+    ></UploaderMenu>
     <el-dialog
       class="addDialog-wrapper"
       :title="menu_option.title"
@@ -82,7 +94,7 @@
       >搜索</el-button>
       <div class="addList-wrapper">
         <el-row :gutter="30">
-          <el-col :span="12" v-for="item in menu_list" :key="item.mid+''">
+          <el-col :span="12" v-for="(item,index) in menu_list" :key="item.mid+''">
             <div class="list-item">
               <div style="display:inline-block">
                 <el-avatar shape="square" :size="45" :src="item.profile"></el-avatar>
@@ -97,7 +109,7 @@
                       v-if="item.status"
                       @click="addInList(item)"
                     >添加</el-button>
-                    <el-button type="warning" size="mini" v-else @click="cancleInList(item)">取消</el-button>
+                    <el-button type="warning" size="mini" v-else @click="cancleInList(item,index)">取消</el-button>
                   </div>
                 </div>
                 <div class="item-abstract">
@@ -130,6 +142,7 @@
 
 <script>
 import CrossChart from "../../baseAnalysis/components/CrossChart";
+import UploaderMenu from "@/components/UploaderMenu/index";
 import qs from "qs";
 import {
   getUploader,
@@ -140,7 +153,8 @@ import {
 export default {
   name: "Competing",
   components: {
-    CrossChart: CrossChart
+    CrossChart: CrossChart,
+    UploaderMenu: UploaderMenu
   },
   // 选单数据格式
   //   mid: 12322,
@@ -169,6 +183,14 @@ export default {
         mid: 0,
         status: true
       },
+      ////////////////////////////重构
+      haveSearch: true,
+      menuVisiable: false,
+      menuTitle: "推荐加入",
+      totalPage: 0,
+      menuItems: [],
+
+      /////////////////////////////////////
       // 选单mid的list
       menu_mid_list: [],
       // 选单数据列
@@ -238,22 +260,134 @@ export default {
     );
   },
   methods: {
-    resetCrossDataUnit(){
+    //////////////////////////////////////重构
+    handleClose() {
+      this.menuVisiable = false;
+    },
+    pageChange(page) {
+      console.log(page);
+      //   请求换页
+    },
+    handleSelect(item, list,index) {
+      // 选中时的事件
+      // item.isSelect = true
+      // 添加到table
+      this.addInList(item);
+    },
+    handleDiselect(item, list,index) {
+      this.tableData.splice(index+1, 1);
+      // 取消选中的事件
+      // item.isSelect = false;
+    },
+    handleSearch(key, page, pageSize) {
+      getCompetingUploader(key, page, pageSize).then(response => {
+        // 先将menu列表清空
+        this.menuItems = [];
+        // 将数据更新到menu中
+        var data = response["data"];
+        this.totalPage = data["count"];
+        var list = data["list"];
+        const table_data = [];
+
+        for (const key in list) {
+          if (list.hasOwnProperty(key)) {
+            // 如果是本机那么就不用添加，故选单中不会出现本机id
+            if (list[key].userId === this.mind_mid.mid) {
+              continue;
+            }
+            let item = {};
+            item.name = list[key]["nickName"];
+            item.mid = list[key].userId;
+            item.profile = "https://images.weserv.nl/?url=" + list[key].profile;
+            item.name = list[key].nickName;
+            item.abstract = list[key].sign;
+            // 加入到竞品列表检测名单中
+            table_data.push(item);
+          }
+        }
+        // 添加至选单
+        this.menuItems = table_data;
+
+        console.log("sss" + this.menuItems);
+      });
+      // 查询事件
+    },
+    addRecommend() {
+      this.haveSearch = false;
+      this.menuVisiable = true;
+      this.menuTitle = "推荐加入";
+    },
+    addMyself() {
+      this.haveSearch = true;
+      this.menuVisiable = true;
+      this.menuTitle = "手动加入";
+    },
+
+    // 加入到竞品选单中
+    addInList(item) {
+      // 添加竞品
+      // 添加至table
+      getCompetingData(item.mid).then(response => {
+        let item_ = {};
+        let data = response.data;
+        let uploader = data.uploader;
+        let fans = data.fans.series_data;
+        let fans_avg = 0;
+        let latest_video = data.latestVideo.pop();
+        fans_avg = parseInt((fans.pop().value - fans[0].value) / fans.length);
+        item_.mid = item.mid;
+        item_.profile = this.return_profile(uploader.profile);
+        item_.nickname = uploader.nickName;
+        item_.rank = 1;
+        item_.fans = uploader.follower;
+        item_.fans_rate = fans_avg;
+        item_.video_publish = uploader.videoCount;
+        item_.latest_watch = latest_video;
+        // 判断是否本机
+        if (item.mid === this.mind_mid.mid) {
+          item_.isOri = true;
+        } else {
+          item_.isOri = false;
+        }
+        // 加入竞品列表
+        this.tableData.push(item_);
+      });
+    },
+    // // 从竞品选单中删除
+    // cancleInList(item,index) {
+    //   this.tableData.splice(index+1, 1);
+    //   // 从弹出框选单中取消
+    //   if (item.status != undefined) {
+    //     item.status = true;
+    //   } else {
+    //     // 从列表中删除
+    //     for (const key in this.menu_list) {
+    //       if (this.menu_list.hasOwnProperty(key)) {
+    //         if (this.menu_list[key].mid == item.mid) {
+    //           this.menu_list[key].status = true;
+    //         }
+    //       }
+    //     }
+    //   }
+    // },
+
+    ////////////////////////////////////
+    resetCrossDataUnit() {
       return {
         title_text: "粉丝增长变化",
         legend: [],
         x_axis: [],
         series: []
-      }
+      };
     },
-    resetCrossDataUnitSeries(){
-     return {
+    resetCrossDataUnitSeries() {
+      return {
         name: "",
         type: "line",
         stack: "总量",
         areaStyle: {},
         data: []
-      }
+      };
     },
     // cross数据显示切换
     crossTabsHandleClick(tab, event) {
@@ -277,7 +411,7 @@ export default {
           type: type,
           limit: limit
         },
-       {indices: false }
+        { indices: false }
       );
       getCompetingOnesData(params).then(response => {
         var data = response["data"]["list"];
@@ -288,7 +422,7 @@ export default {
           var x_axis = [];
           var series = this.resetCrossDataUnitSeries();
           var series_list = [];
-          var $this = this
+          var $this = this;
           this.competing_mid_list.forEach(function(item, index) {
             // 遍历每个mid
             legend.push(item);
@@ -305,9 +439,9 @@ export default {
               }
               series.data.push(item.value);
             });
-            console.log(series)
+            console.log(series);
             series_list.push(series);
-            series = $this.resetCrossDataUnitSeries()
+            series = $this.resetCrossDataUnitSeries();
           });
 
           this.cross_data_unit.legend = legend;
@@ -370,60 +504,6 @@ export default {
         this.menu_pagination.totalSize = 50;
       });
     },
-    // 加入到竞品选单中
-    addInList(item) {
-      // 添加竞品
-      // 添加至table
-      getCompetingData(item.mid).then(response => {
-        let item_ = {};
-        let data = response.data;
-        let uploader = data.uploader;
-        let fans = data.fans.series_data;
-        let fans_avg = 0;
-        let latest_video = data.latestVideo.pop();
-        fans_avg = parseInt((fans.pop().value - fans[0].value) / fans.length);
-        item_.mid = item.mid;
-        item_.profile = this.return_profile(uploader.profile);
-        item_.nickname = uploader.nickName;
-        item_.rank = 1;
-        item_.fans = uploader.follower;
-        item_.fans_rate = fans_avg;
-        item_.video_publish = uploader.videoCount;
-        item_.latest_watch = latest_video;
-        // 判断是否本机
-        if (item.mid === this.mind_mid.mid) {
-          item_.isOri = true;
-        } else {
-          item_.isOri = false;
-        }
-        // 加入竞品列表
-        this.tableData.push(item_);
-      });
-      // 加入已添加列表和改变竞品可选列表的状态
-      this.competing_mid_list.push(item.mid);
-      this.menu_mid_list.push(item.mid);
-      item.status = false;
-    },
-    // 从竞品选单中删除
-    cancleInList(item) {
-      var index = this.menu_mid_list.indexOf(item.mid);
-      this.menu_mid_list.splice(index, 1);
-      this.tableData.splice(index, 1);
-      this.competing_mid_list.splice(index, 1);
-      // 从弹出框选单中取消
-      if (item.status != undefined) {
-        item.status = true;
-      } else {
-        // 从列表中删除
-        for (const key in this.menu_list) {
-          if (this.menu_list.hasOwnProperty(key)) {
-            if (this.menu_list[key].mid == item.mid) {
-              this.menu_list[key].status = true;
-            }
-          }
-        }
-      }
-    },
     // 验证是否已添加竞品
     isInAddList(mid) {
       var items = this.menu_mid_list;
@@ -461,14 +541,13 @@ export default {
     //     this.fansCrossData.series.push(this.fansSeries);
     //   });
     // },
-    addRecommend() {
-      (this.menu_option.visible = true), (this.menu_option.title = "推荐加入");
-    },
-    addMyself() {
-      (this.menu_option.visible = true), (this.menu_option.title = "手动加入");
-    },
-    handleConfirm(item) {
-      this.cancleInList(item);
+    handleConfirm(mid,index) {
+      console.log(mid)
+      var list = this.$refs.uploaderMenu.item_id_list
+      var list_index = list.indexOf(mid)
+      list.splice(list_index,1)
+      console.log(list)
+      this.tableData.splice(index, 1);
     },
     return_profile(url) {
       return "https://images.weserv.nl/?url=" + url;
