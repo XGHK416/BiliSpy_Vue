@@ -50,7 +50,7 @@
         layout="prev, pager, next"
         v-if="totalPage>0"
         :total="totalPage"
-        :page_size="6"
+        :page-size="6"
         style="margin-top:30px"
         @current-change="menuPageChange"
         @prev-click="menuPageChange"
@@ -106,7 +106,7 @@ export default {
           }else return false
         },
         menuPageChange(page) {
-          this.$emit("handlePageChange",page)
+          this.$emit("handlePageChange",this.search_input,page,6)
         },
         handleSelect(item,index){
           this.item_id_list.push(item.mid)

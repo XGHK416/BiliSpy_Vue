@@ -264,8 +264,9 @@ export default {
     handleClose() {
       this.menuVisiable = false;
     },
-    pageChange(page) {
-      console.log(page);
+    pageChange(key, page, pageSize) {
+      console.log(page)
+      this.getMenuData(key,page,pageSize)
       //   请求换页
     },
     handleSelect(item, list,index) {
@@ -279,7 +280,7 @@ export default {
       // 取消选中的事件
       // item.isSelect = false;
     },
-    handleSearch(key, page, pageSize) {
+    getMenuData(key,page,pageSize){
       getCompetingUploader(key, page, pageSize).then(response => {
         // 先将menu列表清空
         this.menuItems = [];
@@ -310,6 +311,9 @@ export default {
 
         console.log("sss" + this.menuItems);
       });
+    },
+    handleSearch(key, page, pageSize) {
+      this.getMenuData(key,page,pageSize)
       // 查询事件
     },
     addRecommend() {
@@ -353,23 +357,17 @@ export default {
         this.tableData.push(item_);
       });
     },
-    // // 从竞品选单中删除
-    // cancleInList(item,index) {
-    //   this.tableData.splice(index+1, 1);
-    //   // 从弹出框选单中取消
-    //   if (item.status != undefined) {
-    //     item.status = true;
-    //   } else {
-    //     // 从列表中删除
-    //     for (const key in this.menu_list) {
-    //       if (this.menu_list.hasOwnProperty(key)) {
-    //         if (this.menu_list[key].mid == item.mid) {
-    //           this.menu_list[key].status = true;
-    //         }
-    //       }
-    //     }
-    //   }
-    // },
+    handleConfirm(mid,index) {
+      console.log(mid)
+      var list = this.$refs.uploaderMenu.item_id_list
+      var list_index = list.indexOf(mid)
+      list.splice(list_index,1)
+      console.log(list)
+      this.tableData.splice(index, 1);
+    },
+    return_profile(url) {
+      return "https://images.weserv.nl/?url=" + url;
+    },
 
     ////////////////////////////////////
     resetCrossDataUnit() {
@@ -541,17 +539,7 @@ export default {
     //     this.fansCrossData.series.push(this.fansSeries);
     //   });
     // },
-    handleConfirm(mid,index) {
-      console.log(mid)
-      var list = this.$refs.uploaderMenu.item_id_list
-      var list_index = list.indexOf(mid)
-      list.splice(list_index,1)
-      console.log(list)
-      this.tableData.splice(index, 1);
-    },
-    return_profile(url) {
-      return "https://images.weserv.nl/?url=" + url;
-    }
+    
   }
 };
 </script>
