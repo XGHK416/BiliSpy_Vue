@@ -52,6 +52,7 @@
         :total="totalPage"
         :page-size="6"
         style="margin-top:30px"
+        :current-page="current_page"
         @current-change="menuPageChange"
         @prev-click="menuPageChange"
         @next-click="menuPageChange"
@@ -92,6 +93,7 @@ export default {
           item_id_list:[],
           visible_:false,
           search_input:"",
+          current_page:1
         }
     },
     watch:{
@@ -106,6 +108,7 @@ export default {
           }else return false
         },
         menuPageChange(page) {
+          this.current_page = page
           this.$emit("handlePageChange",this.search_input,page,6)
         },
         handleSelect(item,index){
@@ -121,6 +124,7 @@ export default {
           this.$emit('handleClose')
         },
         handleSearch(){
+          this.current_page=1
           this.item_id_list
           this.$emit("handleSearch",this.search_input,1,6)
         }

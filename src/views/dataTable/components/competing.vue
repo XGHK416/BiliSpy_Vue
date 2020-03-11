@@ -60,7 +60,7 @@
         <el-tab-pane :label="cross_option.clounms[1].name" :name="cross_option.clounms[1].key"></el-tab-pane>
         <el-tab-pane :label="cross_option.clounms[2].name" :name="cross_option.clounms[2].key"></el-tab-pane>
       </el-tabs>
-      <!-- <CrossChart :cross-data="cross_data[cross_option.current_option.key]"></CrossChart> -->
+      <CrossChart :cross-data="return_crossData()"></CrossChart>
     </div>
     <!-- 加入dialog -->
     <UploaderMenu
@@ -75,73 +75,11 @@
       :haveSearch="haveSearch"
       ref="uploaderMenu"
     ></UploaderMenu>
-    <el-dialog
-      class="addDialog-wrapper"
-      :title="menu_option.title"
-      :visible.sync="menu_option.visible"
-      width="30%"
-    >
-      <el-input
-        v-model="menu_option.search_input"
-        placeholder="请输入up主"
-        v-if="menu_option.title=='手动加入'"
-        style="width:70%"
-      ></el-input>
-      <el-button
-        type="primary"
-        v-if="menu_option.title=='手动加入'"
-        @click="search_competing('SEARCH')"
-      >搜索</el-button>
-      <div class="addList-wrapper">
-        <el-row :gutter="30">
-          <el-col :span="12" v-for="(item,index) in menu_list" :key="item.mid+''">
-            <div class="list-item">
-              <div style="display:inline-block">
-                <el-avatar shape="square" :size="45" :src="item.profile"></el-avatar>
-              </div>
-              <div class="item-cotent-wrapper">
-                <div class="item-cotent">
-                  <span class="item-title">{{item.name}}</span>
-                  <div class="item-select">
-                    <el-button
-                      type="success"
-                      size="mini"
-                      v-if="item.status"
-                      @click="addInList(item)"
-                    >添加</el-button>
-                    <el-button type="warning" size="mini" v-else @click="cancleInList(item,index)">取消</el-button>
-                  </div>
-                </div>
-                <div class="item-abstract">
-                  <span>{{item.abstract}}</span>
-                </div>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-      <el-pagination
-        small
-        layout="prev, pager, next"
-        v-if="menu_pagination.totalSize>0"
-        :total="menu_pagination.totalSize"
-        :page_size="menu_pagination.pageSize"
-        style="margin-top:30px"
-        @current-change="menuPageChange"
-        @prev-click="menuPageChange"
-        @next-click="menuPageChange"
-      ></el-pagination>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="menu_option.visible = false">取 消</el-button>
-        <el-button type="primary" @click="menu_option.visible = false">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import CrossChart from "../../baseAnalysis/components/CrossChart";
+import CrossChart from "./CrossChart";
 import UploaderMenu from "@/components/UploaderMenu/index";
 import qs from "qs";
 import {
@@ -165,6 +103,7 @@ export default {
   // },
   // 列表数据格式
   // {
+  // mid
   //   profile:
   //     "https://xghk416.oss-cn-beijing.aliyuncs.com/BiliSpy/userProfile/user1.png",
   //   nickname: "明日方舟官方",
@@ -189,26 +128,10 @@ export default {
       menuTitle: "推荐加入",
       totalPage: 0,
       menuItems: [],
+      // 列表数据
+      tableData: [],
 
       /////////////////////////////////////
-      // 选单mid的list
-      menu_mid_list: [],
-      // 选单数据列
-      menu_list: [],
-      // 竞争mid的list
-      competing_mid_list: [],
-      // 选单表状态
-      menu_pagination: {
-        page: 1,
-        pageSize: 6,
-        totalSize: 0
-      },
-      // 选单状态
-      menu_option: {
-        search_input: "",
-        visible: false,
-        title: "推荐加入"
-      },
       // 折线图选项
       cross_option: {
         current_option: { key: "FANS", name: "粉丝" },
@@ -242,16 +165,18 @@ export default {
         name: "",
         type: "line",
         stack: "总量",
-        areaStyle: {},
+        // areaStyle: {},
         data: []
       },
-      // 列表数据
-      tableData: []
+      //折线图的mid列表
+      cross_mids:[]
     };
   },
   created() {
     this.mind_mid.mid = Number(this.$route.params["id"]);
     // this.competing_mid_list.push(this.mind_mid.mid);
+  },
+  mounted() {
     this.addInList(this.mind_mid);
     this.addToCross(
       [this.mind_mid.mid],
@@ -265,22 +190,21 @@ export default {
       this.menuVisiable = false;
     },
     pageChange(key, page, pageSize) {
-      console.log(page)
-      this.getMenuData(key,page,pageSize)
+      this.getMenuData(key, page, pageSize);
       //   请求换页
     },
-    handleSelect(item, list,index) {
+    handleSelect(item, list, index) {
       // 选中时的事件
       // item.isSelect = true
       // 添加到table
       this.addInList(item);
     },
-    handleDiselect(item, list,index) {
-      this.tableData.splice(index+1, 1);
+    handleDiselect(item, list, index) {
+      this.tableData.splice(index + 1, 1);
       // 取消选中的事件
       // item.isSelect = false;
     },
-    getMenuData(key,page,pageSize){
+    getMenuData(key, page, pageSize) {
       getCompetingUploader(key, page, pageSize).then(response => {
         // 先将menu列表清空
         this.menuItems = [];
@@ -313,7 +237,7 @@ export default {
       });
     },
     handleSearch(key, page, pageSize) {
-      this.getMenuData(key,page,pageSize)
+      this.getMenuData(key, page, pageSize);
       // 查询事件
     },
     addRecommend() {
@@ -357,12 +281,13 @@ export default {
         this.tableData.push(item_);
       });
     },
-    handleConfirm(mid,index) {
-      console.log(mid)
-      var list = this.$refs.uploaderMenu.item_id_list
-      var list_index = list.indexOf(mid)
-      list.splice(list_index,1)
-      console.log(list)
+    // 确认从table中删除
+    handleConfirm(mid, index) {
+      console.log(mid);
+      var list = this.$refs.uploaderMenu.item_id_list;
+      var list_index = list.indexOf(mid);
+      list.splice(list_index, 1);
+      console.log(list);
       this.tableData.splice(index, 1);
     },
     return_profile(url) {
@@ -383,7 +308,7 @@ export default {
         name: "",
         type: "line",
         stack: "总量",
-        areaStyle: {},
+        // areaStyle: {},
         data: []
       };
     },
@@ -394,15 +319,28 @@ export default {
       var type = tab.name;
       this.cross_option.current_option.key = type;
       this.cross_option.current_option.name = label;
-      this.addToCross(this.competing_mid_list, type, 7);
+
+      
+
+      var competing_list = this.$refs.uploaderMenu.item_id_list.slice(0)
+      competing_list.unshift(this.mind_mid.mid)
+      if(this.cross_mids.toString==competing_list.toString && JSON.stringify(this.cross_data[type])!='{}'){
+      }else{
+        this.addToCross(competing_list, type, 7);
+      }
+
+      // console.log(mids,type)
+
+
+
     },
-    //选单切换页面
-    menuPageChange(page) {
-      this.menu_pagination.page = page;
-      this.search_competing("UPDATE");
+    return_crossData(){
+      // console.log(this.cross_data[this.cross_option.current_option.key])
+      return this.cross_data[this.cross_option.current_option.key]
     },
     // 添加cross
     addToCross(mid, type, limit) {
+      this.cross_mids = mid.slice(0)
       var params = qs.stringify(
         {
           mids: mid,
@@ -412,135 +350,68 @@ export default {
         { indices: false }
       );
       getCompetingOnesData(params).then(response => {
-        var data = response["data"]["list"];
+        var data = response["data"];
         if (data != null) {
-          var legend = [];
+          var list = data['list']
+          var uploaders = data['legend'];
+          var legend = []
           // 以第一个的横坐标为准
           var data_flag = false;
           var x_axis = [];
           var series = this.resetCrossDataUnitSeries();
           var series_list = [];
           var $this = this;
-          this.competing_mid_list.forEach(function(item, index) {
+          uploaders.forEach(function(item, index) {
+            legend.push(item.name)
             // 遍历每个mid
-            legend.push(item);
-            series.name = item;
+            series.name = item.name;
             if (index == 0) {
               data_flag = true;
             } else {
               data_flag = false;
             }
             // 获取具体数据
-            data[item].forEach(function(item, index) {
+            list[item.id].forEach(function(cross_item, index) {
               if (data_flag) {
-                x_axis.push(item.name);
+                x_axis.push(cross_item.name);
               }
-              series.data.push(item.value);
+              series.data.push(cross_item.value);
             });
-            console.log(series);
             series_list.push(series);
             series = $this.resetCrossDataUnitSeries();
           });
-
-          this.cross_data_unit.legend = legend;
-          this.cross_data_unit.x_axis = x_axis;
-          this.cross_data_unit.series = series_list;
-          // console.log(this.cross_data_unit)
+          var unit = this.resetCrossDataUnit()
+          unit.title_text = this.cross_option.current_option.name+"增长变化";
+          unit.legend = legend;
+          unit.x_axis = x_axis;
+          unit.series = series_list;
+          console.log(this.cross_data['FANS'])
           // 添加到指定选项数据中
-          this.cross_data[type] = this.cross_data_unit;
+          this.cross_data[type] = unit;
+          // console.log(this.cross_data)
+          console.log(this.cross_data['FANS'])
+
         } else {
           // 数据为空时
         }
       });
-    },
-    // 查询竞品
-    search_competing(type) {
-      // pagination状态清空
-      if (type != "UPDATE") {
-        this.menu_pagination.page = 1;
-        (this.menu_pagination.pageSize = 6),
-          (this.menu_pagination.totalSize = 0);
-      }
-
-      getCompetingUploader(
-        this.menu_option.search_input,
-        this.menu_pagination.page,
-        this.menu_pagination.pageSize
-      ).then(response => {
-        // 先将menu列表清空
-        this.menu_list = [];
-        // 将数据更新到menu中
-        var data = response["data"];
-        const table_data = [];
-        // let flag = true
-        for (const key in data) {
-          if (data.hasOwnProperty(key)) {
-            // 如果是本机那么就不用添加
-            if (data[key].userId === this.mind_mid.mid) {
-              continue;
-            }
-            let add_table_item = {};
-            add_table_item.name = data[key]["nickName"];
-            add_table_item.mid = data[key].userId;
-            add_table_item.profile =
-              "https://images.weserv.nl/?url=" + data[key].profile;
-            add_table_item.name = data[key].nickName;
-            add_table_item.abstract = data[key].sign;
-            // 判断是否已经添加至竞品列表
-            if (this.menu_mid_list.indexOf(add_table_item.mid) != -1) {
-              add_table_item.status = false;
-            } else {
-              add_table_item.status = true;
-            }
-            // 加入到竞品列表检测名单中
-            table_data.push(add_table_item);
-          }
-        }
-        // 添加至选单
-        this.menu_list = table_data;
-        // 更新menu的总数
-        this.menu_pagination.totalSize = 50;
-      });
-    },
+    }
     // 验证是否已添加竞品
-    isInAddList(mid) {
-      var items = this.menu_mid_list;
-      if (items.length === 0) {
-        return true;
-      } else {
-        let flag = null;
-        items.forEach(function(i, index) {
-          if (i === mid) {
-            console.log(mid);
-            // console.log(mid)
-            flag = false;
-            return false;
-          } else {
-            flag = true;
-            return true;
-          }
-        });
-        return flag;
-      }
-      // console.log(flag)
-      // return flag;
-    },
-    // initCross() {
-    //   fansChange(this.mid, 7).then(response => {
-    //     var data = response["data"];
-    //     this.fansCrossData.legend.push(this.name);
-    //     this.fansSeries.name = this.name;
-
-    //     for (let item of Object.values(data["fans"]["series_data"])) {
-    //       var { name, value } = item;
-    //       this.fansCrossData.x_axis.push(name);
-    //       this.fansSeries.data.push(value);
-    //     }
-    //     this.fansCrossData.series.push(this.fansSeries);
-    //   });
-    // },
-    
   }
+  // initCross() {
+  //   fansChange(this.mid, 7).then(response => {
+  //     var data = response["data"];
+  //     this.fansCrossData.legend.push(this.name);
+  //     this.fansSeries.name = this.name;
+
+  //     for (let item of Object.values(data["fans"]["series_data"])) {
+  //       var { name, value } = item;
+  //       this.fansCrossData.x_axis.push(name);
+  //       this.fansSeries.data.push(value);
+  //     }
+  //     this.fansCrossData.series.push(this.fansSeries);
+  //   });
+  // },
 };
 </script>
 
