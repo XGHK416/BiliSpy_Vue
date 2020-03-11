@@ -49,12 +49,14 @@ export default {
       deep: true,
       handler(val) {
         this.setOptions(val);
-      }
+
+      } 
     }
   },
   methods: {
     // { title_text, x_axis, series_data } = {}
     setOptions(crossData) {
+      this.chart.clear()
       this.chart.setOption({
         title: {
           text: crossData["title_text"]
@@ -101,8 +103,11 @@ export default {
             }
           }
         ],
+        // yAxis: {
+        //   type: "value"
+        // },
         series: crossData.series
-      });
+      },true);
     },
     initChart() {
       this.chart = echarts.init(this.$el, "macarons");

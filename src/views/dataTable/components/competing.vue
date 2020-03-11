@@ -164,7 +164,6 @@ export default {
       cross_data_unit_series: {
         name: "",
         type: "line",
-        stack: "总量",
         // areaStyle: {},
         data: []
       },
@@ -194,13 +193,22 @@ export default {
       //   请求换页
     },
     handleSelect(item, list, index) {
+
       // 选中时的事件
       // item.isSelect = true
       // 添加到table
       this.addInList(item);
+
+      var competing_list = list.slice(0)
+      competing_list.unshift(this.mind_mid.mid)
+      this.addToCross(competing_list,this.cross_option.current_option.key,7)
     },
     handleDiselect(item, list, index) {
       this.tableData.splice(index + 1, 1);
+
+      var competing_list = list.slice(0)
+      competing_list.unshift(this.mind_mid.mid)
+      this.addToCross(competing_list,this.cross_option.current_option.key,7)
       // 取消选中的事件
       // item.isSelect = false;
     },
@@ -233,7 +241,7 @@ export default {
         // 添加至选单
         this.menuItems = table_data;
 
-        console.log("sss" + this.menuItems);
+        // console.log("sss" + this.menuItems);
       });
     },
     handleSearch(key, page, pageSize) {
@@ -283,12 +291,14 @@ export default {
     },
     // 确认从table中删除
     handleConfirm(mid, index) {
-      console.log(mid);
       var list = this.$refs.uploaderMenu.item_id_list;
       var list_index = list.indexOf(mid);
       list.splice(list_index, 1);
-      console.log(list);
       this.tableData.splice(index, 1);
+
+      var competing_list = list.slice(0)
+      competing_list.unshift(this.mind_mid.mid)
+      this.addToCross(competing_list,this.cross_option.current_option.key,7)
     },
     return_profile(url) {
       return "https://images.weserv.nl/?url=" + url;
@@ -307,7 +317,6 @@ export default {
       return {
         name: "",
         type: "line",
-        stack: "总量",
         // areaStyle: {},
         data: []
       };
@@ -324,7 +333,7 @@ export default {
 
       var competing_list = this.$refs.uploaderMenu.item_id_list.slice(0)
       competing_list.unshift(this.mind_mid.mid)
-      if(this.cross_mids.toString==competing_list.toString && JSON.stringify(this.cross_data[type])!='{}'){
+      if(this.cross_mids.toString==competing_list.toString && JSON.stringify(this.cross_data[type])!='{}' && this.cross_mids.length==this.cross_data[type].series.length){
       }else{
         this.addToCross(competing_list, type, 7);
       }
@@ -385,11 +394,12 @@ export default {
           unit.legend = legend;
           unit.x_axis = x_axis;
           unit.series = series_list;
-          console.log(this.cross_data['FANS'])
+          // console.log(this.cross_data['FANS'])
           // 添加到指定选项数据中
           this.cross_data[type] = unit;
           // console.log(this.cross_data)
-          console.log(this.cross_data['FANS'])
+          // console.log(this.cross_data['FANS'])
+          console.log(this.cross_data)
 
         } else {
           // 数据为空时
