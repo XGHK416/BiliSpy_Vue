@@ -1,12 +1,14 @@
 import request from '@/utils/request'
 import qs from 'qs'
-export function getUploaderList(page,pageSize) {
+export function getUploaderList(page,pageSize,selectId,date) {
   return request({
     url: '/bili-api/uploader/getList',
     method: 'get',
     params: {
         'page': page,
-        'pageSize': pageSize
+        'pageSize': pageSize,
+        'selectId':selectId,
+        'date':date
     }
   })
 }
@@ -93,5 +95,11 @@ export function getCompetingData(mid) {
     params: {
         'mid':mid
     }
+  })
+}
+export function getMainSection() {
+  return request({
+    url: '/bili-api/getMainSection',
+    method: 'get',
   })
 }

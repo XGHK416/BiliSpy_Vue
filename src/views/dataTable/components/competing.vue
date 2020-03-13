@@ -73,6 +73,7 @@
       :visiable.sync="menuVisiable"
       :totalPage="totalPage"
       :haveSearch="haveSearch"
+      :maxSelect="maxCompeter"
       ref="uploaderMenu"
     ></UploaderMenu>
   </div>
@@ -128,6 +129,7 @@ export default {
       menuTitle: "推荐加入",
       totalPage: 0,
       menuItems: [],
+      maxCompeter:5,
       // 列表数据
       tableData: [],
 

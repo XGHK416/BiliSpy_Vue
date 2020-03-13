@@ -76,6 +76,10 @@ export default {
             type:Boolean,
             default:false,
         },
+        maxSelect:{
+          type:Number,
+          default:3
+        },
         data:{
             type:Array,
             function () {
@@ -90,6 +94,7 @@ export default {
     },
     data() {
         return {
+          current_selectNum:0,
           item_id_list:[],
           visible_:false,
           search_input:"",
@@ -112,10 +117,20 @@ export default {
           this.$emit("handlePageChange",this.search_input,page,6)
         },
         handleSelect(item,index){
-          this.item_id_list.push(item.mid)
-          this.$emit("handleSelect",item,this.item_id_list,index)
+          if(this.current_selectNum==this.maxSelect){
+            this.$message({
+              type:'warning',
+              message:"已达到上线"
+            })
+          }else{
+            this.current_selectNum+=1
+            this.item_id_list.push(item.mid)
+            this.$emit("handleSelect",item,this.item_id_list,index)
+          }
+          
         },
         handleDiselect(item,index){
+          this.current_selectNum-=1
           var list_index = this.item_id_list.indexOf(item.mid)
           this.item_id_list.splice(list_index,1)
           this.$emit("handleDiselect",item,this.item_id_list,list_index)
