@@ -12,6 +12,18 @@ export function getUploaderList(page,pageSize,selectId,date) {
     }
   })
 }
+export function getVideoList(page,pageSize,selectId,date) {
+  return request({
+    url: '/bili-api/video/getList',
+    method: 'get',
+    params: {
+        'page': page,
+        'pageSize': pageSize,
+        'selectId':selectId,
+        'date':date
+    }
+  })
+}
 
 export function getBasicInfo(mid) {
   return request({

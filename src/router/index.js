@@ -85,7 +85,18 @@ export const constantRoutes = [{
       title: '数据研究院',
       icon: 'data-college'
     },
-    children: [{
+    children: [
+      {
+        hidden:true,
+        path: 'videoInfo/:id(\\d+)',
+        name: 'VideoInfo',
+        component: () => import('@/views/dataTable/VideoInfo'),
+        meta: {
+          title: '视频详情',
+          noCache: true
+        },
+      },
+      {
         hidden:true,
         path: 'uploaderInfo/:id(\\d+)',
         name: 'UploaderInfo',
@@ -107,7 +118,7 @@ export const constantRoutes = [{
       {
         path: 'videoList',
         name: 'VideoList',
-        component: () => import('@/views/dataTable/videoList'),
+        component: () => import('@/views/dataTable/VideoList'),
         meta: {
           title: '视频区',
           icon: 'today-video'
