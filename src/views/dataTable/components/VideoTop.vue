@@ -7,19 +7,17 @@
             <el-col :span="7">
               <div class="img-wrapper">
                 <img
-                  style="min-height:70px;width:100%"
-                  :src="return_profile('https://i1.hdslb.com/bfs/archive/bfe378396ecb2015eacbe7a8006788daed3140d3.jpg@160w_100h_100Q_1c.webp')"
+                  style="min-height:50px;width:100%;max-height:150px"
+                  :src="return_profile(data.videoProfile)"
                   alt
                 />
               </div>
             </el-col>
             <el-col :span="17">
               <div class="base-info">
-                <div class="title">标题：123</div>
+                <div class="title">标题：{{data.videoTitle}}</div>
                 <div class="tag">
-                  <el-tag type="success" size="medium">标签1</el-tag>
-                  <el-tag type="success" size="medium">标签2</el-tag>
-                  <el-tag type="success" size="medium">标签3</el-tag>
+                  <el-tag type="success" size="medium" v-for="item in data.dynamic" :key="item">{{item}}</el-tag>
                 </div>
               </div>
             </el-col>
@@ -28,7 +26,7 @@
             <el-col :span="24">
               <div class="video-abstract">
                 简介：
-                <span>ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</span>
+                <span>{{data.videoDesc}}</span>
               </div>
             </el-col>
           </el-row>
@@ -44,7 +42,7 @@
                   <div class="card-panel-text">观看</div>
                   <count-to
                     :start-val="0"
-                    :end-val="12311"
+                    :end-val="data.videoView"
                     :duration="3000"
                     class="card-panel-num"
                   />个
@@ -60,7 +58,7 @@
                   <div class="card-panel-text">点赞</div>
                   <count-to
                     :start-val="0"
-                    :end-val="12311"
+                    :end-val="data.videoLike"
                     :duration="3000"
                     class="card-panel-num"
                   />个
@@ -76,7 +74,7 @@
                   <div class="card-panel-text">硬币</div>
                   <count-to
                     :start-val="0"
-                    :end-val="12311"
+                    :end-val="data.coins"
                     :duration="3000"
                     class="card-panel-num"
                   />个
@@ -92,7 +90,7 @@
                   <div class="card-panel-text">收藏</div>
                   <count-to
                     :start-val="0"
-                    :end-val="12311"
+                    :end-val="data.videoFavorite"
                     :duration="3000"
                     class="card-panel-num"
                   />个
@@ -108,6 +106,7 @@
 
 <script>
 import CountTo from "vue-count-to";
+import {getVideoInfo} from "@/api/videoAna"
 export default {
   name: "VideoTop",
   components: {
@@ -115,14 +114,52 @@ export default {
   },
   props: {},
   data() {
-    return {};
+    return {
+      aid:this.$route.params['id'],
+      data:{
+        videoId:0,
+        tid:0,
+        tname:'',
+        videoTitle:'',
+        videoProfile:'',
+        videoDesc:'',
+        videoView:0,
+        videoFavorite:0,
+        coins:0,
+        videoShare:0,
+        videoLike:0,
+        dynamic:[],
+        lastUpdate:'',
+        videoAuthor:'',
+        authorMid:0
+
+      }
+    };
   },
   methods: {
     return_profile(url) {
       return "https://images.weserv.nl/?url=" + url;
     }
   },
-  created() {}
+  created() {
+    getVideoInfo(this.aid).then(response=>{
+      this.data = response.data
+      var dynamic = this.data.dynamic
+      if(dynamic.length==0){
+        this.data.dynamic = []
+      }else{
+        var tag_list = dynamic.split('#')
+        var list = []
+        tag_list.forEach(element => {
+          if(element!=''){
+            list.push(element)
+          }
+        });
+        this.data.dynamic = list
+      }
+      
+    })
+  }
 };
 </script>
 
@@ -136,7 +173,7 @@ export default {
     background: #ffffff;
     .base-info-wrapper {
       // text-align: left;
-      padding: 16px;
+      // padding: 16px;
       //   padding-bottom: 0px;
       background: #ffffff;
       border-bottom: 1px rgb(240, 242, 245) solid;
@@ -156,9 +193,9 @@ export default {
       }
     }
     .abstract-wrapper {
-      padding: 16px 16px 0 16px;
       background: #ffffff;
       .video-abstract {
+        padding: 5px;
         color: #666;
         width: 100%;
         word-wrap: break-word;

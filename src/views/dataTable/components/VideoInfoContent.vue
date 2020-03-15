@@ -17,8 +17,8 @@
       相关推荐
       <div class="recomment-list">
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="title" label="标题" width="180"></el-table-column>
-          <el-table-column prop="author" label="作者" width="180"></el-table-column>
+          <el-table-column prop="title" label="标题" width="280"></el-table-column>
+          <el-table-column prop="author" label="作者" width="280"></el-table-column>
           <el-table-column prop="section" label="分区"></el-table-column>
           <el-table-column prop="like" label="点赞"></el-table-column>
           <el-table-column prop="favorite" label="收藏"></el-table-column>
@@ -37,6 +37,7 @@
 
 <script>
 import CrossChart from "@/components/CrossChart/index";
+import { getEvaluateInfo, getRecommend } from "@/api/videoAna";
 export default {
   name: "VideoInfoContent",
   components: {
@@ -50,6 +51,7 @@ export default {
   },
   data() {
     return {
+      aid: this.$route.params["id"],
       ////////////////tab////////
       active_name: "",
       label_list: [
@@ -75,85 +77,81 @@ export default {
       cross_data: {
         x_axis: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
         view: {
-          name: "邮件营销",
           type: "line",
           //   stack: "总量",
           areaStyle: {},
           smooth: false,
-          data: [120, 132, 101, 134, 90, 230, 210]
+          data: []
         },
         coins: {
-          name: "联盟广告",
           type: "line",
           //   stack: "总量",
           smooth: false,
           areaStyle: {},
-          data: [220, 182, 191, 234, 290, 330, 310]
+          data: []
         },
         favorite: {
-          name: "视频广告",
           type: "line",
           //   stack: "总量",
           smooth: false,
           areaStyle: {},
-          data: [150, 232, 201, 154, 190, 330, 410]
+          data: []
         },
         like: {
-          name: "直接访问",
           type: "line",
           //   stack: "总量",
           smooth: false,
           areaStyle: {},
-          data: [320, 332, 301, 334, 390, 330, 320]
+          data: []
         }
       },
       ////////////////table
       tableData: [
-        {
-          title: "123",
-          author: "王小虎",
-          section: "上海市普陀区金沙江路 1518 弄",
-          like: 123,
-          favorite: 123,
-          coins: 42321,
-          view: 541,
-          aid: 1231
-        },
-        {
-          title: "123",
-          author: "王小虎",
-          section: "上海市普陀区金沙江路 1518 弄",
-          like: 123,
-          favorite: 123,
-          coins: 42321,
-          view: 541,
-          aid: 11111131
-        },
-        {
-          title: "123",
-          author: "王小虎",
-          section: "上海市普陀区金沙江路 1518 弄",
-          like: 123,
-          favorite: 123,
-          coins: 42321,
-          view: 541,
-          aid: 776
-        },
-        {
-          title: "123",
-          author: "王小虎",
-          section: "上海市普陀区金沙江路 1518 弄",
-          like: 123,
-          favorite: 123,
-          coins: 42321,
-          view: 541,
-          aid: 90
-        }
+       
       ]
     };
   },
   created() {
     this.active_name = this.label_list[0].name;
+    getRecommend(this.aid).then(response=>{
+      var table = []
+      var table_item ={}
+      response['data'].forEach(element => {
+        table_item.title = element['video'].videoTitle
+        table_item.author = element['video'].videoAuthor
+        table_item.section = element['video'].tname
+        table_item.like = element['video'].videoLike
+        table_item.favorite = element['video'].videoFavorite
+        table_item.coins = element['video'].coins
+        table_item.view = element['video'].videoView
+        table_item.aid = element['video'].videoId
+        table.push(table_item)
+        table_item={}
+      });
+      this.tableData = table
+    })
+    getEvaluateInfo(this.aid).then(response => {
+      var item = {};
+      var x_axis = [];
+      var view_list = [],
+        coins_list = [],
+        favorite_list = [],
+        like_list = [];
+      response["data"].forEach(element => {
+        view_list.push(element.video_view);
+        coins_list.push(element.coins);
+        like_list.push(element.video_like);
+        favorite_list.push(element.video_favorite);
+        x_axis = this.$moment(new Date(element.last_update)).format(
+          "YYYY-MM-DD"
+        );
+      });
+      this.cross_data.view.data = view_list
+      this.cross_data.coins.data = coins_list
+      this.cross_data.favorite.data = favorite_list
+      this.cross_data.like.data = like_list
+      this.x_axis = x_axis
+    });
   },
   methods: {
     info(aid) {
