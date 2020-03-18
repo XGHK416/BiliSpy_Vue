@@ -2,15 +2,17 @@
   <div id="uploadProfile">
     <my-upload
       v-model="show"
-      :width="300"
-      :height="300"
-      url="/upload"
+      :width="400"
+      :height="400"
+      method="PUT"
+      :params="profileUploadParam"
+      url="http://localhost:8080/bili-api/space/updateProfile"
       img-format="png"
+      :withCredentials="withCredentials"
       @crop-success="cropSuccess"
       @crop-upload-success="cropUploadSuccess"
       @crop-upload-fail="cropUploadFail"
     />
-    <img :src="imgDataUrl">
   </div>
 </template>
 <script>
@@ -28,7 +30,13 @@ export default {
   },
   data() {
     return {
-      imgDataUrl: '' // the datebase64 url of created image
+      show:false,
+      imgDataUrl: '' ,// the datebase64 url of created image,
+      profileUploadParam: {
+        'userId': this.$store.state.user.user_id
+      },
+      withCredentials: true,
+
     }
   },
   methods: {
@@ -44,6 +52,7 @@ export default {
      */
     cropUploadSuccess(jsonData, field) {
       console.log('-------- upload success --------')
+      // this.$store.dispatch('user/updateProfile',jsonData['data'])
       console.log(jsonData)
       console.log('field: ' + field)
     },

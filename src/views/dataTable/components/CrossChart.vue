@@ -56,6 +56,7 @@ export default {
   methods: {
     // { title_text, x_axis, series_data } = {}
     setOptions(crossData) {
+      console.log('crossDate_axis'+crossData.x_axis)
       this.chart.clear()
       this.chart.setOption({
         title: {

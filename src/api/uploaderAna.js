@@ -1,5 +1,17 @@
 import request from '@/utils/request'
 import qs from 'qs'
+
+export function getRecommendUploader(mid,page,pageSize) {
+  return request({
+    url: '/bili-api/uploader/competing/getRecommendUploader',
+    method: 'get',
+    params: {
+        'page': page,
+        'pageSize': pageSize,
+        'mid':mid,
+    }
+  })
+}
 export function getUploaderList(page,pageSize,selectId,date) {
   return request({
     url: '/bili-api/uploader/getList',

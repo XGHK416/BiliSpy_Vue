@@ -1,108 +1,94 @@
 <template>
-  <div class="dashboard-editor-container">
-    <UserInfo :info="base_info" :auths="auths" @handleSetLineChartData="handleSetLineChartData" />
-
-    <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
+  <div class="user-container">
+    <el-row>
+      <el-col :span="14" :offset="5">
+        <UserTop :info="base_info"></UserTop>
+        <UserAuths :auths="auths" style="margin:30px 0"></UserAuths>
+        <el-row type="flex" style="margin-top:15px" :gutter="20">
+          <el-col :span="5">
+            <div class="logging-wrapper">
+              <div class="logging-head">
+                <span class>登录记录</span>
+              </div>
+              <div class="logging-content">
+                 <el-timeline :reverse="reverse">
+                <el-timeline-item
+                  v-for="(activity, index) in activities"
+                  :key="index"
+                  :timestamp="activity.timestamp"
+                >{{activity.content}}</el-timeline-item>
+              </el-timeline>
+              </div>
+             
+            </div>
+          </el-col>
+          <el-col :span="19">
+            <UserDetect></UserDetect>
+          </el-col>
+        </el-row>
+      </el-col>
     </el-row>
-
-    <el-row :gutter="32">
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <raddar-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <pie-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <bar-chart />
-        </div>
-      </el-col>
-    </el-row> -->
-
-    <!-- <el-row :gutter="8">
-      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
-        <transaction-table />
-      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <todo-list />
-      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <box-card />
-      </el-col>
-    </el-row> -->
   </div>
 </template>
 
 <script>
-import UserInfo from './components/UserInfo'
-import { mapGetters } from 'vuex'
-const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
+// import UserInfo from './components/UserInfo'
+import UserTop from "./components/UserTop";
+import UserAuths from "./components/UserAuths";
+import UserDetect from "./components/UserDetect";
+import { mapGetters } from "vuex";
 export default {
-  name: 'Userspace',
+  name: "UserSpace",
   components: {
-    UserInfo
+    UserTop: UserTop,
+    UserAuths: UserAuths,
+    UserDetect: UserDetect
   },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
-    }
+      ///////////////logging
+      reverse: true,
+      activities: [
+        {
+          content: "活动按期开始",
+          timestamp: "2018-04-15"
+        },
+        {
+          content: "通过审核",
+          timestamp: "2018-04-13"
+        },
+        {
+          content: "创建成功",
+          timestamp: "2018-04-11"
+        }
+      ]
+    };
   },
   computed: {
-    ...mapGetters([
-      'base_info',
-      'auths'
-    ])
+    ...mapGetters(["base_info", "auths"])
   },
-  methods: {
-    handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
-    }
-  }
-}
+  methods: {}
+};
 </script>
 
 <style lang="scss" scoped>
-.dashboard-editor-container {
+.user-container {
   padding: 32px;
   background-color: rgb(240, 242, 245);
   position: relative;
-  .github-corner {
-    position: absolute;
-    top: 0px;
-    border: 0;
-    right: 0;
+  .logging-wrapper {
+    height: 100%;
+    background: #ffffff;
+    .logging-content{
+      padding-top: 15px;
+    }
+    .logging-head {
+    border-bottom: #e0e0e0 1px solid;
+    padding: 5px;
+    text-align: left;
+    line-height: 30px;
+    padding-left: 10px;
   }
-  .chart-wrapper {
-    background: #fff;
-    padding: 16px 16px 0;
-    margin-bottom: 32px;
-  }
-}
-@media (max-width:1024px) {
-  .chart-wrapper {
-    padding: 8px;
   }
 }
 </style>

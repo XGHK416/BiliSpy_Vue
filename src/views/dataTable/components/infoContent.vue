@@ -84,7 +84,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="{row}">
-            <el-button type="primary" size="mini" plain @click="collection(row.aid)">分析</el-button>
+            <el-button type="primary" size="mini" plain @click="collection(row.videoId)">分析</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -94,8 +94,9 @@
 
 <script>
 import PieChart from "../../baseAnalysis/components/PieChart";
-import CrossChart from "../../baseAnalysis/components/CrossChart";
+import CrossChart from "./CrossChart";
 import {fansChange,getRecentVideo,getVideoAna} from "@/api/uploaderAna"
+import router from '../../../router';
 export default {
   name: "InfoContent",
   components: {
@@ -105,7 +106,7 @@ export default {
   data() {
     return {
       mid:this.$route.params['id'],
-      name:"XGHK416",
+      name:"",
       percentage: 100,
       w_day:0,
       m_day:0,
@@ -155,6 +156,10 @@ export default {
 
   },
   methods: {
+    collection(aid){
+      let url = "/dataTable/VideoInfo/" + aid;
+      this.$router.push({ path: url });
+    },
     initFansCross(){
       fansChange(this.mid,7).then(response=>{
         var data = response['data']

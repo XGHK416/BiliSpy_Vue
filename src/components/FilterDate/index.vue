@@ -28,7 +28,7 @@ export default {
         disabledDate(time) {
           // console.log(time.getTime()>this.limit_date.getTime())
           return (
-            time.getTime() < new Date("2020/2/20").getTime() ||
+            time.getTime() < new Date("2020/02/20").getTime() ||
             time.getTime() > Date.now()-24*60*60*1000
           );
         }

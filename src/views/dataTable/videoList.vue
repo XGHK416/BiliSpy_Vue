@@ -4,12 +4,16 @@
     <!-- :class-name="getSortClass('id')" -->
 
     <div class="filter-container">
-      <FilterSection :data="data" style="padding:10px;border-bottom:1px solid rgb(240, 242, 245);"
+      <FilterSection
+        :data="data"
+        style="padding:10px;border-bottom:1px solid rgb(240, 242, 245);"
         @handleSelectChange="handleSelectChange"
       ></FilterSection>
-      <FilterDate style="padding:10px" :default-date="default_date"
+      <FilterDate
+        style="padding:10px"
+        :default-date="default_date"
         @handleDateChange="handleDateChange"
-        ></FilterDate>
+      ></FilterDate>
     </div>
 
     <el-table
@@ -29,7 +33,7 @@
       <el-table-column label="封面" align="center">
         <template slot-scope="{row}">
           <a :href="return_href(row.video.videoId)">
-            <img :src="return_profile(row.video.videoProfile)" alt="" style="height:70px;width:112px">
+            <img :src="return_profile(row.video.videoProfile)" alt style="height:70px;width:112px" />
             <!-- <el-avatar shape="square" :src="return_profile(row.video.videoProfile)"></el-avatar> -->
             <div>{{ row.nick_name}}</div>
           </a>
@@ -42,7 +46,7 @@
       </el-table-column>
       <el-table-column label="观看数" align="center">
         <template slot-scope="{row}">
-           <span>{{ row.video.videoView }}</span>
+          <span>{{ row.video.videoView }}</span>
         </template>
       </el-table-column>
       <el-table-column label="点赞">
@@ -96,41 +100,42 @@
   </div>
 </template>
 <script>
-import { getVideoList,getMainSection } from "@/api/uploaderAna";
+import { getVideoList, getMainSection } from "@/api/uploaderAna";
 import FilterSection from "@/components/FilterSection/index";
-import FilterDate from "@/components/FilterDate/index"
+import FilterDate from "@/components/FilterDate/index";
 
 export default {
   name: "UploaderTable",
-  components: { FilterSection,FilterDate },
+  components: { FilterSection, FilterDate },
   data() {
     return {
       tableKey: 0,
       list: [],
       total: 0,
       listLoading: true,
-     
-      ///////////////过滤
-      default_date:new Date(Date.now()-24*60*60*1000),
-      current_select:0,
-      current_date:0,
 
-      data: [
-      ],
+      ///////////////过滤
+      default_date: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      current_select: 0,
+      current_date: 0,
+
+      data: [],
       ///////////////////分页
       current_page: 1,
       total: 20,
       listQuery: {
         page: 1,
-        pageSize: 20,
-      },
+        pageSize: 20
+      }
     };
   },
   created() {
-    getMainSection().then(response=> {
-      this.data = response['data']
-    })
-    this.current_date = this.formateDate(new Date(Date.now()-24*60*60*1000))
+    getMainSection().then(response => {
+      this.data = response["data"];
+    });
+    this.current_date = this.formateDate(
+      new Date(Date.now() - 24 * 60 * 60 * 1000)
+    );
     this.getList();
   },
   methods: {
@@ -150,37 +155,43 @@ export default {
     },
 
     getList() {
-      this.listLoading = true
-      getVideoList(this.current_page, this.listQuery.pageSize,this.current_select,this.current_date).then(
-        response => {
-          this.list = response["data"];
-          this.listLoading = false;
-        }
-      );
+      this.listLoading = true;
+      getVideoList(
+        this.current_page,
+        this.listQuery.pageSize,
+        this.current_select,
+        this.current_date
+      ).then(response => {
+        this.list = response["data"];
+        this.listLoading = false;
+      });
     },
     // 分页变化
-    pageChange(page){
-      this.current_page = page
-      this.getList()
+    pageChange(page) {
+      this.current_page = page;
+      this.getList();
     },
-    formateDate(date){
+    formateDate(date) {
       var year = date.getFullYear();
-      var month = date.getMonth()+1;
-      var day = date.getDate();
-      var new_date = [year,month,day].join('-');
-      return new_date
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
+      if (month < 10) {
+        month = "0" + month;
+      }
+      var new_date = [year, month, day].join("-");
+      return new_date;
     },
     // 日期筛选发生变化时
-    handleDateChange(date){
-      this.current_page=1
-      this.current_date = date
-      this.getList()
+    handleDateChange(date) {
+      this.current_page = 1;
+      this.current_date = date;
+      this.getList();
     },
     // 分区筛选发生变化时
-    handleSelectChange(val){
-      this.current_page=1
-      this.current_select = val
-      this.getList()
+    handleSelectChange(val) {
+      this.current_page = 1;
+      this.current_select = val;
+      this.getList();
     }
   }
 };

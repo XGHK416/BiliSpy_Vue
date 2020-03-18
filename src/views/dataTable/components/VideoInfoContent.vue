@@ -75,7 +75,7 @@ export default {
       title_text: "视频详情",
       ///////////////////cross
       cross_data: {
-        x_axis: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+        x_axis: [],
         view: {
           type: "line",
           //   stack: "总量",
@@ -142,20 +142,21 @@ export default {
         coins_list.push(element.coins);
         like_list.push(element.video_like);
         favorite_list.push(element.video_favorite);
-        x_axis = this.$moment(new Date(element.last_update)).format(
+        x_axis.push(this.$moment(new Date(element.last_update)).format(
           "YYYY-MM-DD"
-        );
+        ));
       });
       this.cross_data.view.data = view_list
       this.cross_data.coins.data = coins_list
       this.cross_data.favorite.data = favorite_list
       this.cross_data.like.data = like_list
-      this.x_axis = x_axis
+      this.cross_data.x_axis = x_axis
     });
   },
   methods: {
     info(aid) {
-      console.log(aid);
+      let url = "/dataTable/VideoInfo/" + aid;
+      this.$router.push({ path: url });
     },
     handleClick(tab, event) {
       var type = tab.name;

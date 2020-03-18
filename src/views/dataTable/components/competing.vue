@@ -84,6 +84,7 @@ import CrossChart from "./CrossChart";
 import UploaderMenu from "@/components/UploaderMenu/index";
 import qs from "qs";
 import {
+  getRecommendUploader,
   getUploader,
   getCompetingData,
   getCompetingUploader,
@@ -175,15 +176,13 @@ export default {
   },
   created() {
     this.mind_mid.mid = Number(this.$route.params["id"]);
-    // this.competing_mid_list.push(this.mind_mid.mid);
-  },
-  mounted() {
     this.addInList(this.mind_mid);
     this.addToCross(
       [this.mind_mid.mid],
       this.cross_option.current_option.key,
       7
     );
+    // this.competing_mid_list.push(this.mind_mid.mid);
   },
   methods: {
     //////////////////////////////////////重构
@@ -191,7 +190,12 @@ export default {
       this.menuVisiable = false;
     },
     pageChange(key, page, pageSize) {
-      this.getMenuData(key, page, pageSize);
+      if(this.menuTitle=="推荐加入"){
+        this.getRecommendDate(this.mind_mid.mid,page,pageSize)
+      }
+      else{
+        this.getMenuData(key, page, pageSize);
+        }
       //   请求换页
     },
     handleSelect(item, list, index) {
@@ -250,10 +254,41 @@ export default {
       this.getMenuData(key, page, pageSize);
       // 查询事件
     },
+    // 查找推荐名单
+    getRecommendDate(mid,page,pageSize){
+      getRecommendUploader(mid,page,pageSize).then(response=>{
+        // 先将menu列表清空
+        this.menuItems = [];
+        // 将数据更新到menu中
+        var data = response["data"];
+        this.totalPage = data["count"];
+        var list = data["list"];
+        const table_data = [];
+
+        for (const key in list) {
+          if (list.hasOwnProperty(key)) {
+            // 如果是本机那么就不用添加，故选单中不会出现本机id
+            if (list[key].userId === this.mind_mid.mid) {
+              continue;
+            }
+            let item = {};
+            item.name = list[key]["nickName"];
+            item.mid = list[key].userId;
+            item.profile = "https://images.weserv.nl/?url=" + list[key].profile;
+            item.abstract = list[key].sign;
+            // 加入到竞品列表检测名单中
+            table_data.push(item);
+          }
+        }
+        // 添加至选单
+        this.menuItems = table_data;
+      })
+    },
     addRecommend() {
       this.haveSearch = false;
       this.menuVisiable = true;
       this.menuTitle = "推荐加入";
+      this.getRecommendDate(this.mind_mid.mid,1,6)
     },
     addMyself() {
       this.haveSearch = true;

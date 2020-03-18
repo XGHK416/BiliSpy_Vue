@@ -122,7 +122,7 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      console.log(state.user_id)
+      console.log('getInfo'+state.user_id)
       getInfo(state.user_id).then(response => {
         const { data } = response
         const { base_info, auths } = data

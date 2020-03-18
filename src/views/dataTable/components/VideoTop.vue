@@ -15,7 +15,7 @@
             </el-col>
             <el-col :span="17">
               <div class="base-info">
-                <div class="title">标题：{{data.videoTitle}}</div>
+                <div class="title"><a :href='"https://www.bilibili.com/video/av"+data.videoId'>{{data.videoTitle}}</a></div>
                 <div class="tag">
                   <el-tag type="success" size="medium" v-for="item in data.dynamic" :key="item">{{item}}</el-tag>
                 </div>
@@ -45,7 +45,7 @@
                     :end-val="data.videoView"
                     :duration="3000"
                     class="card-panel-num"
-                  />个
+                  />次
                 </div>
               </div>
             </el-col>
@@ -61,7 +61,7 @@
                     :end-val="data.videoLike"
                     :duration="3000"
                     class="card-panel-num"
-                  />个
+                  />次
                 </div>
               </div>
             </el-col>
@@ -93,7 +93,7 @@
                     :end-val="data.videoFavorite"
                     :duration="3000"
                     class="card-panel-num"
-                  />个
+                  />次
                 </div>
               </div>
             </el-col>

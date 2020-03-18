@@ -56,7 +56,7 @@ export const constantRoutes = [{
       name: 'Userspace',
       component: () => import('@/views/userspace/index'),
       meta: {
-        title: 'Userspace',
+        title: '个人空间',
         icon: 'dashboard'
       }
     }]
