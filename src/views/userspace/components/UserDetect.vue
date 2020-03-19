@@ -20,7 +20,7 @@
         </div>
       </div>
       <el-divider></el-divider>
-      <div class="detect-tip">通过分钟级监控，可了解图文如何传播、生命周期能有多长以及用户喜欢在什么时候点击图文进行阅读。</div>
+      <div class="detect-tip">通过监控，可了解图文如何传播、生命周期能有多长以及用户喜欢在什么时候点击图文进行阅读。</div>
     </div>
   </div>
 </template>

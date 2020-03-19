@@ -44,22 +44,47 @@ export const constantRoutes = [{
   {
     path: '/test',
     component: () => import('@/views/test'),
-    // hidden: true
+    hidden: true
   },
 
   {
     path: '/',
     component: Layout,
     redirect: '/userspace',
+    name:'PersonalSpace',
+    meta: {
+      title: '个人空间',
+      icon: 'personal-space'
+    },
     children: [{
-      path: 'userspace',
-      name: 'Userspace',
-      component: () => import('@/views/userspace/index'),
-      meta: {
-        title: '个人空间',
-        icon: 'dashboard'
+        path: 'userspace',
+        name: '个人信息',
+        component: () => import('@/views/userspace/index'),
+        meta: {
+          title: '个人信息',
+          icon: 'dashboard'
+        }
+      },
+      {
+        path: 'favorite',
+        name: '个人收藏',
+        component: () => import('@/views/favorite/index'),
+        meta: {
+          title: '个人收藏',
+          icon: 'favorite'
+        }
+      },
+      {
+        path: 'changePassword',
+        name: '更改密码',
+        component: () => import('@/views/changePassword/index'),
+        meta: {
+          title: '更改密码',
+          icon: 'dashboard'
+        },
+        hidden:true
       }
-    }]
+    ]
   },
 
   {
@@ -76,6 +101,7 @@ export const constantRoutes = [{
       }
     }]
   },
+
   {
     path: '/dataTable',
     component: Layout,
@@ -85,9 +111,8 @@ export const constantRoutes = [{
       title: '数据研究院',
       icon: 'data-college'
     },
-    children: [
-      {
-        hidden:true,
+    children: [{
+        hidden: true,
         path: 'videoInfo/:id(\\d+)',
         name: 'VideoInfo',
         component: () => import('@/views/dataTable/VideoInfo'),
@@ -97,7 +122,7 @@ export const constantRoutes = [{
         },
       },
       {
-        hidden:true,
+        hidden: true,
         path: 'uploaderInfo/:id(\\d+)',
         name: 'UploaderInfo',
         component: () => import('@/views/dataTable/uploaderInfo'),
@@ -127,137 +152,55 @@ export const constantRoutes = [{
     ]
   },
 
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: {
-      title: 'Example',
-      icon: 'example'
-    },
-    children: [{
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: {
-          title: 'Table',
-          icon: 'table'
-        },
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: {
-          title: 'Tree',
-          icon: 'tree'
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/currentBili',
+  //   component: Layout,
+  //   redirect: '/currentBili/abstract',
+  //   name: 'CurrentBili',
+  //   meta: {
+  //     title: '当下B站',
+  //     icon: 'bili'
+  //   },
+  //   children: [{
+  //       path: 'abstract',
+  //       name: '简介',
+  //       component: () => import('@/views/bili/abstract/index'),
+  //       meta: {
+  //         title: '简介',
+  //         icon: 'abstract'
+  //       },
+  //     },
+  //   ]
+  // },
 
-  {
-    path: '/form',
-    component: Layout,
-    children: [{
-      path: 'index',
-      name: 'Form',
-      component: () => import('@/views/form/index'),
-      meta: {
-        title: 'Form',
-        icon: 'form'
-      }
-    }]
-  },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [{
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: {
-          title: 'Menu1'
-        },
-        children: [{
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: {
-              title: 'Menu1-1'
-            }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: {
-              title: 'Menu1-2'
-            },
-            children: [{
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: {
-                  title: 'Menu1-2-1'
-                }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: {
-                  title: 'Menu1-2-2'
-                }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: {
-              title: 'Menu1-3'
-            }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: {
-          title: 'menu2'
-        }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [{
-      path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-      meta: {
-        title: 'External Link',
-        icon: 'link'
-      }
-    }]
-  },
-
-  // 404 page must be placed at the end !!!
-  {
-    path: '*',
-    redirect: '/404',
-    hidden: true
-  }
+  // {
+  //   path: '/detect',
+  //   redirect: '/detect/doDetect',
+  //   name:'Detect',
+  //   component: Layout,
+  //   meta: {
+  //     title: '检测空间',
+  //     icon: 'detect'
+  //   },
+  //   children: [{
+  //     path: '/doDetect',
+  //     name: 'DoDetect',
+  //     component: () => import('@/views/detect/doDetect/index'),
+  //     meta: {
+  //       title: '检测选择',
+  //       icon: 'select',
+  //     }
+  //   },
+  //   {
+  //     path: '/detectList',
+  //     name: 'DetectList',
+  //     component: () => import('@/views/detect/detectList/index'),
+  //     meta: {
+  //       title: '检测列表',
+  //       icon: 'list',
+  //     }
+  //   }]
+  // },
 ]
 
 const createRouter = () => new Router({

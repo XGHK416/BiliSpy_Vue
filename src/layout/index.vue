@@ -49,25 +49,33 @@ export default {
     //   this.$store.replaceState(Object.assign({}, this.$store.state, JSON.parse(sessionStorage.getItem('store'))))
     // }
     // 在页面刷新时将vuex里的信息保存到sessionStorage里
-    window.addEventListener("beforeunload", () => {
-      sessionStorage.setItem("store", JSON.stringify(this.$store.state));
-    });
-    window.addEventListener("load", () => {
-      if (sessionStorage.getItem("store")) {
-        this.$store.replaceState(
-          Object.assign(
-            {},
-            this.$store.state,
-            JSON.parse(sessionStorage.getItem("store"))
-          )
-        );
-      }else{
-        this.$store.dispatch('user/resetToken').then(()=>{
-          location.reload();
-        })
-      }
-    });
-    this.$store.dispatch("user/getInfo", this.$store.state.user_id);
+    // window.addEventListener("beforeunload", () => {
+    //   sessionStorage.setItem("store", JSON.stringify(this.$store.state));
+    // });
+    // window.addEventListener("load", () => {
+    //   if (sessionStorage.getItem("store")) {
+    //     this.$store.replaceState(
+    //       Object.assign(
+    //         {},
+    //         this.$store.state,
+    //         JSON.parse(sessionStorage.getItem("store"))
+    //       )
+    //     );
+    //   }else{
+    //     this.$store.dispatch('user/resetToken').then(()=>{
+    //       location.reload();
+    //     })
+    //   }
+    // });
+    // this.$store.dispatch("user/getInfo", this.$store.state.user_id);
+    if (localStorage.getItem('store')) {
+      this.$store.replaceState(Object.assign({}, this.$store.state, JSON.parse(localStorage.getItem('store'))))
+    }
+    // 在页面刷新时将vuex里的信息保存到sessionStorage里
+    window.addEventListener('beforeunload', () => {
+      localStorage.setItem('store', JSON.stringify(this.$store.state))
+    })
+    this.$store.dispatch('user/getInfo', this.$store.state.user_id)
   },
   methods: {
     handleClickOutside() {

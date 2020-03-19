@@ -1,4 +1,4 @@
-import { login, logout, getInfo, register, bandIdentity, updateInfo, updateProfile } from '@/api/user'
+import { login, logout, getInfo, register, bandIdentity, updateInfo, updateProfile,changePassword } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -30,8 +30,8 @@ const mutations = {
   },
   SET_ONES_BASE_INFO: (state, newInfo) => {
     const {base_info_item_type, base_info_item_value} = newInfo
-    console.log(base_info_item_type, base_info_item_value)
-    console.log(state.base_info)
+    // console.log(base_info_item_type, base_info_item_value)
+    // console.log(state.base_info)
     state.base_info[base_info_item_type] = base_info_item_value
   },
   SET_ONES_AUTHS: (state, newAuths) => {
@@ -111,6 +111,16 @@ const actions = {
     })
   },
 
+  changePassword({commit},chagnPassword) {
+    const { newPassword, userId } = chagnPassword
+    return new Promise((resolve, reject) => {
+      changePassword({ password: newPassword, userId: userId }).then(response => {
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
   // user updateProfile
   updateProfile({ commit }, profileUrl) {
     commit('SET_ONES_BASE_INFO', {

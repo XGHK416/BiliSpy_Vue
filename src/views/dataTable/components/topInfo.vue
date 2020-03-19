@@ -6,11 +6,7 @@
           <el-row>
             <el-col :span="4">
               <div>
-                <el-avatar
-                  shape="square"
-                  :size="100"
-                  :src="infoData.profile"
-                ></el-avatar>
+                <el-avatar shape="square" :size="100" :src="infoData.profile"></el-avatar>
               </div>
             </el-col>
             <el-col :span="10">
@@ -58,7 +54,8 @@
           <div class="button-group">
             <el-button type="primary" plain>监控下次视频发布</el-button>
             <el-button type="primary">立即分析</el-button>
-            <el-button type="warning">收藏</el-button>
+            <el-button type="success" v-if="!is_favorite" @click="favorite">收藏</el-button>
+            <el-button type="warning" v-else @click="cancelFavorite">取消收藏</el-button>
           </div>
         </el-col>
       </el-row>
@@ -71,27 +68,63 @@
 </template>
 
 <script>
-import InfoContent from './infoContent'
+import InfoContent from "./infoContent";
+import { doFavorite, unFavorite, findFavorite } from "@/api/favorite";
 export default {
   name: "TopInfo",
-  props:{
-    infoData:{
-      type:Object,
-      required:true,
+  props: {
+    infoData: {
+      type: Object,
+      required: true
     }
   },
   data() {
     return {
+      favorite_id: -1,
+      mid: this.$route.params["id"],
+      user_id: this.$store.state.user.user_id,
       activeName: "Content",
+      is_favorite: false
     };
   },
-  created(){
-    console.log(this.infoData)
+  mounted() {
+    console.log(this.user_id)
+    findFavorite(this.user_id, this.mid, "uploader").then(response => {
+      if (response.data != null) {
+        this.favorite_id = response.data.id;
+        this.is_favorite = true;
+      }
+      else{
+        this.is_favorite = false
+      }
+    });
   },
   methods: {
+    favorite() {
+      doFavorite(this.user_id, this.mid, "uploader").then(response => {
+        this.is_favorite = true;
+        this.$message({
+          type: "success",
+          message: "收藏成功"
+        });
+        findFavorite(this.user_id, this.mid, "uploader").then(response => {
+          this.favorite_id = response.data.id;
+        });
+      });
+    },
+    cancelFavorite() {
+      console.log(this.favorite_id)
+      unFavorite(this.favorite_id).then(response => {
+        this.is_favorite = false;
+        this.$message({
+          type: "warning",
+          message: "已取消收藏"
+        });
+      });
+    },
     handleClick(tab, event) {
       console.log(tab, event);
-    },
+    }
   }
 };
 </script>
@@ -154,5 +187,4 @@ export default {
     text-align: left;
   }
 }
-
 </style>

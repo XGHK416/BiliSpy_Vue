@@ -114,9 +114,13 @@ export default {
   created() {
     this.active_name = this.label_list[0].name;
     getRecommend(this.aid).then(response=>{
+      var $this = this
       var table = []
       var table_item ={}
       response['data'].forEach(element => {
+        if(element['video'].videoId==this.aid){
+          return
+        }
         table_item.title = element['video'].videoTitle
         table_item.author = element['video'].videoAuthor
         table_item.section = element['video'].tname

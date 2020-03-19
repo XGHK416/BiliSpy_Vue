@@ -68,3 +68,13 @@ export function updateProfile(data) {
     }
   })
 }
+export function changePassword(data) {
+  return request({
+    url: '/bili-api/changePassword',
+    method: 'post',
+    data: {
+      'credential': data.password,
+      'userId': data.userId
+    }
+  })
+}

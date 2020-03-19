@@ -37,6 +37,7 @@ import UserTop from "./components/UserTop";
 import UserAuths from "./components/UserAuths";
 import UserDetect from "./components/UserDetect";
 import { mapGetters } from "vuex";
+import {getUserDailyLog} from '@/api/operate_log'
 export default {
   name: "UserSpace",
   components: {
@@ -67,7 +68,22 @@ export default {
   computed: {
     ...mapGetters(["base_info", "auths"])
   },
-  methods: {}
+  created(){
+    getUserDailyLog(this.$store.state.user.user_id).then(response=>{
+      var log_list=[]
+      var log_item={}
+      response.data.forEach(element => {
+        log_item.content = element.createUser+element.context
+        log_item.timestamp = element.createTime
+        log_list.push(log_item)
+        log_item = {}
+      });
+      this.activities = log_list
+    })
+  },
+  methods: {
+
+  }
 };
 </script>
 

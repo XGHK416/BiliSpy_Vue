@@ -33,7 +33,7 @@ export default {
       const first = matched[0]
 
       if (!this.isUserspace(first)) {
-        matched = [{ path: '/userspace', meta: { title: 'Userspace' }}].concat(matched)
+        matched = [{ path: '/', meta: { title: 'Bilibili' }}].concat(matched)
       }
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)

@@ -15,9 +15,20 @@
             </el-col>
             <el-col :span="17">
               <div class="base-info">
-                <div class="title"><a :href='"https://www.bilibili.com/video/av"+data.videoId'>{{data.videoTitle}}</a></div>
+                <div class="title">
+                  <a :href="'https://www.bilibili.com/video/av'+data.videoId">{{data.videoTitle}}</a>
+                </div>
+                <div style="margin-top:10px">
+                  <el-button type="success" v-if="!is_favorite" @click="favorite" size="medium" style="float:right">收藏</el-button>
+                  <el-button type="warning" v-else @click="cancelFavorite" size="medium" style="float:right">取消收藏</el-button>
+                </div>
                 <div class="tag">
-                  <el-tag type="success" size="medium" v-for="item in data.dynamic" :key="item">{{item}}</el-tag>
+                  <el-tag
+                    type="success"
+                    size="medium"
+                    v-for="item in data.dynamic"
+                    :key="item"
+                  >{{item}}</el-tag>
                 </div>
               </div>
             </el-col>
@@ -106,7 +117,8 @@
 
 <script>
 import CountTo from "vue-count-to";
-import {getVideoInfo} from "@/api/videoAna"
+import { getVideoInfo } from "@/api/videoAna";
+import { doFavorite, unFavorite, findFavorite } from "@/api/favorite";
 export default {
   name: "VideoTop",
   components: {
@@ -115,50 +127,85 @@ export default {
   props: {},
   data() {
     return {
-      aid:this.$route.params['id'],
-      data:{
-        videoId:0,
-        tid:0,
-        tname:'',
-        videoTitle:'',
-        videoProfile:'',
-        videoDesc:'',
-        videoView:0,
-        videoFavorite:0,
-        coins:0,
-        videoShare:0,
-        videoLike:0,
-        dynamic:[],
-        lastUpdate:'',
-        videoAuthor:'',
-        authorMid:0
+      favorite_id: -1,
+      user_id: this.$store.state.user.user_id,
+      is_favorite: false,
 
+      aid: this.$route.params["id"],
+      data: {
+        videoId: 0,
+        tid: 0,
+        tname: "",
+        videoTitle: "",
+        videoProfile: "",
+        videoDesc: "",
+        videoView: 0,
+        videoFavorite: 0,
+        coins: 0,
+        videoShare: 0,
+        videoLike: 0,
+        dynamic: [],
+        lastUpdate: "",
+        videoAuthor: "",
+        authorMid: 0
       }
     };
   },
   methods: {
+    favorite() {
+      doFavorite(this.user_id, this.aid, "video").then(response => {
+        this.is_favorite = true;
+        this.$message({
+          type: "success",
+          message: "收藏成功"
+        });
+        findFavorite(this.user_id, this.aid, "video").then(response => {
+          this.favorite_id = response.data.id;
+        });
+      });
+    },
+    cancelFavorite() {
+      console.log(this.favorite_id);
+      unFavorite(this.favorite_id).then(response => {
+        this.is_favorite = false;
+        this.$message({
+          type: "warning",
+          message: "已取消收藏"
+        });
+      });
+    },
+
     return_profile(url) {
       return "https://images.weserv.nl/?url=" + url;
     }
   },
   created() {
-    getVideoInfo(this.aid).then(response=>{
-      this.data = response.data
-      var dynamic = this.data.dynamic
-      if(dynamic.length==0){
-        this.data.dynamic = []
-      }else{
-        var tag_list = dynamic.split('#')
-        var list = []
+    getVideoInfo(this.aid).then(response => {
+      this.data = response.data;
+      var dynamic = this.data.dynamic;
+      if (dynamic.length == 0) {
+        this.data.dynamic = [];
+      } else {
+        var tag_list = dynamic.split("#");
+        var list = [];
         tag_list.forEach(element => {
-          if(element!=''){
-            list.push(element)
+          if (element != "") {
+            list.push(element);
           }
         });
-        this.data.dynamic = list
+        this.data.dynamic = list;
       }
-      
-    })
+    });
+  },
+  mounted() {
+    findFavorite(this.user_id, this.aid, "video").then(response => {
+      if (response.data != null) {
+        this.favorite_id = response.data.id;
+        this.is_favorite = true;
+      } else {
+        this.is_favorite = false;
+      }
+    });
   }
 };
 </script>
