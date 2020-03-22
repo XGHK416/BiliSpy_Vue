@@ -152,26 +152,21 @@ export const constantRoutes = [{
     ]
   },
 
-  // {
-  //   path: '/currentBili',
-  //   component: Layout,
-  //   redirect: '/currentBili/abstract',
-  //   name: 'CurrentBili',
-  //   meta: {
-  //     title: '当下B站',
-  //     icon: 'bili'
-  //   },
-  //   children: [{
-  //       path: 'abstract',
-  //       name: '简介',
-  //       component: () => import('@/views/bili/abstract/index'),
-  //       meta: {
-  //         title: '简介',
-  //         icon: 'abstract'
-  //       },
-  //     },
-  //   ]
-  // },
+  {
+    path: '/bili_hot',
+    component: Layout,
+    redirect: '/bili_hot',
+    children: [{
+        path: 'bili_hot',
+        name: '当下b站',
+        component: () => import('@/views/currentHot/index'),
+        meta: {
+          title: '当下B站',
+          icon: 'bili_hot'
+        },
+      },
+    ]
+  },
 
   // {
   //   path: '/detect',

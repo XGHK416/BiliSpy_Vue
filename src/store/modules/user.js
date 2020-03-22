@@ -17,7 +17,6 @@ const mutations = {
     Object.assign(state, getDefaultState())
   },
   SET_TOKEN: (state, token) => {
-    console.log(state)
     state.token = token
   },
   SET_USER_ID: (state, user_id) => {
@@ -66,11 +65,9 @@ const actions = {
     const { nickname, password } = registerInfo
     return new Promise((resolve, reject) => {
       register({ nickname: nickname.trim(), password: password }).then(response => {
-        console.log(response)
         // 解构赋值，相当于const data = response.data
         const { data } = response
         // 模拟设置token
-        console.log(data.userId)
         commit('SET_TOKEN', data.token)
         commit('SET_USER_ID', data.userId)
         setToken(data.token)
@@ -138,7 +135,6 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       let user_id = getId()
-      console.log('getInfo:'+user_id)
       getInfo(user_id).then(response => {
         const { data } = response
         const { base_info, auths } = data
