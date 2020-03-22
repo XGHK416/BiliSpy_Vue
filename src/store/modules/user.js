@@ -1,5 +1,5 @@
 import { login, logout, getInfo, register, bandIdentity, updateInfo, updateProfile,changePassword } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken,getId,setId,removeId } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
@@ -53,6 +53,7 @@ const actions = {
         commit('SET_TOKEN', data.token)
         commit('SET_USER_ID', data.userId)
         setToken(data.token)
+        setId(data.userId)
         resolve()
       }).catch(error => {
         reject(error)
@@ -73,6 +74,7 @@ const actions = {
         commit('SET_TOKEN', data.token)
         commit('SET_USER_ID', data.userId)
         setToken(data.token)
+        setId(data.userId)
         resolve()
       }).catch(error => {
         reject(error)
@@ -135,8 +137,9 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      console.log(state)
-      getInfo(state.user_id).then(response => {
+      let user_id = getId()
+      console.log('getInfo:'+user_id)
+      getInfo(user_id).then(response => {
         const { data } = response
         const { base_info, auths } = data
         if (!data) {
@@ -156,6 +159,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         removeToken() // must remove  token  first
+        removeId()
         resetRouter()
         commit('RESET_STATE')
         resolve()
@@ -169,6 +173,7 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
+      removeId()
       commit('RESET_STATE')
       resolve()
     })
