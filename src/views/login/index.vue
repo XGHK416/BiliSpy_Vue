@@ -93,7 +93,8 @@ export default {
       registerDialogVisible: false,
       loginForm: {
         identityId: '',
-        credential: ''
+        credential: '',
+        identityType:''
       },
       loginRules: {
         identityId: [{ required: true, trigger: 'blur', validator: validateIdentityId }],
@@ -127,6 +128,18 @@ export default {
       // 固定写法
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          var identityId = this.loginForm.identityId+''
+          console.log(identityId)
+          if(identityId.indexOf('@')!=-1){
+            this.loginForm.identityType = 'EMAIL'
+          }else{
+            if(identityId.indexOf('user')!=-1){
+              this.loginForm.identityType = 'ORIGIN'
+            }else{
+              this.loginForm.identityType = 'PHONE'
+            }
+          }
+          console.log(this.loginForm)
           // do something
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {

@@ -79,6 +79,23 @@ export default {
       this.nick_name_show = true;
     },
     NickNameChanged() {
+      var baseInfo = {
+        nickName: this.nick_name,
+        userId: this.$store.state.user.user_id
+      };
+      this.$store
+        .dispatch("user/updateInfo", baseInfo)
+        .then(response => {
+          this.loading = true;
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
+        })
+        .catch(() => {
+          this.loading = false;
+        });
+
       this.nick_name_show = false;
     },
     handleProfileDialogStatus() {

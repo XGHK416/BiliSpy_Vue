@@ -48,7 +48,9 @@
           <div class="card-panel-text">
             爬虫运行时间
           </div>
-          <count-to :start-val="0" :end-val="topInfo.run_time_second" :duration="3600" class="card-panel-num" /> Sec
+          <span class="card-panel-num" > 
+            {{returnRuntime()}}
+          </span>
         </div>
       </div>
     </el-col>
@@ -68,6 +70,16 @@ export default {
     }
   },
   methods: {
+    returnRuntime(){
+      var time_list = this.topInfo.run_time_second
+      var hour = time_list[0]
+      var minte = time_list[1]
+      if(hour.indexOf("days,")!=-1){
+        var list= hour.split(' days, ')
+        console.log(list)
+        return list[0]+'天'+list[1]+'小时'
+      }
+    },
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
     },

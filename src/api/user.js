@@ -29,13 +29,13 @@ export function logout() {
 }
 
 export function register(data) {
+  let param = new URLSearchParams()
+  param.append('nickname', data.nickname)
+  param.append('password', data.password)
   return request({
     url: '/bili-api/register',
     method: 'post',
-    data: {
-      'nickname': data.nickname,
-      'password': data.password
-    }
+    data: param
   })
 }
 

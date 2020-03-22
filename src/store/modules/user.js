@@ -17,6 +17,7 @@ const mutations = {
     Object.assign(state, getDefaultState())
   },
   SET_TOKEN: (state, token) => {
+    console.log(state)
     state.token = token
   },
   SET_USER_ID: (state, user_id) => {
@@ -43,9 +44,9 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { identityId, credential } = userInfo
+    const { identityId, credential,identityType } = userInfo
     return new Promise((resolve, reject) => {
-      login({ identityId: identityId.trim(), credential: credential, identityType: 'ORIGIN' }).then(response => {
+      login({ identityId: identityId.trim(), credential: credential, identityType: identityType }).then(response => {
         // 解构赋值，相当于const data = response.data
         const { data } = response
         // 模拟设置token
@@ -64,9 +65,11 @@ const actions = {
     const { nickname, password } = registerInfo
     return new Promise((resolve, reject) => {
       register({ nickname: nickname.trim(), password: password }).then(response => {
+        console.log(response)
         // 解构赋值，相当于const data = response.data
         const { data } = response
         // 模拟设置token
+        console.log(data.userId)
         commit('SET_TOKEN', data.token)
         commit('SET_USER_ID', data.userId)
         setToken(data.token)
@@ -132,7 +135,7 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      console.log('getInfo'+state.user_id)
+      console.log(state)
       getInfo(state.user_id).then(response => {
         const { data } = response
         const { base_info, auths } = data
