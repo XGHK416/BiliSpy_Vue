@@ -172,6 +172,7 @@ export default {
 .video-abstract-wrapper {
   line-height: 20px;
   font-size: 16px;
+<<<<<<< HEAD
   min-height: 120px;
   color: #212121;
   display: -webkit-box;
@@ -181,6 +182,16 @@ export default {
 }
 .video-metric-wrapper {
   height: 170px;
+=======
+  min-height: 60px;
+  color: #212121;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+.video-metric-wrapper {
+>>>>>>> master
     text-align: center;
     .metric-text{
         text-align: center;

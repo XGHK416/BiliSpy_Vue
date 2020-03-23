@@ -20,7 +20,10 @@
                 <div slot="header" class="clearfix">
                   <span>作者简介</span>
                 </div>
+<<<<<<< HEAD
                 <uploader-info></uploader-info>
+=======
+>>>>>>> master
               </el-card>
             </div>
           </el-col>
@@ -32,12 +35,18 @@
 
 <script>
 import VideoInfo from './components/VideoInfo'
+<<<<<<< HEAD
 import UploaderInfo from './components/UploaderInfo'
+=======
+>>>>>>> master
 export default {
   name: "InfoCard",
   components:{
       VideoInfo,
+<<<<<<< HEAD
       UploaderInfo
+=======
+>>>>>>> master
   },
   props: {
     visible: {
