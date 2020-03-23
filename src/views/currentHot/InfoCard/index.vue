@@ -20,6 +20,7 @@
                 <div slot="header" class="clearfix">
                   <span>作者简介</span>
                 </div>
+                <uploader-info></uploader-info>
               </el-card>
             </div>
           </el-col>
@@ -31,10 +32,12 @@
 
 <script>
 import VideoInfo from './components/VideoInfo'
+import UploaderInfo from './components/UploaderInfo'
 export default {
   name: "InfoCard",
   components:{
       VideoInfo,
+      UploaderInfo
   },
   props: {
     visible: {
