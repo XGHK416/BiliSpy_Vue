@@ -4,7 +4,7 @@
       <el-col :span="2">
         <img
           style="height:100%;width:100%"
-          src="https://i1.hdslb.com/bfs/archive/be4e3836646af3822d99f9c47c4e491f2fb408c3.jpg@143w_88h.webp"
+          :src="request_profile(row.profile)"
           alt
         />
       </el-col>
@@ -49,7 +49,11 @@ export default {
   data() {
     return {};
   },
-  methods: {}
+  methods: {
+    request_profile(profile){
+      return "https://images.weserv.nl/?url=" + profile
+    }
+  }
 };
 </script>
 
