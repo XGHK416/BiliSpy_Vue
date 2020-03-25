@@ -3,26 +3,44 @@
     <el-row :gutter="10" type="flex" style="height:120px">
       <el-col :span="6">
         <div class="avatar-wrapper">
-          <el-avatar
-            shape="square"
-            :size="120"
-            src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png"
-          ></el-avatar>
+          <el-avatar shape="square" :size="120" :src="request_profile(data.info.face)"></el-avatar>
         </div>
       </el-col>
       <el-col :span="12">
         <div class="identity-wrapper">
-          <div class="name">XGHK416</div>
-          <div class="mid">mid:32213</div>
+          <div class="name">
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="'即将访问 https://space.bilibili.com/3043120'+data.info.mid"
+              placement="top-start"
+            >
+              <a
+                :href="'https://space.bilibili.com/3043120'+data.info.mid"
+                target="_blank"
+                rel="noopener noreferrer"
+              >{{data.info.name}}</a>
+            </el-tooltip>
+          </div>
+          <div class="mid">mid:{{data.info.mid}}</div>
+          <el-tag
+            size="small"
+            :style="'color:'+level_color[data.info.level].color+';border-color:'+level_color[data.info.level].border"
+            effect="plain"
+          >Level{{data.info.level}}</el-tag>
         </div>
       </el-col>
       <el-col :span="5">
         <div class="uploader-option">
           <div>
-            <el-button type="primary" style="width:100%">未在名单中</el-button>
+            <el-button type="primary" style="width:100%" :disabled="isDetect">提交侦测</el-button>
           </div>
           <div>
-            <el-button type="success" style="width:100%;margin-top:10px">侦测该用户</el-button>
+            <el-button type="success" style="width:100%;margin-top:10px" v-if="!isFavorite&&isDetect" @click="hadleFavorite">收藏</el-button>
+            <el-button type="warning" style="width:100%;margin-top:10px" v-else-if="isFavorite&&isDetect" @click="hadleDisFavorite">取消收藏</el-button>
+          </div>
+          <div>
+            <el-button type="info" style="width:100%;margin-top:10px" v-if="isMoniter&&isDetect" @click="handleMoniter">监控</el-button>
           </div>
         </div>
       </el-col>
@@ -31,6 +49,7 @@
     <div class="announcement-wrapper">
       <span style="font-size:16px;font-weight:bold">公告</span>
       <br />
+      {{data.notice}}
     </div>
     <el-divider></el-divider>
     <div class="uploader-metric-wrapper">
@@ -38,25 +57,25 @@
         <el-col :span="12">
           <div class="uploader-metric">
             <div class="metric-name follower">关注</div>
-            <div class="metric-num">123123</div>
+            <div class="metric-num">{{formatDate(data.stat.following) }}</div>
           </div>
         </el-col>
         <el-col :span="12">
           <div class="uploader-metric">
             <div class="metric-name following">粉丝</div>
-            <div class="metric-num">123123</div>
+            <div class="metric-num">{{formatDate(data.stat.follower)}}</div>
           </div>
         </el-col>
         <el-col :span="12">
           <div class="uploader-metric">
             <div class="metric-name getLike">获赞</div>
-            <div class="metric-num">123123</div>
+            <div class="metric-num">{{formatDate(data.upstat.likes)}}</div>
           </div>
         </el-col>
         <el-col :span="12">
           <div class="uploader-metric">
             <div class="metric-name view">播放</div>
-            <div class="metric-num">123123</div>
+            <div class="metric-num">{{formatDate(data.upstat.archive.view)}}</div>
           </div>
         </el-col>
       </el-row>
@@ -67,10 +86,85 @@
 <script>
 export default {
   name: "UploaderInfo",
-  data() {
-    return {};
+  props: {
+    data: {
+      type: Object,
+      default: {
+        info: {
+          face: ""
+        }
+      }
+    }
   },
-  methods: {}
+  data() {
+    return {
+      // 是否存在侦测
+      isDetect:false,
+      // 是否收藏
+      isFavorite:false,
+      // 是否监控
+      isMoniter:true,
+      // 提交选单
+      dialog_visible:false,
+      
+
+
+      level_color: {
+        0: {
+          color: "#cdcdcd",
+          border: "#d2d2d2"
+        },
+        1: {
+          color: "#bfbfbf",
+          border: "#cbcbcb"
+        },
+        2: {
+          color: "#95deb3",
+          border: "#b2e7c7"
+        },
+        3: {
+          color: "#97cfe0",
+          border: "#abd8e6"
+        },
+        4: {
+          color: "#f4b37e",
+          border: "#f6c297"
+        },
+        5: {
+          color: "#ff6d00",
+          border: "#ff8a33"
+        },
+        6: {
+          color: "#fe0000",
+          border: "#fe3333"
+        }
+      }
+    };
+  },
+  watch: {
+    data(val) {}
+  },
+  methods: {
+    hadleFavorite(){
+      this.isFavorite = true
+    },
+    hadleDisFavorite(){
+      this.isFavorite = false
+    },
+    handleMoniter(){
+
+    },
+    request_profile(profile) {
+      return "https://images.weserv.nl/?url=" + profile;
+    },
+    formatDate(num) {
+      if (num / 10000 > 1) {
+        return (num / 10000).toFixed(2) + "万";
+      } else {
+        return num + "";
+      }
+    }
+  }
 };
 </script>
 
@@ -80,8 +174,12 @@ export default {
     color: #666;
     font-size: 24px;
     font-weight: bold;
+    :hover {
+      color: #70bbfe;
+    }
   }
   .mid {
+    margin: 10px 0px;
     font-size: 12px;
     color: #999;
   }
@@ -130,7 +228,7 @@ export default {
     background: linear-gradient(90deg, #36d1dc 0%, #5b86e5 100%);
   }
   .view {
-   background:linear-gradient(90deg, #3494e6 0%,#ec6ead 100% );
+    background: linear-gradient(90deg, #3494e6 0%, #ec6ead 100%);
   }
 }
 </style>

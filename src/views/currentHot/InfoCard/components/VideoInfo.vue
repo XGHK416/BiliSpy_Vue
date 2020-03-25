@@ -2,27 +2,44 @@
   <div>
     <el-row type="flex" :gutter="20">
       <el-col :span="4">
-        <div class="video-profile"></div>
+        <div>
+          <img class="video-profile" :src="request_profile(video_data.profile)" referrerPolicy="no-referrer" />
+        </div>
       </el-col>
       <el-col :span="12">
         <div class="video-section-wrapper">
           <div class="video-title">
-            <span>这是一段标题</span>
+            <el-tooltip class="item" effect="dark" :content="'即将访问 https://www.bilibili.com/video/'+video_data.bvid" placement="top-start">
+              <a :href="'https://www.bilibili.com/video/'+video_data.bvid" target="_blank" >
+                <span>{{this.video_data.title}}</span>
+              </a>
+            </el-tooltip>
+          </div>
+          <div class="video-aid">
+            <span>aid: {{video_data.aid}}</span>
+            <span style="margin-left:10px">bvid: {{video_data.bvid}}</span>
           </div>
           <div class="video-section">
-            <el-tag type="success" effect="dark" size="small">标签二</el-tag>
+            <el-tag type="success" effect="dark" size="small">{{this.video_data.section}}</el-tag>
           </div>
           <div class="video-tag">
-            <el-tag type="success" size="mini">标签二</el-tag>
-            <el-tag type="warning" size="mini">标签二</el-tag>
-            <el-tag type="danger" size="mini">标签二</el-tag>
+            <el-tag
+              class="tag"
+              :type="randomTagColor()"
+              size="mini"
+              v-for="item in video_data.dynamic"
+              :key="item"
+            >{{item}}</el-tag>
           </div>
         </div>
       </el-col>
       <el-col :span="8">
         <div class="video-option-wrapper">
-          <el-button type="primary">已在侦测名单中</el-button>
-          <el-button type="success">收藏</el-button>
+          <el-button type="primary"  :disabled="isDetect">提交侦测</el-button>
+          <el-button type="success" v-if="!isFavorite&&isDetect" @click="hadleFavorite">收藏</el-button>
+          <el-button type="warning" v-else-if="isFavorite&&isDetect" @click="hadleDisFavorite">取消收藏</el-button>
+          <el-button type="info"  v-if="isMoniter&&isDetect" @click="handleMoniter">监控</el-button>
+          <el-button type="info" plain  v-if="!isMoniter&&isDetect" disabled>监控中</el-button>
         </div>
       </el-col>
     </el-row>
@@ -30,6 +47,7 @@
     <div class="video-abstract-wrapper">
       <span style="font-size:16px;font-weight:bold">简介</span>
       <br />
+      {{video_data.desc}}
     </div>
     <el-divider></el-divider>
     <div class="video-metric-wrapper">
@@ -87,9 +105,32 @@
 <script>
 export default {
   name: "VideoInfo",
-  props: {},
+  props: {
+    data: {
+      type: Object,
+      default:{
+        stat:{
+          coin:0
+        }
+      }
+    }
+  },
   data() {
     return {
+      isDetect:true,
+      isFavorite:false,
+      isMoniter:true,
+      dialogVisible:false,
+
+
+      video_data: {
+        title: "123",
+        coins: 0,
+        favorite: 0,
+        share: 0,
+        like: 0,
+        view: 0
+      },
       percentage: 100,
       metric: [
         {
@@ -116,27 +157,78 @@ export default {
       ]
     };
   },
+  watch: {
+    data(val) {
+      this.initData();
+    }
+  },
+  mounted() {
+    this.initData();
+  },
   methods: {
+    hadleFavorite(){
+      this.isFavorite = true
+    },
+    hadleDisFavorite(){
+      this.isFavorite = false
+    },
+    handleMoniter(){
+
+    },
+
+    randomTagColor(){
+      var list = ['success','info','danger','warning']
+      var index = Math.floor(Math.random()*4);
+      console.log(index)
+      return list[index]
+    },
+    request_profile(profile) {
+      return profile;
+    },
+    initData() {
+      this.video_data.profile = this.data.pic;
+      this.video_data.title = this.data.title;
+      this.video_data.bvid = this.data.bvid;
+      this.video_data.aid = this.data.aid;
+      this.video_data.section = this.data.tname;
+      this.video_data.desc = this.data.desc;
+      this.video_data.coins = this.data.stat.coin;
+      this.video_data.favorite = this.data.stat.favorite;
+      this.video_data.share = this.data.stat.share;
+      this.video_data.like = this.data.stat.like;
+      this.video_data.view = this.data.stat.view;
+      this.video_data.dynamic = this.formatDynamic(this.data.dynamic);
+    },
+    formatDynamic(dynamic) {
+      var index = dynamic.replace(/[\r\n]/g, "|").indexOf("|");
+      if (index > 0) {
+        var stream = dynamic.substring(1, index - 1);
+      } else {
+        var stream = dynamic.substring(1, dynamic.length - 1);
+      }
+      var list = stream.split("##");
+      return list;
+    },
     formatLike() {
-      return this.formatDate(this.metric[0].num);
+      return this.formatDate(this.video_data.like);
     },
     formatCoins() {
-      return this.formatDate(this.metric[1].num);
+      return this.formatDate(this.video_data.coins);
     },
     formatFavorite() {
-      return this.formatDate(this.metric[2].num);
+      return this.formatDate(this.video_data.favorite);
     },
     formatView() {
-      return this.formatDate(this.metric[3].num);
+      return this.formatDate(this.video_data.view);
     },
     formatTransmit() {
-      return this.formatDate(this.metric[4].num);
+      return this.formatDate(this.video_data.share);
     },
     formatDate(num) {
       if (num / 10000 > 1) {
         return (num / 10000).toFixed(2) + "万";
       } else {
-        return num+'';
+        return num + "";
       }
     }
   }
@@ -156,14 +248,24 @@ export default {
     color: #666;
     font-size: 20px;
     font-weight: bold;
+    :hover {
+      color: #70bbfe;
+    }
   }
   .video-section {
     margin-top: 5px;
+  }
+  .video-aid {
+    margin-top: 3px;
+    color: #999;
   }
   .video-tag {
     position: absolute;
     left: 0px;
     bottom: 0px;
+    .tag {
+      margin-right: 5px;
+    }
   }
 }
 .video-option-wrapper {
@@ -172,7 +274,6 @@ export default {
 .video-abstract-wrapper {
   line-height: 20px;
   font-size: 16px;
-<<<<<<< HEAD
   min-height: 120px;
   color: #212121;
   display: -webkit-box;
@@ -182,21 +283,11 @@ export default {
 }
 .video-metric-wrapper {
   height: 170px;
-=======
-  min-height: 60px;
-  color: #212121;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  overflow: hidden;
-}
-.video-metric-wrapper {
->>>>>>> master
+  text-align: center;
+  .metric-text {
     text-align: center;
-    .metric-text{
-        text-align: center;
-        color: #666;
-        font-size: 16px;
-    }
+    color: #666;
+    font-size: 16px;
+  }
 }
 </style>

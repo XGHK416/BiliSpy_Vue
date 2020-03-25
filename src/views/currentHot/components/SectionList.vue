@@ -75,6 +75,8 @@ export default {
 
   methods: {
     handlePreView(index, item) {
+      // 点击传递aid和mid以获取信息
+      $bus.$emit("handleInfo",{"aid":item.aid,"mid":item.mid})
       this.card_visible = true
     },
     handleCardClose(){
@@ -86,6 +88,9 @@ export default {
         var table_item = {};
         var list = response.data.list;
         list.forEach(element => {
+          table_item.aid= element.aid
+          table_item.bvid = element.bvid
+          table_item.mid = element.mid
           table_item.title = element.title;
           table_item.profile = element.pic;
           ///评论和播放处理

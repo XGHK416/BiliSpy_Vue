@@ -5,12 +5,16 @@
         <img
           style="height:100%;width:100%"
           :src="request_profile(row.profile)"
-          alt
+          referrerPolicy="no-referrer"
         />
       </el-col>
       <el-col :span="8" :offset="1">
         <div class="abstract-wrapper">
-          <span class="title">{{row.title}}</span>
+          <el-tooltip class="item" effect="dark" :content="'即将访问 https://www.bilibili.com/video/'+row.bvid" placement="top-start">
+              <a :href="'https://www.bilibili.com/video/'+row.bvid" target="_blank" >
+                 <span class="title">{{row.title}}</span>
+              </a>
+            </el-tooltip>
           <div class="abstract-metric">
             <div style="display:inline;margin-right:7px">
               <svg-icon icon-class="metric_view" class-name="metric-icon" />
@@ -51,7 +55,7 @@ export default {
   },
   methods: {
     request_profile(profile){
-      return "https://images.weserv.nl/?url=" + profile
+      return profile
     }
   }
 };

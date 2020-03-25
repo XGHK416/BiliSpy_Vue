@@ -9,21 +9,17 @@
                 <div slot="header" class="clearfix">
                   <span>视频详情</span>
                 </div>
-                <video-info></video-info>
-
+                <video-info :data="videoInfo"></video-info>
               </el-card>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="user-info-wrapper">
-                <el-card class="box-card">
+              <el-card class="box-card">
                 <div slot="header" class="clearfix">
                   <span>作者简介</span>
                 </div>
-<<<<<<< HEAD
-                <uploader-info></uploader-info>
-=======
->>>>>>> master
+                <uploader-info :data="uploaderInfo"></uploader-info>
               </el-card>
             </div>
           </el-col>
@@ -34,19 +30,15 @@
 </template>
 
 <script>
-import VideoInfo from './components/VideoInfo'
-<<<<<<< HEAD
-import UploaderInfo from './components/UploaderInfo'
-=======
->>>>>>> master
+import VideoInfo from "./components/VideoInfo";
+import UploaderInfo from "./components/UploaderInfo";
+import $bus from "@/utils/eventBus";
+import { getUploader, getVideo } from "@/api/hot_bili";
 export default {
   name: "InfoCard",
-  components:{
-      VideoInfo,
-<<<<<<< HEAD
-      UploaderInfo
-=======
->>>>>>> master
+  components: {
+    VideoInfo,
+    UploaderInfo
   },
   props: {
     visible: {
@@ -61,7 +53,9 @@ export default {
   },
   data() {
     return {
-      card_visible: false
+      card_visible: false,
+      uploaderInfo: {},
+      videoInfo: {}
     };
   },
   methods: {
@@ -69,7 +63,19 @@ export default {
       this.$emit("handleClose");
     }
   },
-  created() {}
+  mounted() {
+    this.$nextTick(function() {
+      $bus.$on("handleInfo", item => {
+        getUploader(item.mid).then(response => {
+          this.uploaderInfo = response.data;
+        });
+        getVideo(item.aid).then(response => {
+          this.videoInfo = response.data;
+        });
+        
+      });
+    });
+  }
 };
 </script>
 

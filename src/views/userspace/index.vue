@@ -1,5 +1,6 @@
 <template>
   <div class="user-container">
+    <el-button type="primary" v-permission="['admin']">sssss</el-button>
     <el-row>
       <el-col :span="14" :offset="5">
         <UserTop :info="base_info"></UserTop>
@@ -32,6 +33,7 @@
 </template>
 
 <script>
+import permission from '@/directive/permission/index.js'
 // import UserInfo from './components/UserInfo'
 import UserTop from "./components/UserTop";
 import UserAuths from "./components/UserAuths";
@@ -45,6 +47,7 @@ export default {
     UserAuths: UserAuths,
     UserDetect: UserDetect
   },
+  directives: { permission },
   data() {
     return {
       ///////////////logging

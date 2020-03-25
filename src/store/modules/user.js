@@ -7,7 +7,8 @@ const getDefaultState = () => {
     token: getToken(),
     user_id: '',
     base_info: {},
-    auths: {}
+    auths: {},
+    roles:['admin']
   }
 }
 const state = getDefaultState()
