@@ -144,6 +144,7 @@ const actions = {
         }
         commit('SET_BASE_INFO', base_info)
         commit('SET_AUTHS', auths)
+        commit('SET_USER_ID', user_id)
         resolve(data)
       }).catch(error => {
         reject(error)

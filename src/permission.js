@@ -26,16 +26,25 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasGetUserInfo = store.getters.base_info
-      if (hasGetUserInfo.length>0) {
+      const hasGetUserInfo = store.getters.user_id
+      if (hasGetUserInfo.length>1) {
         next()
       } else {
         try {
           // get user info
           // 这是要进行token验证的
           await store.dispatch('user/getInfo')
+          // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
+          // const { roles } = await store.dispatch('user/getInfo')
+          // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
+          const { roles } = {roles:['admin']}
 
-          next()
+
+          const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+          router.addRoutes(accessRoutes)
+          next({ ...to, replace: true })
+          // next()
+          
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')

@@ -46,37 +46,55 @@ export const constantRoutes = [{
     component: () => import('@/views/test'),
     hidden: true
   },
-
   {
     path: '/',
     component: Layout,
-    redirect: '/userspace',
+    redirect: '/baseAnalysis',
+    children: [{
+      path: 'baseAnalysis',
+      name: 'BaseAnalysis',
+      component: () => import('@/views/baseAnalysis/index'),
+      meta: {
+        title: '基础信息分析',
+        icon: 'analysis',
+      }
+    }]
+  },
+]
+export const asyncRoutes = [
+  {
+    path: '/space',
+    component: Layout,
+    redirect: '/space/userspace',
     name:'PersonalSpace',
     meta: {
       title: '个人空间',
-      icon: 'personal-space'
+      icon: 'personal-space',
+      roles: ['admin', 'editor']
     },
     children: [{
         path: 'userspace',
-        name: '个人信息',
+        name: 'UserSpace',
         component: () => import('@/views/userspace/index'),
         meta: {
           title: '个人信息',
-          icon: 'dashboard'
+          icon: 'dashboard',
+          roles: ['admin', 'editor']
         }
       },
       {
         path: 'favorite',
-        name: '个人收藏',
+        name: 'Favorite',
         component: () => import('@/views/favorite/index'),
         meta: {
           title: '个人收藏',
-          icon: 'favorite'
+          icon: 'favorite',
+          roles: ['editor']
         }
       },
       {
         path: 'changePassword',
-        name: '更改密码',
+        name: 'ChangePassword',
         component: () => import('@/views/changePassword/index'),
         meta: {
           title: '更改密码',
@@ -86,22 +104,6 @@ export const constantRoutes = [{
       }
     ]
   },
-
-  {
-    path: '/baseAnalysis',
-    component: Layout,
-    redirect: '/baseAnalysis',
-    children: [{
-      path: 'baseAnalysis',
-      name: 'BaseAnalysis',
-      component: () => import('@/views/baseAnalysis/index'),
-      meta: {
-        title: '基础信息分析',
-        icon: 'analysis'
-      }
-    }]
-  },
-
   {
     path: '/dataTable',
     component: Layout,
@@ -109,7 +111,8 @@ export const constantRoutes = [{
     name: 'DataTable',
     meta: {
       title: '数据研究院',
-      icon: 'data-college'
+      icon: 'data-college',
+      roles: ['editor']
     },
     children: [{
         hidden: true,
@@ -118,7 +121,7 @@ export const constantRoutes = [{
         component: () => import('@/views/dataTable/VideoInfo'),
         meta: {
           title: '视频详情',
-          noCache: true
+          noCache: true,
         },
       },
       {
@@ -151,7 +154,6 @@ export const constantRoutes = [{
       }
     ]
   },
-
   {
     path: '/bili_hot',
     component: Layout,
@@ -162,40 +164,43 @@ export const constantRoutes = [{
         component: () => import('@/views/currentHot/index'),
         meta: {
           title: '当下B站',
-          icon: 'bili_hot'
+          icon: 'bili_hot',
+          roles: ['editor']
         },
       },
     ]
   },
-
-  // {
-  //   path: '/detect',
-  //   redirect: '/detect/doDetect',
-  //   name:'Detect',
-  //   component: Layout,
-  //   meta: {
-  //     title: '检测空间',
-  //     icon: 'detect'
-  //   },
-  //   children: [{
-  //     path: '/doDetect',
-  //     name: 'DoDetect',
-  //     component: () => import('@/views/detect/doDetect/index'),
-  //     meta: {
-  //       title: '检测选择',
-  //       icon: 'select',
-  //     }
-  //   },
-  //   {
-  //     path: '/detectList',
-  //     name: 'DetectList',
-  //     component: () => import('@/views/detect/detectList/index'),
-  //     meta: {
-  //       title: '检测列表',
-  //       icon: 'list',
-  //     }
-  //   }]
-  // },
+  ///////////////////////////Mo//////////////////
+  {
+    path: '/moRoles',
+    redirect: '/moRoles/viewer',
+    name:'角色管理',
+    component: Layout,
+    meta: {
+      title: '角色管理',
+      icon: 'mo_roles',
+      roles: ['admin']
+    },
+    children: [{
+      path: 'viewer',
+      name: 'Viewer',
+      component: () => import('@/views/mo/roles/user/index'),
+      meta: {
+        title: '用户管理',
+        icon: 'mo_roles_user',
+      }
+    },
+    {
+      path: 'manage',
+      name: 'Manage',
+      component: () => import('@/views/mo/roles/manage/index'),
+      meta: {
+        title: '管理员管理',
+        icon: 'mo_roles_manage',
+      }
+    }
+  ]
+  },
 ]
 
 const createRouter = () => new Router({
