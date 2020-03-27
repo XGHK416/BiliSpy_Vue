@@ -201,6 +201,68 @@ export const asyncRoutes = [
     }
   ]
   },
+   {
+    path: '/manage_api',
+    component: Layout,
+    redirect: '/manage_api',
+    children: [{
+        path: 'manage_api',
+        name: 'api管理',
+        component: () => import('@/views/mo/apiManage/index'),
+        meta: {
+          title: 'api管理',
+          icon: 'api',
+          roles: ['admin']
+        },
+      },
+    ]
+  },
+  {
+    path: '/detect',
+    redirect: '/detect/info',
+    name:'侦测管理',
+    component: Layout,
+    meta: {
+      title: '侦测管理',
+      icon: 'detect',
+      roles: ['admin']
+    },
+    children: [{
+      path: 'info',
+      name: '侦测详情',
+      component: () => import('@/views/mo/detect/detectInfo/index'),
+      meta: {
+        title: '侦测详情',
+        icon: 'mo_detect_data',
+      }
+    },
+    {
+      path: 'manage',
+      name: 'Manage',
+      component: () => import('@/views/mo/detect/detectManage/index'),
+      meta: {
+        title: '侦测管理',
+        icon: 'mo_detect_manage',
+      }
+    }
+  ]
+  },
+  {
+    path: '/announcement',
+    component: Layout,
+    redirect: '/announcement',
+    children: [{
+        path: 'announcement',
+        name: '公告管理',
+        component: () => import('@/views/mo/announcement/index'),
+        meta: {
+          title: '公告管理',
+          icon: 'announce',
+          roles: ['admin']
+        },
+      },
+    ]
+  },
 ]
 
 const createRouter = () => new Router({
