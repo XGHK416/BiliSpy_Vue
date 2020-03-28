@@ -28,6 +28,12 @@ router.beforeEach(async(to, from, next) => {
     } else {
       const hasGetUserInfo = store.getters.user_id
       if (hasGetUserInfo.length>1) {
+        if(from.path==='/login'){
+          await store.dispatch('user/getInfo')
+          const { roles } = {roles:['admin']}
+          const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+          router.addRoutes(accessRoutes)
+        }
         next()
       } else {
         try {

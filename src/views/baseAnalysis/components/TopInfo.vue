@@ -76,7 +76,6 @@ export default {
       var minte = time_list[1]
       if(hour.indexOf("days,")!=-1){
         var list= hour.split(' days, ')
-        console.log(list)
         return list[0]+'天'+list[1]+'小时'
       }
     },
