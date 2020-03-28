@@ -61,6 +61,7 @@ export const constantRoutes = [{
     }]
   },
 ]
+//////////////////////////////////////////////
 export const asyncRoutes = [
   {
     path: '/space',
@@ -70,7 +71,7 @@ export const asyncRoutes = [
     meta: {
       title: '个人空间',
       icon: 'personal-space',
-      roles: ['admin', 'editor']
+      // roles: ['admin', 'editor']
     },
     children: [{
         path: 'userspace',
@@ -79,7 +80,7 @@ export const asyncRoutes = [
         meta: {
           title: '个人信息',
           icon: 'dashboard',
-          roles: ['admin', 'editor']
+          roles: ['admin', 'viewer','manager']
         }
       },
       {
@@ -89,7 +90,7 @@ export const asyncRoutes = [
         meta: {
           title: '个人收藏',
           icon: 'favorite',
-          roles: ['editor']
+          roles: ['viewer']
         }
       },
       {
@@ -98,7 +99,8 @@ export const asyncRoutes = [
         component: () => import('@/views/changePassword/index'),
         meta: {
           title: '更改密码',
-          icon: 'dashboard'
+          icon: 'dashboard',
+          roles: ['admin', 'viewer','manager']
         },
         hidden:true
       }
@@ -112,7 +114,7 @@ export const asyncRoutes = [
     meta: {
       title: '数据研究院',
       icon: 'data-college',
-      roles: ['editor']
+      roles: ['viewer']
     },
     children: [{
         hidden: true,
@@ -165,7 +167,7 @@ export const asyncRoutes = [
         meta: {
           title: '当下B站',
           icon: 'bili_hot',
-          roles: ['editor']
+          roles: ['viewer']
         },
       },
     ]
@@ -179,7 +181,7 @@ export const asyncRoutes = [
     meta: {
       title: '角色管理',
       icon: 'mo_roles',
-      roles: ['admin']
+      roles:['admin','manager']
     },
     children: [{
       path: 'viewer',
@@ -188,6 +190,7 @@ export const asyncRoutes = [
       meta: {
         title: '用户管理',
         icon: 'mo_roles_user',
+        roles: ['admin','manager']
       }
     },
     {
@@ -197,6 +200,7 @@ export const asyncRoutes = [
       meta: {
         title: '管理员管理',
         icon: 'mo_roles_manage',
+        roles: ['manager']
       }
     }
   ]
@@ -212,7 +216,7 @@ export const asyncRoutes = [
         meta: {
           title: 'api管理',
           icon: 'api',
-          roles: ['admin']
+          roles: ['admin','manager']
         },
       },
     ]
@@ -225,7 +229,7 @@ export const asyncRoutes = [
     meta: {
       title: '侦测管理',
       icon: 'detect',
-      roles: ['admin']
+      roles: ['admin','manager']
     },
     children: [{
       path: 'info',
@@ -258,7 +262,7 @@ export const asyncRoutes = [
         meta: {
           title: '公告管理',
           icon: 'announce',
-          roles: ['admin']
+          roles: ['admin','manager']
         },
       },
     ]

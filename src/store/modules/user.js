@@ -8,12 +8,15 @@ const getDefaultState = () => {
     user_id: '',
     base_info: {},
     auths: {},
-    roles:['admin']
+    roles:['']
   }
 }
 const state = getDefaultState()
 
 const mutations = {
+  SET_ROLES:(state,roles) => {
+    state.roles = [roles]
+  },
   RESET_STATE: (state) => {
     Object.assign(state, getDefaultState())
   },
@@ -142,6 +145,8 @@ const actions = {
         if (!data) {
           reject('Verification failed, please Login again.')
         }
+        commit('SET_ROLES',base_info.role)
+        console.log(base_info.role)
         commit('SET_BASE_INFO', base_info)
         commit('SET_AUTHS', auths)
         commit('SET_USER_ID', user_id)
