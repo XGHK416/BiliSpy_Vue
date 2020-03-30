@@ -12,6 +12,7 @@ export function parseTime(time, cFormat) {
   if (arguments.length === 0) {
     return null
   }
+  // const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   let date
   if (typeof time === 'object') {

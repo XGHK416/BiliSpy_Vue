@@ -1,6 +1,6 @@
 <template>
   <div class="user-container">
-    <!-- <el-button type="primary" v-permission="['admin']">sssss</el-button> -->
+    <!-- <el-button type="primary" >sssss</el-button> -->
     <el-row>
       <el-col :span="14" :offset="5">
         <UserTop :info="base_info"></UserTop>

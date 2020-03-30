@@ -133,7 +133,7 @@ export default {
           if(identityId.indexOf('@')!=-1){
             this.loginForm.identityType = 'EMAIL'
           }else{
-            if(identityId.indexOf('user')!=-1){
+            if(identityId.indexOf('user')!=-1||identityId.indexOf('mo')!=-1){
               this.loginForm.identityType = 'ORIGIN'
             }else{
               this.loginForm.identityType = 'PHONE'

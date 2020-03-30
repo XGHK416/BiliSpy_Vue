@@ -2,8 +2,8 @@
   <div>
     <el-dialog title="信息展示" :visible.sync="dialogVisible" width="25%">
       <div class="writtenOff-info-wrapper">
-        <div>注销管理员： {{info.name}}</div>
-        <div>注销id： {{info.moid}}</div>
+        <div>注销用户： {{info.base_info.nickName}}</div>
+        <div>注销id： {{info.base_info.userId}}</div>
       </div>
       <el-divider></el-divider>
       <div class="writtenOff-form-wrapper">
@@ -35,21 +35,27 @@
 </template>
 
 <script>
+import {writtenOffUser} from '@/api/mo_manager'
+import { MessageBox } from 'element-ui';
 export default {
   name: "WrittenOff",
   props: {
     info: {
       type: Object,
-      default: function() {
-        return {
-          name: "ssd",
-          moid: "sd"
-        };
-      }
+      required:true,
+    },
+    currentId:{
+      type:String,
+      required:true
+    },
+    currentIndex:{
+      type:Number,
+      required:true
     }
   },
   data() {
     return {
+      user_id: this.$store.state.user.user_id,
       dialogVisible: false,
       written_off_form: {
         reason: "",
@@ -65,7 +71,13 @@ export default {
     comfirmWrittenOff() {
       this.dialogVisible = false;
       ///////////////////////
-
+      writtenOffUser(this.user_id,this.currentId,true).then(response=>{
+        this.$emit("changeType",this.currentIndex)
+        this.$message({
+          message: '用户已封禁',
+          type: 'warning'
+        })
+      })
       ///////////////////////
       this.resetForm();
     }
