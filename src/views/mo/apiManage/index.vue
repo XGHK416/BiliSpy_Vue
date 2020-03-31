@@ -4,37 +4,44 @@
       <div class></div>
       <el-row :gutter="20" type="flex">
         <el-col :span="5">
-          <el-menu default-active="2" class="el-menu-vertical-demo"
-          @select="handleSelectApi">
-            <el-submenu index="1">
+          <el-menu class="el-menu-vertical-demo" @select="handleSelectApi">
+            <el-submenu index="video">
               <template slot="title">
-                <span>导航一</span>
+                <span>视频</span>
+                <el-badge :value="video_api_unuseble" v-if="video_api_unuseble>0"></el-badge>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
+                <el-menu-item v-for="(item,i) in video_api_menu" :key="item.id" :index="i+''">
+                  {{item.apiName}}
+                  <el-tag type="warning" size="mini" v-if="item.apiUseable!=1">故障</el-tag>
+                </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
-            <el-submenu index="2">
+            <el-submenu index="uploader">
               <template slot="title">
-                <span>导航一</span>
+                <span>up主</span>
+                <el-badge :value="uploader_api_unseble" v-if="uploader_api_unseble>0"></el-badge>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="2-1">选项1</el-menu-item>
-                <el-menu-item index="2-2">选项2</el-menu-item>
+                <el-menu-item v-for="(item,i) in uploader_api_menu" :key="item.id" :index="i+''">
+                  {{item.apiName}}
+                  <el-tag type="warning" size="mini" v-if="item.apiUseable!=1">故障</el-tag>
+                </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
           </el-menu>
         </el-col>
+        <!-- ////////////////////////////////////////////////// -->
         <el-col :span="19">
           <div class="params-wrapper">
             <div class="params-address">
-              <el-input v-model="api_info.address" placeholder disabled style="width:80%"></el-input>
-              <el-tag type="success">可用</el-tag>
-              <el-button type="primary" style="width:8%;float:right">发送</el-button>
+              <el-input v-model="api_info.apiUrl" placeholder disabled style="width:80%"></el-input>
+              <el-tag type="success" v-if="api_info.apiUseable!=0">可用</el-tag>
+              <el-tag type="warning" v-else>故障</el-tag>
+              <el-button type="primary" style="width:8%;float:right" @click="handleTest">发送</el-button>
             </div>
             <div class="params-list">
-              <el-table :data="tableData" style="width: 100%">
+              <el-table :data="params" style="width: 100%">
                 <el-table-column prop="key" label="key"></el-table-column>
                 <el-table-column prop="value" label="value">
                   <template slot-scope="{row}">
@@ -76,7 +83,13 @@
           <el-divider></el-divider>
           <div class="api-result">
             <div class="report">
-              <el-button type="primary" @click="reportApi">回报错误</el-button>
+              <el-button type="primary" @click="reportApi" v-if="api_info.apiUseable!=0">回报错误</el-button>
+              <el-button
+                type="primary"
+                @click="recoverApi"
+                v-if="api_info.apiUseable==0"
+                v-permission="['manager']"
+              >恢复api</el-button>
             </div>
             <div class="result">
               <pre>{{result}}</pre>
@@ -85,63 +98,150 @@
         </el-col>
       </el-row>
     </div>
-    <report ref="report" :info="api_info"></report>
+    <report ref="report" :info="api_info" @changeType="changeType"></report>
   </div>
 </template>
 
 <script>
-import Report from './components/Report'
+import permission from "@/directive/permission/index.js";
+import {
+  getApiTest,
+  reportApi,
+  getApiList,
+  getApiParam,
+  getApiReportInfo,
+  getApiRecover
+} from "@/api/api_manage";
+import Report from "./components/Report";
 export default {
-  components:{
+  components: {
     Report
   },
+  directives: { permission },
   data() {
     return {
-      api_info:{
-        address:'qqweqwe',
-        api_id:'123',
-        api_name:'1·ad·',
-
-      },
+      user_id: this.$store.state.user.user_id,
+      api_info: {},
+      api_params: [],
       // json返回值
-      result: {
-       
-      },
+      result: {},
       //params 列表
-      tableData: [
-        {
-          key: "2016-05-02",
-          value: "王小虎",
-          ori_value: "王小虎",
-          descript: "上海市普陀区金沙江路 1518 弄",
-          edit: false
-        }
-      ]
+      params: [],
+      video_api_menu: [],
+      video_api_unuseble: 0,
+      uploader_api_menu: [],
+      uploader_api_unseble: 0
     };
   },
+  created() {
+    getApiList().then(repsonse => {
+      var { uploader, video } = repsonse.data;
+      this.video_api_menu = video.list;
+      this.video_api_unuseble = video.unusableCount;
+      this.uploader_api_menu = uploader.list;
+      this.uploader_api_unuseble = uploader.unusableCount;
+    });
+  },
   methods: {
-    handleSelectApi(index,indexPath){
-      this.api_info.api_id = index,
-      // api赋值
-      // this.api_info.api_name = indexPath
-      console.log(index,indexPath)
+    recoverApi() {
+      getApiRecover(this.api_info.apiId, this.user_id).then(Response => {
+        this.$message({
+          message: "已解封",
+          type: "success"
+        });
+
+        this.changeType(-1);
+      });
     },
-    reportApi(){
-      this.$refs.report.dialogVisible = true
+    // 因为改变api的状态而进行状态改变
+    changeType(plus) {
+      if (plus > 0) {
+        this.api_info.apiUseable = 0;
+      } else {
+        this.api_info.apiUseable = 1;
+      }
+
+      if (this.api_info.apiSection == "uploader") {
+        this.uploader_api_unseble += plus;
+        console.log(this.uploader_api_unseble);
+      } else {
+        this.video_api_unuseble += plus;
+        console.log(this.uploader_api_unseble);
+      }
+    },
+    handleTest() {
+      var param_line = "";
+      var flag = 0;
+      if (this.params.length == 0) {
+        param_line = "";
+      } else {
+        this.params.forEach((element, index) => {
+          if (element.value == "") {
+            param_line = "";
+            flag = 1;
+          }
+          if (this.params.length - 1 == index) {
+            param_line += element.key + "=" + element.value;
+          } else {
+            param_line += element.key + "=" + element.value + "&";
+          }
+        });
+        if (flag != 0) {
+          this.$message({
+            message: "请填写完整信息",
+            type: "warning"
+          });
+        }
+      }
+      getApiTest(
+        this.api_info.apiId,
+        this.api_info.apiUrl,
+        param_line,
+        this.user_id
+      ).then(Response => {
+        this.result = Response.data.data;
+      });
+    },
+    handleSelectApi(index, indexPath) {
+      this.result = "{}";
+      if (indexPath[0] == "video") {
+        this.api_info = this.video_api_menu[+index];
+      } else {
+        this.api_info = this.uploader_api_menu[+index];
+      }
+      getApiParam(this.api_info.apiId).then(repsonse => {
+        var list = [];
+        var item = {};
+        repsonse.data.forEach(element => {
+          item.key = element.apiParam;
+          (item.value = ""),
+            (item.ori_value = ""),
+            (item.descript = element.paramAbstract);
+          item.edit = false;
+
+          list.push(item);
+          item = {};
+        });
+        this.params = list;
+      });
+    },
+    reportApi() {
+      this.$refs.report.dialogVisible = true;
     },
     cancelEdit(row) {
       row.value = row.ori_value;
       row.edit = false;
       this.$message({
-        message: "The title has been restored to the original value",
+        message: "已取消",
         type: "warning"
       });
     },
     confirmEdit(row) {
+      console.log(row);
       row.edit = false;
       row.ori_value = row.value;
       this.$message({
-        message: "The title has been edited",
+        message: "已修改",
         type: "success"
       });
     }
@@ -155,7 +255,6 @@ export default {
   .api-contain {
     padding: 16px;
     background: #ffffff;
-    height: 900px;
     .params-wrapper {
       .params-list {
         margin-top: 15px;
@@ -176,7 +275,8 @@ export default {
       text-align: right;
     }
     .result {
-        min-height: 100px;
+      height: 600px;
+      overflow-y: scroll;
       margin-top: 10px;
       border: 1px solid #e6e6e6;
       background: #fafafa;

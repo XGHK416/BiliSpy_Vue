@@ -46,10 +46,10 @@ export default {
   data() {
     return {
       init: {
-        language_url: `${this.baseUrl}/tinymce/langs/zh_CN.js`,
+        language_url: '/tinymce/zh_CN.js',
         language: "zh_CN",
-        skin_url: `${this.baseUrl}/tinymce/skins/ui/oxide`,
-        content_css: `${this.baseUrl}/tinymce/skins/content/default/content.css`,
+        skin_url: '/tinymce/skins/ui/oxide',
+        content_css: '/tinymce/skins/content/default/content.css',
         // skin_url: `${this.baseUrl}/tinymce/skins/ui/oxide-dark`, // 暗色系
         // content_css: `${this.baseUrl}/tinymce/skins/content/dark/content.css`, // 暗色系
         height: 300,
