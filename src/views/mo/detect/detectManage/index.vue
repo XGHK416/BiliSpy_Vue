@@ -2,47 +2,41 @@
   <div class="manage-wrapper">
     <div class="manage-option-wrapper">
       <div class="search-wrapper">
-        <el-form :inline="true" :model="search_form" class="demo-form-inline">
+        <el-form :inline="true" class="demo-form-inline">
           <el-form-item>
-            <el-input v-model="search_form.search_input" placeholder="搜索侦测"></el-input>
+            <el-input v-model="search_input" placeholder="搜索侦测"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">查询</el-button>
+            <el-button type="primary" @click="handleSearch">查询</el-button>
           </el-form-item>
         </el-form>
       </div>
       <div class="scanning-wrapper">
-        <el-button type="primary">扫描无用账号</el-button>
+        <el-button type="primary" @click="handleScan">扫描无用账号</el-button>
       </div>
     </div>
+    <!-- ///////////////////////////////////////// -->
     <div class="table-wrapper">
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column label="用户" width="150">
-          <template slot-scope="scope" style="position: relative;">
-            <div class="column-user">
-              <el-avatar shape="square" :size="50" :src="squareUrl"></el-avatar>
-              <div class="column-name">{{scope.row.uploader_name}}</div>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column header-align="center" prop="mid" align="center" label="mid"></el-table-column>
-        <el-table-column header-align="center" align="center" label="等级">
+      <el-table :data="tableData" style="width: 100%" stripe>
+        <el-table-column label="id" width="150" prop="user_id"></el-table-column>
+        <el-table-column label="昵称" prop="nick_name"></el-table-column>
+        <el-table-column label="等级" prop="level"></el-table-column>
+        <el-table-column label="粉丝" prop="following"></el-table-column>
+        <el-table-column label="视频数目" prop="video_count"></el-table-column>
+        <el-table-column label="创建日期" prop="create_time"></el-table-column>
+        <el-table-column label="侦测次数" prop="count"></el-table-column>
+        <el-table-column label="侦测次数" prop="count">
           <template slot-scope="scope">
-            <el-tag type="success">{{scope.row.level}}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column header-align="center" prop="create_time" align="center" label="最后登录时间"></el-table-column>
-        <el-table-column header-align="center" prop="last_update" align="center" label="最后更新时间"></el-table-column>
-        <el-table-column header-align="center" align="center" label="label">
-          <template slot-scope="scope">
-            <el-button type="primary" @click="handleInfo(scope.row)">取消侦测</el-button>
+            <el-button type="warning" plain @click="handleDelete(scope.$index,scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="pagination">
         <el-pagination
           layout="prev, pager, next"
-          :total="50"
+          :total="100"
+          :page-size="page_size"
+          :current-page="current_page"
           @current-change="paginationChange"
           @prev-click="paginationChange"
           @next-click="paginationChange"
@@ -53,49 +47,63 @@
 </template>
 
 <script>
+import {
+  deleteDetectObject,
+  selectUploader,
+  scanUnusable
+} from "@/api/detect_manager";
 export default {
   data() {
     return {
-      search_form: {
-        search_input: ""
-      },
+      flag: 0,
+      user_id: this.$store.state.user.user_id,
+      current_page: 1,
+      page_size: 15,
+      search_input: "",
       squareUrl:
         "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
-      tableData: [
-        {
-          uploader_name: "sss",
-          mid: "mo1231",
-          level: "管理员",
-          create_time: "2020-1-23",
-          last_update:'123123'
-        },
-         {
-          uploader_name: "sss",
-          mid: "mo1231",
-          level: "管理员",
-          create_time: "2020-1-23",
-          last_update:'123123'
-        },
-         {
-          uploader_name: "sss",
-          mid: "mo1231",
-          level: "管理员",
-          create_time: "2020-1-23",
-          last_update:'123123'
-        },
-         {
-          uploader_name: "sss",
-          mid: "mo1231",
-          level: "管理员",
-          create_time: "2020-1-23",
-          last_update:'123123'
-        },
-      ]
+      tableData: []
     };
   },
   methods: {
+    handleScan() {
+      this.flag = 1;
+      scanUnusable(1, this.page_size).then(Response => {
+        this.tableData = Response.data;
+      });
+    },
+    handleDelete(index, row) {
+      deleteDetectObject(this.user_id, row.user_id).then(Response => {
+        this.$message({
+          message: "已删除",
+          type: "success"
+        });
+        this.tableData.splice(index, 1);
+      });
+    },
+    handleSearch() {
+      this.flag = 0;
+      selectUploader(this.search_input, this.current_page, this.page_size).then(
+        Response => {
+          this.tableData = Response.data;
+        }
+      );
+    },
     paginationChange(current_page) {
-      console.log(current_page);
+      this.current_page = current_page;
+      if (this.flag == 1) {
+        scanUnusable(this.current_page, this.page_size).then(Response => {
+          this.tableData = Response.data;
+        });
+      } else {
+        selectUploader(
+          this.search_input,
+          this.current_page,
+          this.page_size
+        ).then(Response => {
+          this.tableData = Response.data;
+        });
+      }
     },
     handleInfo(row) {
       (this.info = row), (this.$refs.info.dialogVisible = true);

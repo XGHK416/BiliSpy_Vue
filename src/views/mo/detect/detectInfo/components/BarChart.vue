@@ -54,7 +54,7 @@ export default {
     }
   },
   methods: {
-    setOptions({ title, xAxis, seriesData } = {}) {
+    setOptions({ title, x_axis, data } = {}) {
       this.chart.setOption({
         title: {
           text: title,
@@ -76,7 +76,7 @@ export default {
         xAxis: [
           {
             type: "category",
-            data: xAxis,
+            data: x_axis,
             axisTick: {
               alignWithLabel: true
             }
@@ -96,7 +96,7 @@ export default {
             type: "bar",
             stack: 'vistors',
             barWidth: "10%",
-            data: seriesData,
+            data: data,
             animationDuration
           }
         ]

@@ -3,16 +3,16 @@
     <div class="detect-info-cards">
       <el-row :gutter="40">
         <el-col :span="6">
-          <count-card :title="'当前侦测用户数量'" :num="9888"></count-card>
+          <count-card :title="'当前侦测用户数量'" :num="uploader_count.all"></count-card>
         </el-col>
         <el-col :span="6">
-          <count-card :title="'今日侦测数量'" :num="9888"></count-card>
+          <count-card :title="'今日侦测数量'" :num="uploader_count.daily"></count-card>
         </el-col>
         <el-col :span="6">
-          <count-card :title="'当前视频侦测数量'" :num="9888"></count-card>
+          <count-card :title="'当前视频侦测数量'" :num="video_count.all"></count-card>
         </el-col>
         <el-col :span="6">
-          <count-card :title="'今日视频侦测数量'" :num="9888"></count-card>
+          <count-card :title="'今日视频侦测数量'" :num="video_count.daily"></count-card>
         </el-col>
       </el-row>
     </div>
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import {getDetectInfo} from '@/api/detect_manager'
 import CountCard from "./components/CountCard";
 import BarChart from "./components/BarChart";
 export default {
@@ -38,17 +39,32 @@ export default {
   },
   data() {
     return {
+      uploader_count:{},
+      video_count:{},
       daily_uploader_data: {
         title: "每日UP主侦测数量",
-        xAxis: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        seriesData: [120, 200, 150, 80, 70, 110, 130]
+        x_axis: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        data: [120, 200, 150, 80, 70, 110, 130]
       },
       daily_video_data: {
         title: "每日视频侦测数量",
-        xAxis: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        seriesData: [120, 200, 150, 80, 70, 110, 130]
+        x_axis: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        data: [120, 200, 150, 80, 70, 110, 130]
       }
     };
+  },
+  created() {
+    getDetectInfo("video").then(Response=>{
+      var {num,bar} = Response.data 
+      this.daily_video_data = bar
+      this.video_count = num
+      
+    }),
+    getDetectInfo("uploader").then(Response=>{
+      var {num,bar} = Response.data 
+      this.daily_uploader_data = bar
+      this.uploader_count = num
+    })
   },
   methods: {}
 };
