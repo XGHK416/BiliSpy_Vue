@@ -52,7 +52,8 @@
                 v-permission="['manager']"
                 v-if="scope.row.usable!='1'"
               >恢复</el-button>
-              <el-button type="info" @click="handleCold(scope.row)">冻结</el-button>
+              <el-button type="info" v-if="scope.row.isCold==0" @click="handleCold(scope.row,scope.$index)">冻结</el-button>
+              <el-button type="info" v-else plain @click="handleDisCold(scope.row,scope.$index)">解冻</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -74,7 +75,7 @@
       @changeType="changeType"
       ref="written_off"
     ></written-off>
-    <info :info="info" :current-id="current_id" ref="info"></info>
+    <viewer-info :info="info" :current-id="current_id" ref="info"></viewer-info>
   </div>
 </template>
 
@@ -89,12 +90,13 @@ import {
 } from "@/api/mo_manager";
 import permission from "@/directive/permission/index.js";
 import WrittenOff from "../components/WrittenOff";
-import Info from "../components/Info";
+import ViewerInfo from "./components/ViewerInfo";
+import { parseTime } from "@/utils/index";
 export default {
   name: "Manage",
   components: {
     WrittenOff,
-    Info
+    ViewerInfo
   },
   directives: { permission },
   data() {
@@ -105,7 +107,10 @@ export default {
       // 用户id
       user_id: this.$store.state.user.user_id,
       // 查看用户信息
-      info: {},
+      info: {
+        base_info: {},
+        auths: {}
+      },
       current_id: "",
       current_index: 0,
       // 搜索表单
@@ -129,14 +134,32 @@ export default {
         });
       }
     },
-    //改变封禁状态
-    changeType(index) {
-      if (this.tableData[index].usable == "1") {
-        this.tableData[index].usable = "0";
-      } else {
-        this.tableData[index].usable = "1";
-      }
+  
+    // 冻结
+    handleCold(row,index){
+      var data = {}
+      data.cold_user_id = row.userId
+      data.create_mo_id = this.user_id,
+      data.cold_reason = '测试中'
+      coldUser(data).then(Response=>{
+        this.$message({
+          message: '已冻结该用户',
+          type: 'success'
+        })
+        row.isCold=1
+      })
     },
+    //解冻
+    handleDisCold(row,index){
+      decoldUser(row.userId,this.user_id).then(Response=>{
+        this.$message({
+          message: '以解冻该用户',
+          type: 'success'
+        })
+        row.isCold=0
+      })
+    },
+    
     // 封禁后改变状态
     changeType(index) {
       if (this.tableData[index].usable == "1") {

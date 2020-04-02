@@ -9,12 +9,12 @@
           <el-button type="primary" @click="handleAddMo" style="margin-left:10px">添加后台人员</el-button>
         </div>
         <div class="manager-search-wrapper">
-          <el-form :inline="true" :model="search_form" class="demo-form-inline">
+          <el-form :inline="true" class="demo-form-inline">
             <el-form-item>
-              <el-input v-model="search_form.search_input" placeholder="昵称/moid"></el-input>
+              <el-input v-model="search_input" placeholder="昵称/moid"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary">查询</el-button>
+              <el-button type="primary" @click="handleSearch">查询</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -56,14 +56,14 @@
                 type="warning"
                 @click="handleWrittenOff(scope.row,scope.$index)"
                 v-permission="['manager']"
-                v-if="mo_type!='manager'&&scope.row.usable!='0'"
+                v-if="mo_type!='manager'&&scope.row.usable!='0'&&scope.row.role!='manager'"
               >注销</el-button>
               <el-button
                 type="success"
                 plain
                 @click="handleDisWrittenOff(scope.row,scope.$index)"
                 v-permission="['manager']"
-                v-if="mo_type!='manager'&&scope.row.usable!='1'"
+                v-if="mo_type!='manager'&&scope.row.usable!='1'&&scope.row.role!='manager'"
               >恢复</el-button>
             </template>
           </el-table-column>
@@ -81,7 +81,7 @@
       </div>
     </div>
     <written-off :info="info" :current-id="current_id" :current-index="current_index" @changeType="changeType" ref="written_off" ></written-off>
-    <info :info="info" :current-id="current_id" ref="info"></info>
+    <mo-info :info="info" :current-id="current_id" ref="info"></mo-info>
     <add-mo ref="addMo"></add-mo>
   </div>
 </template>
@@ -93,17 +93,18 @@ import {
   getUserInfo,
   writtenOffUser,
   decoldUser,
-  getCount
+  getCount,
+  searchUser
 } from "@/api/mo_manager";
 import permission from "@/directive/permission/index.js";
 import WrittenOff from "../components/WrittenOff";
-import Info from "../components/Info";
-import AddMo from "../components/AddMo"
+import MoInfo from "./components/MoInfo";
+import AddMo from "./components/AddMo"
 export default {
   name: "Manage",
   components: {
     WrittenOff,
-    Info,
+    MoInfo,
     AddMo
   },
   directives: { permission },
@@ -118,13 +119,16 @@ export default {
 
       user_id: this.$store.state.user.user_id,
       // 查看用户信息
-      info: {},
+      info: {
+        base_info:{
+          
+        },
+        auths:{}
+      },
       current_id:'',
       current_index:0,
       // 搜索表单
-      search_form: {
-        search_input: ""
-      },
+      search_input: "",
       // 用户列
       tableData: []
     };
@@ -142,6 +146,16 @@ export default {
     }
   },
   methods: {
+    // 搜索
+    handleSearch(){
+      this.tableData = [],
+      searchUser(this.search_input,'manager').then(Response=>{
+        this.tableData.push(...Response.data)
+      })
+      searchUser(this.search_input,'admin').then(Response=>{
+        this.tableData.push(...Response.data)
+      })
+    },
     // 封禁后改变状态
     changeType(index){
       if(this.tableData[index].usable == '1'){

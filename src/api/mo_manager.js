@@ -71,23 +71,20 @@ export function writtenOffUser(createId, writtenOffId, isWrittenOf) {
   })
 }
 export function coldUser(data) {
+  let param = new URLSearchParams()
+  param.append('coldUserId', data.cold_user_id)
+  param.append('createMoId', data.create_mo_id)
+  param.append('coldReason', data.cold_reason)
   return request({
     url: '/bili-api/userManage/coldUser',
     method: 'post',
-    data: {
-      'coldUserId': data.cold_user_id,
-      'createTime': data.create_time,
-      'createMoId': data.create_mo_id,
-      'startTime':null,
-      'endTime':null,
-      'coldReason':data.cold_reason
-    }
+    data:param
   })
 }
 export function decoldUser(cold_id, mo_id) {
     return request({
       url: '/bili-api/userManage/decoldUser',
-      method: 'get',
+      method: 'delete',
       params: {
         'coldId': cold_id,
         'moId': mo_id,
