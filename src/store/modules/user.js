@@ -34,8 +34,6 @@ const mutations = {
   },
   SET_ONES_BASE_INFO: (state, newInfo) => {
     const {base_info_item_type, base_info_item_value} = newInfo
-    // console.log(base_info_item_type, base_info_item_value)
-    // console.log(state.base_info)
     state.base_info[base_info_item_type] = base_info_item_value
   },
   SET_ONES_AUTHS: (state, newAuths) => {
@@ -146,7 +144,6 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
         commit('SET_ROLES',base_info.role)
-        console.log(base_info.role)
         commit('SET_BASE_INFO', base_info)
         commit('SET_AUTHS', auths)
         commit('SET_USER_ID', user_id)

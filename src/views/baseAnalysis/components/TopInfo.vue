@@ -6,10 +6,13 @@
           <svg-icon icon-class="uploader" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            检测up主
-          </div>
-          <count-to :start-val="0" :end-val="topInfo.total_uploader" :duration="2600" class="card-panel-num" /> 名
+          <div class="card-panel-text">检测up主</div>
+          <count-to
+            :start-val="0"
+            :end-val="topInfo.total_uploader"
+            :duration="2600"
+            class="card-panel-num"
+          />名
         </div>
       </div>
     </el-col>
@@ -19,10 +22,13 @@
           <svg-icon icon-class="total-video" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            总视频数
-          </div>
-          <count-to :start-val="0" :end-val="topInfo.total_video" :duration="3000" class="card-panel-num" /> 个
+          <div class="card-panel-text">总视频数</div>
+          <count-to
+            :start-val="0"
+            :end-val="topInfo.total_video"
+            :duration="3000"
+            class="card-panel-num"
+          />个
         </div>
       </div>
     </el-col>
@@ -32,10 +38,13 @@
           <svg-icon icon-class="today-video" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            今日爬取视频
-          </div>
-          <count-to :start-val="0" :end-val="topInfo.today_video" :duration="3200" class="card-panel-num" /> 个
+          <div class="card-panel-text">今日爬取视频</div>
+          <count-to
+            :start-val="0"
+            :end-val="topInfo.today_video"
+            :duration="3200"
+            class="card-panel-num"
+          />个
         </div>
       </div>
     </el-col>
@@ -45,12 +54,8 @@
           <svg-icon icon-class="runtime" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            爬虫运行时间
-          </div>
-          <span class="card-panel-num" > 
-            {{returnRuntime()}}
-          </span>
+          <div class="card-panel-text">爬虫运行时间</div>
+          <span class="card-panel-num">{{returnRuntime()}}</span>
         </div>
       </div>
     </el-col>
@@ -58,7 +63,7 @@
 </template>
 
 <script>
-import CountTo from 'vue-count-to'
+import CountTo from "vue-count-to";
 export default {
   components: {
     CountTo
@@ -66,27 +71,27 @@ export default {
   props: {
     topInfo: {
       type: Object,
-      required: true,
+      required: true
     }
   },
   methods: {
-    returnRuntime(){
-      var time_list = this.topInfo.run_time_second
-      var hour = time_list[0]
-      var minte = time_list[1]
-      if(hour.indexOf("days,")!=-1){
-        var list= hour.split(' days, ')
-        return list[0]+'天'+list[1]+'小时'
+    returnRuntime() {
+      var time_list =  this.topInfo.run_time_second;
+      var hour = time_list[0];
+      var minte = time_list[1];
+      if (hour.indexOf("days,") != -1) {
+        var list = hour.split(" days, ");
+        return list[0] + "天" + list[1] + "小时";
       }
     },
     handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
+      this.$emit("handleSetLineChartData", type);
     },
-    getTopInfo(topInfo){
-      this.topInfo = topInfo
-    },
+    getTopInfo(topInfo) {
+      this.topInfo = topInfo;
+    }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -103,8 +108,8 @@ export default {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
-    border-color: rgba(0, 0, 0, .05);
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.05);
     &:hover {
       .card-panel-icon-wrapper {
         color: #fff;
@@ -119,7 +124,7 @@ export default {
         background: #f4516c;
       }
       .icon-shopping {
-        background: #34bfa3
+        background: #34bfa3;
       }
     }
     .icon-people {
@@ -132,7 +137,7 @@ export default {
       color: #f4516c;
     }
     .icon-shopping {
-      color: #34bfa3
+      color: #34bfa3;
     }
     .card-panel-icon-wrapper {
       float: left;
@@ -151,7 +156,6 @@ export default {
       margin: 26px;
       margin-left: 0px;
       .card-panel-text {
-        
         line-height: 18px;
         color: rgba(0, 0, 0, 0.45);
         font-size: 20px;
@@ -163,7 +167,7 @@ export default {
     }
   }
 }
-@media (max-width:550px) {
+@media (max-width: 550px) {
   .card-panel-description {
     display: none;
   }

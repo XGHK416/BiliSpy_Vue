@@ -129,7 +129,6 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           var identityId = this.loginForm.identityId+''
-          console.log(identityId)
           if(identityId.indexOf('@')!=-1){
             this.loginForm.identityType = 'EMAIL'
           }else{
@@ -139,18 +138,15 @@ export default {
               this.loginForm.identityType = 'PHONE'
             }
           }
-          console.log(this.loginForm)
           // do something
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            console.log('get it!!')
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
           return false
         }
       })

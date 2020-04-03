@@ -33,7 +33,7 @@ export default {
       default: ""
     },
     wcData: {
-      type: Object,
+      type: Array,
       required: true
     }
   },
@@ -58,7 +58,8 @@ export default {
     }
   },
   methods: {
-    setOptions({ cloud_data } = {}) {
+    setOptions(data) {
+      console.log(data)
       this.chart.setOption({
         title: {
           text: "视频标签词云",
@@ -109,7 +110,7 @@ export default {
             width: "200%",
             height: "200%",
             //数据
-            data: cloud_data
+            data: data
           }
         ]
       });

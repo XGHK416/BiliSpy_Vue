@@ -13,12 +13,13 @@
 </template>
 
 <script>
+import {parseTime} from "@/utils/index"
 export default {
   name: "FilterDate",
   props: {
       defaultDate:{
           type:Date,
-          default:Date()
+          default:parseTime(Date.now(),"{y}-{m}-{d}")
       }
   },
   data() {

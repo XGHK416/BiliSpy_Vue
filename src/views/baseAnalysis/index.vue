@@ -65,8 +65,10 @@ export default {
   },
   data() {
     return {
-      TopInfo:{},
-      WorldCloudData: {},
+      TopInfo:{
+        run_time_second:['','']
+      },
+      WorldCloudData: [],
       UploaderFansBarData: {},
       VideoSpiderBarData:{},
       SectionPieData: {},
@@ -99,7 +101,7 @@ export default {
         this.SectionPieData = response['data']
       })
       getWorldCloud().then(response => {
-        this.WorldCloudData = response['data']
+        this.WorldCloudData = response.data.cloud_data
       })
     }
   },
