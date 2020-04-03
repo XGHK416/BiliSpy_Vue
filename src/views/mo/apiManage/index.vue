@@ -163,10 +163,10 @@ export default {
 
       if (this.api_info.apiSection == "uploader") {
         this.uploader_api_unseble += plus;
-        console.log(this.uploader_api_unseble);
+        // console.log(this.uploader_api_unseble);
       } else {
         this.video_api_unuseble += plus;
-        console.log(this.uploader_api_unseble);
+        // console.log(this.uploader_api_unseble);
       }
     },
     handleTest() {
