@@ -29,8 +29,9 @@
           </el-table-column>
           <el-table-column header-align="center" align="center" label="状态">
             <template slot-scope="scope">
-              <el-tag type="success" v-if="scope.row.usable=='1'">正常</el-tag>
-              <el-tag type="warning" v-else>注销</el-tag>
+              <el-tag type="success" v-if="scope.row.usable=='1'&&scope.row.isCold==0">正常</el-tag>
+              <el-tag type="warning" v-else-if="scope.row.usable=='0'">注销</el-tag>
+              <el-tag type="info" v-if="scope.row.isCold==1">冻结</el-tag>
             </template>
           </el-table-column>
           <el-table-column header-align="center" prop="latest_login" align="center" label="最后登录时间">
@@ -76,6 +77,7 @@
       ref="written_off"
     ></written-off>
     <viewer-info :info="info" :current-id="current_id" ref="info"></viewer-info>
+    <cold-viewer :info="info" :current-id="current_id" :current-index="current_index" ref="cold" @changeColdType="changeColdType"></cold-viewer>
   </div>
 </template>
 
@@ -89,6 +91,7 @@ import {
   decoldUser
 } from "@/api/mo_manager";
 import permission from "@/directive/permission/index.js";
+import ColdViewer from './components/ColdViewer';
 import WrittenOff from "../components/WrittenOff";
 import ViewerInfo from "./components/ViewerInfo";
 import { parseTime } from "@/utils/index";
@@ -96,7 +99,8 @@ export default {
   name: "Manage",
   components: {
     WrittenOff,
-    ViewerInfo
+    ViewerInfo,
+    ColdViewer
   },
   directives: { permission },
   data() {
@@ -137,17 +141,12 @@ export default {
   
     // 冻结
     handleCold(row,index){
-      var data = {}
-      data.cold_user_id = row.userId
-      data.create_mo_id = this.user_id,
-      data.cold_reason = '测试中'
-      coldUser(data).then(Response=>{
-        this.$message({
-          message: '已冻结该用户',
-          type: 'success'
-        })
-        row.isCold=1
-      })
+      getUserInfo(row.userId).then(response => {
+        this.info = response.data;
+        this.current_id = row.userId;
+        this.current_index = index;
+      });
+      this.$refs.cold.dialogVisible=true
     },
     //解冻
     handleDisCold(row,index){
@@ -158,6 +157,13 @@ export default {
         })
         row.isCold=0
       })
+    },
+    changeColdType(index){
+       if (this.tableData[index].isCold == 1) {
+        this.tableData[index].isCold = 0;
+      } else {
+        this.tableData[index].isCold = 1;
+      }
     },
     
     // 封禁后改变状态

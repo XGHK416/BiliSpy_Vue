@@ -17,12 +17,6 @@
                 placeholder="封禁理由"
               ></el-input>
             </el-form-item>
-            <el-input
-              style="margin-top:10px"
-              v-model="written_off_form.current_password"
-              type="password"
-              placeholder="确认密码"
-            ></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -59,7 +53,6 @@ export default {
       dialogVisible: false,
       written_off_form: {
         reason: "",
-        current_password: ""
       }
     };
   },
