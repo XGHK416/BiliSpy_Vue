@@ -78,6 +78,7 @@
     ></written-off>
     <viewer-info :info="info" :current-id="current_id" ref="info"></viewer-info>
     <cold-viewer :info="info" :current-id="current_id" :current-index="current_index" ref="cold" @changeColdType="changeColdType"></cold-viewer>
+    
   </div>
 </template>
 
@@ -90,6 +91,8 @@ import {
   coldUser,
   decoldUser
 } from "@/api/mo_manager";
+
+
 import permission from "@/directive/permission/index.js";
 import ColdViewer from './components/ColdViewer';
 import WrittenOff from "../components/WrittenOff";
@@ -100,7 +103,7 @@ export default {
   components: {
     WrittenOff,
     ViewerInfo,
-    ColdViewer
+    ColdViewer,
   },
   directives: { permission },
   data() {
@@ -125,6 +128,7 @@ export default {
     };
   },
   methods: {
+
     // 点击查询
     handleSearch() {
       if (this.search_form.search_input != "") {

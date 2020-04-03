@@ -22,29 +22,34 @@
       </div>
       <div slot="footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="comfirmWrittenOff">确 定</el-button>
+        <el-button type="primary" @click="checkPassword">确 定</el-button>
       </div>
+      <password-test ref="test_passwrod" @confirmSuccess="comfirmWrittenOff"></password-test>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import {writtenOffUser} from '@/api/mo_manager'
-import { MessageBox } from 'element-ui';
+import PasswordTest from "@/views/mo/components/PasswordTest";
+import { writtenOffUser } from "@/api/mo_manager";
+import { MessageBox } from "element-ui";
 export default {
   name: "WrittenOff",
+  components: {
+    PasswordTest
+  },
   props: {
     info: {
       type: Object,
-      required:true,
+      required: true
     },
-    currentId:{
-      type:String,
-      required:true
+    currentId: {
+      type: String,
+      required: true
     },
-    currentIndex:{
-      type:Number,
-      required:true
+    currentIndex: {
+      type: Number,
+      required: true
     }
   },
   data() {
@@ -52,11 +57,17 @@ export default {
       user_id: this.$store.state.user.user_id,
       dialogVisible: false,
       written_off_form: {
-        reason: "",
+        reason: ""
       }
     };
   },
   methods: {
+    // 密码验证
+    checkPassword() {
+      this.$refs.test_passwrod.passwordDialog = true;
+    },
+
+    /////////////////
     resetForm() {
       (this.written_off_form.reason = ""),
         (this.written_off_form.current_password = "");
@@ -64,13 +75,13 @@ export default {
     comfirmWrittenOff() {
       this.dialogVisible = false;
       ///////////////////////
-      writtenOffUser(this.user_id,this.currentId,true).then(response=>{
-        this.$emit("changeType",this.currentIndex)
+      writtenOffUser(this.user_id, this.currentId, true).then(response => {
+        this.$emit("changeType", this.currentIndex);
         this.$message({
-          message: '用户已封禁',
-          type: 'warning'
-        })
-      })
+          message: "用户已封禁",
+          type: "warning"
+        });
+      });
       ///////////////////////
       this.resetForm();
     }

@@ -14,7 +14,6 @@
           type="date"
           placeholder="选择日期"
           value-format="yyyy-MM-dd"
-          @change="coldDateSelect"
         ></el-date-picker>
       </div>
       <el-divider></el-divider>
@@ -24,19 +23,22 @@
     </div>
     <div slot="footer">
       <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="coldDateSelect">确 定</el-button>
+      <el-button type="primary" @click="checkPassword">确 定</el-button>
     </div>
+    <password-test ref="test_passwrod" @confirmSuccess="coldDateSelect"></password-test>
   </el-dialog>
 </template>
 
 <script>
+import PasswordTest from '@/views/mo/components/PasswordTest'
 import FilterDate from "@/components/FilterDate/index";
 import { coldUser, decoldUser } from "@/api/mo_manager";
 import { parseTime } from "@/utils/index";
 export default {
   name: "ColdViewer",
   components: {
-    FilterDate
+    FilterDate,
+    PasswordTest 
   },
   props: {
     info: {
@@ -61,6 +63,9 @@ export default {
     };
   },
   methods: {
+    checkPassword(){
+      this.$refs.test_passwrod.passwordDialog = true
+    },
     coldDateSelect() {
       if (this.reason != "") {
         var data = {
