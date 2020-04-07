@@ -172,6 +172,46 @@ export const asyncRoutes = [
       },
     ]
   },
+  {
+    path: '/detectModel',
+    component: Layout,
+    redirect: '/detectModel/detectInfo',
+    name: 'DetectModel',
+    meta: {
+      title: '监控模块',
+      icon: 'detect-model',
+      roles: ['viewer']
+    },
+    children: [{
+        path: 'detectInfo',
+        name: 'DetectInfo',
+        component: () => import('@/views/detect/detectInfo/index'),
+        meta: {
+          title: '监控列表',
+          icon: 'detect-model-info'
+        },
+      },
+      {
+        path: 'detectAdd/:type?/:id?',
+        name: 'DetectAdd',
+        component: () => import('@/views/detect/detectAdd/index'),
+        meta: {
+          title: '添加监控',
+          icon: 'detect-model-add'
+        },
+      },
+      {
+        hidden: true,
+        path: 'detectDetails/:id(\\d+)',
+        name: 'DetectDetails',
+        component: () => import('@/views/detect/detectResult/index'),
+        meta: {
+          title: '侦测详情',
+          noCache: true
+        },
+      },
+    ]
+  },
   ///////////////////////////Mo//////////////////
   {
     path: '/moRoles',
