@@ -202,7 +202,7 @@ export const asyncRoutes = [
       },
       {
         hidden: true,
-        path: 'detectDetails/:id(\\d+)',
+        path: 'detectDetails/:id',
         name: 'DetectDetails',
         component: () => import('@/views/detect/detectResult/index'),
         meta: {

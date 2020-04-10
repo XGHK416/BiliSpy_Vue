@@ -6,17 +6,24 @@
     <div class="detect-add-wrapper">
       <div class="detect-add">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="up主侦测" name="uploader">
-          </el-tab-pane>
-          <el-tab-pane label="视频侦测" name="video">
-          </el-tab-pane>
+          <el-tab-pane label="up主侦测" name="uploader"></el-tab-pane>
+          <el-tab-pane label="视频侦测" name="video"></el-tab-pane>
         </el-tabs>
       </div>
       <!-- !!!!!!!!!!!!! -->
       <div class="object-add-wrapper">
         <div class="object-option-wrapper border">
           <span style="font-size:15px;color:#666">添加侦测对象</span>
-          <div class="add-option">
+          <div class="object-list" v-if="object_list.length!=0">
+            <el-tag
+              :key="tag.name"
+              v-for="tag in object_list"
+              closable
+              :disable-transitions="false"
+              @close="handleCancleObject(tag)"
+            >{{tag.name}}</el-tag>
+          </div>
+          <div class="add-option" @click="handleAdd" v-else>
             <svg-icon icon-class="add" class-name="add-icon"></svg-icon>
           </div>
         </div>
@@ -55,43 +62,202 @@
           <div class="rate-option">
             <el-radio-group v-model="rate">
               <el-radio :label="5">5分钟</el-radio>
-              <el-radio :label="2">10分钟</el-radio>
+              <el-radio :label="10">10分钟</el-radio>
             </el-radio-group>
           </div>
         </div>
         <!-- //////////////////////////////// -->
         <div class="submit">
-          <el-button type="primary">确定</el-button>
+          <el-button type="primary" @click="handleDetect">确定</el-button>
         </div>
       </div>
     </div>
+    <!-- 用户选单 -->
+    <uploader-menu
+      :max-select="1"
+      :have-search="true"
+      :data="menu_select_data"
+      :total-page="18"
+      :visiable="uploader_menu_visible"
+      @handleSelect="handleSelect"
+      @handlePageChange="handlePageChange"
+      @handleDiselect="handleDiselect"
+      @handleClose="handleClose"
+      @handleSearch="handleSearch"
+    ></uploader-menu>
+    <!-- 视频选单 -->
+    <el-dialog
+      title="视频选单"
+      :visible.sync="video_menu_visible"
+      width="25%"
+      center>
+      <div v-loading="video_loading">
+          <el-input v-model="video_key" style="width:75%;margin-right:10px" placeholder="请输入bvid号"></el-input>
+          <el-button type="primary" @click="selectVideo">查询</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {getVideoDetectInfo,addJob} from '@/api/detect_add'
+import {generateCron} from '@/utils/cron'
+import UploaderMenu from "@/components/UploaderMenu/index";
 export default {
   name: "DetectAdd",
   components: {
-    
+    UploaderMenu
   },
   data() {
     return {
       activeName: "uploader",
       // ///////////
-      date_select: "",
-      num: 0,
-      rate: 0,
+      object_list: [],
+      date_select: [],
+      num: 1,
+      rate: 5,
       //   日期禁用
       pickerOptions: {
         disabledDate(time) {
           // console.log(time.getTime()>this.limit_date.getTime())
           return time.getTime() < Date.now() - 24 * 60 * 60 * 1000;
         }
-      }
+      },
+      ////////////
+      // 查询选单
+      uploader_menu_visible: false,
+      video_menu_visible: false,
+      video_key:'',
+      video_loading:false,
+      // 查询的结果
+      menu_select_data: [
+        {
+          mid: 1,
+          profile:
+            "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+          name: "明日方舟",
+          abstract: "sdfa"
+        }
+      ]
     };
   },
   methods: {
-    handleClick() {}
+    // 提交申请
+    handleDetect(){
+      if(this.object_list.length==0||this.date_select.length==0){
+        this.$message({
+          message: '请完整填写信息',
+          type: 'warning'
+        })
+      }else{
+        var cron = generateCron(this.rate)
+        var jobInfo = {
+          userId:this.$store.state.user.user_id,
+          jobType:this.activeName+'Job',
+          cornExpression:cron,
+          detectObject:this.object_list[0].name,
+          detectObjectId:this.object_list[0].id,
+          detectObjectProfile:this.object_list[0].profile,
+          detectTime:this.num,
+          duringDate:this.date_select[0]+','+this.date_select[1]
+        }
+        addJob(jobInfo).then(Response=>{
+         
+        })
+
+        
+
+      }
+    },
+
+    // 选择切换
+    handleClick() {
+      this.object_list = [];
+    },
+    handleAdd() {
+      // 打开添加列表
+      if (this.activeName == "uploader") {
+        this.uploader_menu_visible = true;
+      } else {
+        this.video_menu_visible = true;
+      }
+      // this.object_list.push({
+      //   name: "明日方舟",
+      //   id: 123123
+      // });
+    },
+    handleCancleObject(tag) {
+      //取消选择
+      this.object_list.splice(this.object_list.indexOf(tag), 1);
+    },
+    // ---查询选单--用户
+    handlePageChange(input, page, page_size) {
+      // 跳页
+      console.log(input,page,page_size)
+    },
+    handleSelect(item, id_list, index) {
+      var item = {
+        name: "明日方舟",
+        id: 123123,
+        profile:'123123'
+      }
+      this.object_list.push(item);
+      // 选择
+    },
+    handleDiselect(item, id_list, index) {
+       var item_ = {
+        name: "明日方舟",
+        id: 123123,
+        profile:'123123'
+      }
+      this.object_list.splice(this.object_list.indexOf(item_), 1);
+      // 取消选择
+    },
+    handleClose() {
+      if (this.activeName == "uploader") {
+        this.uploader_menu_visible = false;
+      } else {
+        this.video_menu_visible = false;
+      }
+      // 关闭
+    },
+    handleSearch(input, page, page_size) {
+      console.log(input,page,page_size)
+    },
+    // ---查询选单--视频
+    selectVideo(){
+      if(this.video_key==''){
+        this.$message({
+          message: '请输入信息',
+          type: 'warning'
+        })
+      }
+      else if(this.object_list>0){
+        this.$message({
+          message: '目前仅支持一个哦',
+          type: 'warning'
+        })
+      }      
+      else{
+        var params = 'bvid='+this.video_key
+        this.video_loading = true
+        getVideoDetectInfo(params).then(Response=>{
+          var item = {
+            name:Response.data.title,
+            id:Response.data.bvid,
+            profile:Response.data.pic,
+            auths:Response.data.owner.name,
+            auths_id:Response.data.owner.mid,
+            auths_profile:Response.data.owner.face
+          }
+          this.object_list.push(item)
+          this.video_loading = false
+          this.video_menu_visible = false
+        })
+        
+        
+      }
+    }
   }
 };
 </script>
@@ -116,8 +282,8 @@ export default {
     background: #ffffff;
   }
   .object-add-wrapper {
-      padding: 16px;
-      background: #ffffff;
+    padding: 16px;
+    background: #ffffff;
     .border {
       border: 1px solid #e8e8e8;
     }
@@ -126,6 +292,13 @@ export default {
       height: 90px;
       line-height: 90px;
       position: relative;
+      .el-tag + .el-tag {
+        margin-left: 10px;
+      }
+      .object-list {
+        display: inline-block;
+        margin-left: 10px;
+      }
       .add-option {
         text-align: center;
         color: #999;
