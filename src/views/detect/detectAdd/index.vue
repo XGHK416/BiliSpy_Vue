@@ -77,7 +77,8 @@
       :max-select="1"
       :have-search="true"
       :data="menu_select_data"
-      :total-page="18"
+      :total-page="total_page"
+      :page-size="20"
       :visiable="uploader_menu_visible"
       @handleSelect="handleSelect"
       @handlePageChange="handlePageChange"
@@ -86,22 +87,18 @@
       @handleSearch="handleSearch"
     ></uploader-menu>
     <!-- 视频选单 -->
-    <el-dialog
-      title="视频选单"
-      :visible.sync="video_menu_visible"
-      width="25%"
-      center>
+    <el-dialog title="视频选单" :visible.sync="video_menu_visible" width="25%" center>
       <div v-loading="video_loading">
-          <el-input v-model="video_key" style="width:75%;margin-right:10px" placeholder="请输入bvid号"></el-input>
-          <el-button type="primary" @click="selectVideo">查询</el-button>
+        <el-input v-model="video_key" style="width:75%;margin-right:10px" placeholder="请输入bvid号"></el-input>
+        <el-button type="primary" @click="selectVideo">查询</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import {getVideoDetectInfo,addJob} from '@/api/detect_add'
-import {generateCron} from '@/utils/cron'
+import { getVideoDetectInfo, addJob, getUploaderList } from "@/api/detect_add";
+import { generateCron } from "@/utils/cron";
 import UploaderMenu from "@/components/UploaderMenu/index";
 export default {
   name: "DetectAdd",
@@ -125,48 +122,38 @@ export default {
       },
       ////////////
       // 查询选单
+      total_page: 0,
       uploader_menu_visible: false,
       video_menu_visible: false,
-      video_key:'',
-      video_loading:false,
+      video_key: "",
+      video_loading: false,
       // 查询的结果
       menu_select_data: [
-        {
-          mid: 1,
-          profile:
-            "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-          name: "明日方舟",
-          abstract: "sdfa"
-        }
+      
       ]
     };
   },
   methods: {
     // 提交申请
-    handleDetect(){
-      if(this.object_list.length==0||this.date_select.length==0){
+    handleDetect() {
+      if (this.object_list.length == 0 || this.date_select.length == 0) {
         this.$message({
-          message: '请完整填写信息',
-          type: 'warning'
-        })
-      }else{
-        var cron = generateCron(this.rate)
+          message: "请完整填写信息",
+          type: "warning"
+        });
+      } else {
+        var cron = generateCron(this.rate);
         var jobInfo = {
-          userId:this.$store.state.user.user_id,
-          jobType:this.activeName+'Job',
-          cornExpression:cron,
-          detectObject:this.object_list[0].name,
-          detectObjectId:this.object_list[0].id,
-          detectObjectProfile:this.object_list[0].profile,
-          detectTime:this.num,
-          duringDate:this.date_select[0]+','+this.date_select[1]
-        }
-        addJob(jobInfo).then(Response=>{
-         
-        })
-
-        
-
+          userId: this.$store.state.user.user_id,
+          jobType: this.activeName + "Job",
+          cornExpression: cron,
+          detectObject: this.object_list[0].name,
+          detectObjectId: this.object_list[0].id,
+          detectObjectProfile: this.object_list[0].profile,
+          detectTime: this.num,
+          duringDate: this.date_select[0] + "," + this.date_select[1]
+        };
+        addJob(jobInfo).then(Response => {});
       }
     },
 
@@ -174,6 +161,7 @@ export default {
     handleClick() {
       this.object_list = [];
     },
+
     handleAdd() {
       // 打开添加列表
       if (this.activeName == "uploader") {
@@ -181,81 +169,82 @@ export default {
       } else {
         this.video_menu_visible = true;
       }
-      // this.object_list.push({
-      //   name: "明日方舟",
-      //   id: 123123
-      // });
     },
     handleCancleObject(tag) {
       //取消选择
       this.object_list.splice(this.object_list.indexOf(tag), 1);
     },
+
     // ---查询选单--用户
     handlePageChange(input, page, page_size) {
-      // 跳页
-      console.log(input,page,page_size)
+      var params = "page=" + page + "&keyword=" + input;
+      this.getUploaderList_(params);
     },
+    // 选择
     handleSelect(item, id_list, index) {
-      var item = {
-        name: "明日方舟",
-        id: 123123,
-        profile:'123123'
-      }
       this.object_list.push(item);
-      // 选择
     },
+    // 取消选择
     handleDiselect(item, id_list, index) {
-       var item_ = {
-        name: "明日方舟",
-        id: 123123,
-        profile:'123123'
-      }
-      this.object_list.splice(this.object_list.indexOf(item_), 1);
-      // 取消选择
+      this.object_list.splice(this.object_list.indexOf(item), 1);
     },
+    // 关闭
     handleClose() {
       if (this.activeName == "uploader") {
         this.uploader_menu_visible = false;
       } else {
         this.video_menu_visible = false;
       }
-      // 关闭
     },
+    // 搜索
     handleSearch(input, page, page_size) {
-      console.log(input,page,page_size)
+      var params = "page=" + page + "&keyword=" + input;
+      this.getUploaderList_(params);
     },
+    getUploaderList_(params) {
+      getUploaderList(params).then(Response => {
+        this.menu_select_data = [];
+        var item = {};
+        this.total_page = Response.data.numResults;
+        Response.data.result.forEach(element => {
+          item.name = element.uname;
+          item.mid = element.mid;
+          item.profile = "https://images.weserv.nl/?url=https:" + element.upic;
+          item.abstract = element.usign;
+          this.menu_select_data.push(item);
+          item = {};
+        });
+      });
+    },
+
     // ---查询选单--视频
-    selectVideo(){
-      if(this.video_key==''){
+    selectVideo() {
+      if (this.video_key == "") {
         this.$message({
-          message: '请输入信息',
-          type: 'warning'
-        })
-      }
-      else if(this.object_list>0){
+          message: "请输入信息",
+          type: "warning"
+        });
+      } else if (this.object_list > 0) {
         this.$message({
-          message: '目前仅支持一个哦',
-          type: 'warning'
-        })
-      }      
-      else{
-        var params = 'bvid='+this.video_key
-        this.video_loading = true
-        getVideoDetectInfo(params).then(Response=>{
+          message: "目前仅支持一个哦",
+          type: "warning"
+        });
+      } else {
+        var params = "bvid=" + this.video_key;
+        this.video_loading = true;
+        getVideoDetectInfo(params).then(Response => {
           var item = {
-            name:Response.data.title,
-            id:Response.data.bvid,
-            profile:Response.data.pic,
-            auths:Response.data.owner.name,
-            auths_id:Response.data.owner.mid,
-            auths_profile:Response.data.owner.face
-          }
-          this.object_list.push(item)
-          this.video_loading = false
-          this.video_menu_visible = false
-        })
-        
-        
+            name: Response.data.title,
+            id: Response.data.bvid,
+            profile: Response.data.pic,
+            auths: Response.data.owner.name,
+            auths_id: Response.data.owner.mid,
+            auths_profile: Response.data.owner.face
+          };
+          this.object_list.push(item);
+          this.video_loading = false;
+          this.video_menu_visible = false;
+        });
       }
     }
   }

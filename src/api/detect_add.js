@@ -10,6 +10,16 @@ export function getVideoDetectInfo(bvid) {
   })
 }
 
+export function getUploaderList(bvid) {
+  let param = new URLSearchParams()
+  param.append('params', bvid)
+  return request({
+    url: '/bili-api/detectJob/getUploaderList',
+    method: 'post',
+    data:param
+  })
+}
+
 export function addJob(job) {
   let param = new URLSearchParams()
   param.append('userId', job.userId)

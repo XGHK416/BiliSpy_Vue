@@ -50,7 +50,7 @@
         layout="prev, pager, next"
         v-if="totalPage>0"
         :total="totalPage"
-        :page-size="6"
+        :page-size="pageSize"
         style="margin-top:30px"
         :current-page="current_page"
         @current-change="menuPageChange"
@@ -90,6 +90,10 @@ export default {
         totalPage:{
             type:Number,
             default:0
+        },
+        pageSize:{
+            type:Number,
+            default:6
         },
     },
     data() {
