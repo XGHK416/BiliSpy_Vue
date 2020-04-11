@@ -106,7 +106,7 @@
             <el-avatar
               shape="square"
               :size="170"
-              :src="'https://images.weserv.nl/?url='+base_info.profile"
+              :src="base_info.profile"
               referrerpolicy="no-referrer"
             ></el-avatar>
             <el-divider></el-divider>
@@ -236,7 +236,7 @@ export default {
       /////
       var owner = data.owner
       this.base_info.name = owner.name
-      this.base_info.profile = owner.face
+      this.base_info.profile = 'https://images.weserv.nl/?url='+owner.face
       /////
       var stat = data.stat
       this.base_info.view = stat.view
@@ -272,8 +272,6 @@ export default {
       }
     }),
     
-
-
     getVideoJogInfo(this.detect_id).then(Response=>{
       var data = Response.data
       this.base_info.start_detect_time = data.startTime 

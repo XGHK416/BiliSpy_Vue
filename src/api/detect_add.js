@@ -30,9 +30,13 @@ export function addJob(job) {
   param.append('detectObjectProfile',job.detectObjectProfile)
   param.append('detectTime', job.detectTime)
   param.append('duringDate', job.duringDate)
-  param.append('auths',job.auths)
-  param.append('authsId',job.auths_id)
-  param.append('authsProfile',job.auths_profile)
+  // 视频专属
+  if(job.jobType=='videoJob'){
+    param.append('auths',job.auths)
+    param.append('authsId',job.auths_id)
+    param.append('authsProfile',job.auths_profile)
+  }
+ 
   return request({
     url: '/bili-api/detectJob/addjob',
     method: 'post',

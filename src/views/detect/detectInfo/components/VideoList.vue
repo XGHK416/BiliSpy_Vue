@@ -68,7 +68,8 @@ export default {
       total: 0,
       page_size: 18,
       ///////////
-      list: []
+      list: [],
+      parent_id:null
     };
   },
   methods: {
@@ -103,8 +104,8 @@ export default {
       }
       return 
     },
-    getVideoDetectInfo_(page, page_size, user_id, type) {
-      getVideoDetectInfo(page, page_size, user_id, type).then(Response => {
+    getVideoDetectInfo_(page, page_size, user_id, type,parent_id) {
+      getVideoDetectInfo(page, page_size, user_id, type,parent_id).then(Response => {
         var { count, list } = Response.data;
         (this.total = count), (this.list = list);
       });
@@ -114,11 +115,12 @@ export default {
         page,
         this.page_size,
         this.user_id,
-        this.filter_option
+        this.filter_option,
+        this.parent_id
       );
     },
     optionChange(label) {
-      this.getVideoDetectInfo_(1, this.page_size, this.user_id, label);
+      this.getVideoDetectInfo_(1, this.page_size, this.user_id, label,this.parent_id);
     },
     ///
     handleInfo(id) {
@@ -132,7 +134,8 @@ export default {
       1,
       this.page_size,
       this.user_id,
-      this.filter_option
+      this.filter_option,
+      null
     );
   }
 };

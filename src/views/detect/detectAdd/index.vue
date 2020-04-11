@@ -128,9 +128,7 @@ export default {
       video_key: "",
       video_loading: false,
       // 查询的结果
-      menu_select_data: [
-      
-      ]
+      menu_select_data: []
     };
   },
   methods: {
@@ -182,7 +180,12 @@ export default {
     },
     // 选择
     handleSelect(item, id_list, index) {
-      this.object_list.push(item);
+      var item_ = {
+        name: item.name,
+        id: item.mid,
+        profile: item.profile
+      };
+      this.object_list.push(item_);
     },
     // 取消选择
     handleDiselect(item, id_list, index) {

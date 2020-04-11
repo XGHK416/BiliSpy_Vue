@@ -6,8 +6,8 @@
     <div class="info-contain-wrapper">
       <div class="info-contain">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="up主监控" name="uploader_list"><uploader-list></uploader-list></el-tab-pane>
-          <el-tab-pane label="视频监控" name="video_list"><video-list></video-list></el-tab-pane>
+          <el-tab-pane label="up主监控" name="uploader_list"><uploader-list @jumpToVideo="jumpToVideo"></uploader-list></el-tab-pane>
+          <el-tab-pane label="视频监控" name="video_list"><video-list ref="video"></video-list></el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -32,6 +32,12 @@ export default {
       
   },
   methods: {
+    jumpToVideo(parent_id){
+      console.log(parent_id)
+      this.activeName = 'video_list'
+      this.$refs.video.getVideoDetectInfo_(1,18,this.$store.state.user.user_id,0,parent_id)
+      this.$refs.video.parent_id=parent_id
+    },
 handleClick(){}
   }
 };
