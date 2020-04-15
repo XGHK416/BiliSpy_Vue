@@ -21,6 +21,8 @@ export function getUploaderList(bvid) {
 }
 
 export function addJob(job) {
+
+  console.log(job)
   let param = new URLSearchParams()
   param.append('userId', job.userId)
   param.append('jobType', job.jobType)

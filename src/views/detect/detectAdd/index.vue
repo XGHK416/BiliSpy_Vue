@@ -151,6 +151,11 @@ export default {
           detectTime: this.num,
           duringDate: this.date_select[0] + "," + this.date_select[1]
         };
+        if("videoJob"==jobInfo.jobType){
+          jobInfo.auths=this.object_list[0].auths,
+          jobInfo.auths_id=this.object_list[0].auths_id
+          jobInfo.auths_profile=this.object_list[0].auths_profile
+        }
         addJob(jobInfo).then(Response => {});
       }
     },
