@@ -26,10 +26,17 @@
               <img
                 v-if="type=='uploader'"
                 style="height:40px;min-width:40px"
-                :src="return_profile(row.avater)"
+                :src="row.avater"
+                referrerpolicy="no-referrer"
                 alt
               />
-              <img v-else style="height:40px;width:75px" :src="return_profile(row.avater)" alt />
+              <img
+                v-else
+                style="height:40px;width:75px"
+                :src="row.avater"
+                alt
+                referrerpolicy="no-referrer"
+              />
             </div>
           </template>
         </el-table-column>
@@ -55,11 +62,25 @@
     <el-dialog title="修改" :visible.sync="dialogFormVisible" width="25%">
       <el-form :model="favorite_form">
         <el-form-item label="选择加入分区">
-          <el-select v-model="favorite_form.group_id" placeholder="请选择收藏夹区域" v-if="type=='uploader'">
-            <el-option v-for="item in uploaderGroup" :key="item.id" :label="item.groupName" :value="item.groupId"></el-option>
+          <el-select
+            v-model="favorite_form.group_id"
+            placeholder="请选择收藏夹区域"
+            v-if="type=='uploader'"
+          >
+            <el-option
+              v-for="item in uploaderGroup"
+              :key="item.id"
+              :label="item.groupName"
+              :value="item.groupId"
+            ></el-option>
           </el-select>
           <el-select v-model="favorite_form.group_id" placeholder="请选择收藏夹区域" v-else>
-            <el-option v-for="item in videoGroup" :key="item.id" :label="item.groupName" :value="item.groupId"></el-option>
+            <el-option
+              v-for="item in videoGroup"
+              :key="item.id"
+              :label="item.groupName"
+              :value="item.groupId"
+            ></el-option>
           </el-select>
           <el-form-item label="备注">
             <el-input type="text" v-model="favorite_form.remark" autocomplete="off"></el-input>
@@ -76,7 +97,7 @@
 
 <script>
 import { parseTime } from "@/utils/index";
-import { unFavorite,updateFavorite } from "@/api/favorite";
+import { unFavorite, updateFavorite } from "@/api/favorite";
 export default {
   name: "FavoriteContent",
   components: {},
@@ -89,21 +110,19 @@ export default {
       type: String,
       default: "uploader"
     },
-    uploaderGroup:{
-      type:Array,
-      default:[]
+    uploaderGroup: {
+      type: Array,
+      default: []
     },
-    videoGroup:{
-      type:Array,
-      default:[]
+    videoGroup: {
+      type: Array,
+      default: []
     }
-    
   },
   data() {
     return {
-
       favorite_form: {
-        id:'',
+        id: "",
         group_id: "",
         remark: ""
       },
@@ -137,9 +156,6 @@ export default {
     return_href(uid) {
       return "https://space.bilibili.com/" + uid;
     },
-    return_profile(url) {
-      return "https://images.weserv.nl/?url=" + url;
-    },
     cancle(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -163,16 +179,16 @@ export default {
         });
     },
     submitForm() {
-      var { id,group_id, remark } = this.favorite_form;
+      var { id, group_id, remark } = this.favorite_form;
       if (group_id != "") {
-        updateFavorite(id,group_id,remark).then(response=>{
+        updateFavorite(id, group_id, remark).then(response => {
           this.$message({
-            message: '修改成功',
-            type: 'success'
+            message: "修改成功",
+            type: "success"
           });
-          this.dialogFormVisible = false
-          this.$emit('reflashDate')
-        })
+          this.dialogFormVisible = false;
+          this.$emit("reflashDate");
+        });
       } else {
         this.$message({
           message: "请填写完整",
@@ -181,8 +197,8 @@ export default {
       }
     },
     info(row) {
-      this.favorite_form.id = row.favorite_id
-      this.dialogFormVisible = true
+      this.favorite_form.id = row.favorite_id;
+      this.dialogFormVisible = true;
     }
   },
   created() {

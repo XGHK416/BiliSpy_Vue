@@ -59,7 +59,6 @@ export default {
   },
   methods: {
     setOptions(data) {
-      console.log(data)
       this.chart.setOption({
         title: {
           text: "视频标签词云",

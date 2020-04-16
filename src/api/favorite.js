@@ -81,6 +81,30 @@ export function updateFavorite(id, groupId,remark) {
   })
 }
 
+export function updateGroup(groupId, newName) {
+  return request({
+    url: '/bili-api/favorite/updateGroup',
+    method: 'put',
+    data: {
+      'groupId': groupId,
+      'groupName': newName,
+    }
+  })
+}
+
+export function cancelGroup(groupId) {
+  return request({
+    url: '/bili-api/favorite/cancelGroup',
+    method: 'delete',
+    params: {
+      'groupId':groupId,
+    }
+  })
+}
+
+
+
+
 
 
 
