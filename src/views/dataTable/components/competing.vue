@@ -85,7 +85,6 @@ import UploaderMenu from "@/components/UploaderMenu/index";
 import qs from "qs";
 import {
   getRecommendUploader,
-  getUploader,
   getCompetingData,
   getCompetingUploader,
   getCompetingOnesData

@@ -1,20 +1,17 @@
 import request from '@/utils/request'
 import qs from 'qs'
 
-export function getRecommendUploader(mid,page,pageSize) {
+// 获取分区
+export function getMainSection() {
   return request({
-    url: '/bili-api/uploader/competing/getRecommendUploader',
+    url: '/bili-api/list/section',
     method: 'get',
-    params: {
-        'page': page,
-        'pageSize': pageSize,
-        'mid':mid,
-    }
   })
 }
+// 获取up主列表
 export function getUploaderList(page,pageSize,selectId,date) {
   return request({
-    url: '/bili-api/uploader/getList',
+    url: '/bili-api/list/uploader',
     method: 'get',
     params: {
         'page': page,
@@ -24,9 +21,10 @@ export function getUploaderList(page,pageSize,selectId,date) {
     }
   })
 }
+// 获取video列表
 export function getVideoList(page,pageSize,selectId,date) {
   return request({
-    url: '/bili-api/video/getList',
+    url: '/bili-api/list/video',
     method: 'get',
     params: {
         'page': page,
@@ -37,9 +35,10 @@ export function getVideoList(page,pageSize,selectId,date) {
   })
 }
 
+// up主基本信息
 export function getBasicInfo(mid) {
   return request({
-    url: '/bili-api/uploader/content/getBasicInfo',
+    url: '/bili-api/info/uploader/base',
     method: 'get',
     params: {
         'mid': mid,
@@ -49,17 +48,17 @@ export function getBasicInfo(mid) {
 // up主视频分析
 export function getVideoAna(mid) {
   return request({
-    url: '/bili-api/uploader/content/getVideoAna',
+    url: '/bili-api/info/uploader/workInfo',
     method: 'get',
     params: {
         'mid': mid,
     }
   })
 }
-
+// 粉丝变化情况
 export function fansChange(mid,limit) {
   return request({
-    url: '/bili-api/uploader/content/fansChange',
+    url: '/bili-api/info/uploader/fans',
     method: 'get',
     params: {
         'mid': mid,
@@ -68,9 +67,10 @@ export function fansChange(mid,limit) {
   })
 }
 
+// 最近视频发布
 export function getRecentVideo(mid,page,pageSize) {
   return request({
-    url: '/bili-api/uploader/content/getRecentVideo',
+    url: '/bili-api/info/uploader/recentWork',
     method: 'get',
     params: {
         'mid': mid,
@@ -79,30 +79,31 @@ export function getRecentVideo(mid,page,pageSize) {
     }
   })
 }
-// type 是否主体
-export function getUploader(mid,limit,type) {
+// 推荐竞品列表
+export function getRecommendUploader(mid,page,pageSize) {
   return request({
-    url: '/bili-api/uploader/competing/getUploader',
+    url: '/bili-ap/info/uploader/recommendCompeteList',
     method: 'get',
     params: {
-        'mid': mid,
-        'limit':limit,
-        'type': type
+        'page': page,
+        'pageSize': pageSize,
+        'mid':mid,
     }
   })
 }
-
+// 获取一个竞品的信息波动
 export function getCompetingOnesData(params) {
   return request({
-    url: '/bili-api/uploader/competing/getCompetingOnesData?'+params,
+    url: '/bili-api/info/uploader/competeWaveInfo?'+params,
     method: 'get',
     contentType : "application/json" ,
   })
 }
 
+// 获取竞品对象列表
 export function getCompetingUploader(key,page,pageSize) {
   return request({
-    url: '/bili-api/uploader/competing/getCompetingUploader',
+    url: '/bili-api/info/uploader/competeList',
     method: 'get',
     params: {
         'key': key,
@@ -112,18 +113,13 @@ export function getCompetingUploader(key,page,pageSize) {
   })
 }
 
+// 获取一个竞品基本信息
 export function getCompetingData(mid) {
   return request({
-    url: '/bili-api/uploader/competing/getCompetingData',
+    url: '/bili-api/info/uploader/competeBaseInfo',
     method: 'get',
     params: {
         'mid':mid
     }
-  })
-}
-export function getMainSection() {
-  return request({
-    url: '/bili-api/getMainSection',
-    method: 'get',
   })
 }
