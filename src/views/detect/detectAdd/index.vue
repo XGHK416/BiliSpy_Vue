@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { getVideoDetectInfo, addJob, getUploaderList } from "@/api/detect_add";
+import { getVideoDetectInfo, addJob, getUploaderList,getUploader } from "@/api/detect_add";
 import { generateCron } from "@/utils/cron";
 import UploaderMenu from "@/components/UploaderMenu/index";
 export default {
@@ -130,6 +130,24 @@ export default {
       // 查询的结果
       menu_select_data: []
     };
+  },
+  created(){
+    var type = this.$route.params.type;
+    var id = this.$route.params.id;
+    if(id!=undefined){
+      var params = "mid="+id
+      getUploader(params).then(Response=>{
+        var data = Response.data
+        var item_ = {
+          name:data.name,
+          id:data.mid,
+          profile: "https://images.weserv.nl/?url=https:" +data.face
+        }
+        this.object_list.push(item_)
+
+      })
+    }
+    this.activeName = type
   },
   methods: {
     // 提交申请

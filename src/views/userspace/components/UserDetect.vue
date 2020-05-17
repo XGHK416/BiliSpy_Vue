@@ -1,18 +1,20 @@
 <template>
   <div class="detect-wrapper">
+    <div class="mask" v-permission="['admin','manager']">
+    </div>
     <div class="detect-head">
       <span>侦测清单</span>
     </div>
     <div class="detect-content-wrapper">
       <div class="content">
-        <el-button type="primary" size="mini">侦测记录</el-button>
-        <div class="uploader-detect detect-button">
+        <el-button type="primary" size="mini" @click="detectInfo">侦测记录</el-button>
+        <div class="uploader-detect detect-button" @click="createUploaderDetect">
           <div class="icon-wrapper icon-add">
             <svg-icon icon-class="add" class-name="add-icon" />
           </div>
           <span>创建up主监控任务</span>
         </div>
-        <div class="video-detect detect-button">
+        <div class="video-detect detect-button" @click="createVideoDetect">
           <div class="icon-wrapper icon-add">
             <svg-icon icon-class="add" class-name="add-icon" />
           </div>
@@ -25,21 +27,41 @@
   </div>
 </template>
 <script>
+import permission from '@/directive/permission/index.js'
 export default {
   name: "UserDetect",
   props: {},
+  directives: { permission },
   data() {
     return {};
   },
-  methods: {}
+  methods: {
+    createUploaderDetect() {
+      this.$router.push({ name: "DetectAdd", params: { type: "uploader" } });
+    },
+    createVideoDetect() {
+      this.$router.push({ name: "DetectAdd", params: { type: "video" } });
+    },
+    detectInfo() {
+      this.$router.push({ name: "DetectInfo" });
+    }
+  }
 };
 </script>
 
 <style lang='scss' scope>
 .detect-wrapper {
   background: #ffffff;
+  position: relative;
+  .mask{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url('../../../assets/personalSpace/tim.png');
+    z-index: 1000;
+  }
   .detect-head {
-      padding: 5px;
+    padding: 5px;
     border-bottom: #e0e0e0 1px solid;
     // height: 30px;
     text-align: left;

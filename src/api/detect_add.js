@@ -1,5 +1,15 @@
 import request from '@/utils/request'
 
+export function getUploader(params) {
+  return request({
+    url: '/bili-api/detectJob/getUploader',
+    method: 'get',
+    params:{
+      params:params,
+    }
+  })
+}
+
 export function getVideoDetectInfo(bvid) {
   let param = new URLSearchParams()
   param.append('params', bvid)

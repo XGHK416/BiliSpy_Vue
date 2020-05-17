@@ -4,7 +4,7 @@
     <el-row>
       <el-col :span="14" :offset="5">
         <UserTop :info="base_info"></UserTop>
-        <UserAuths :auths="auths" style="margin:30px 0"></UserAuths>
+          <UserAuths :auths="auths" style="margin:30px 0"></UserAuths>
         <el-row type="flex" style="margin-top:15px" :gutter="20">
           <el-col :span="5">
             <div class="logging-wrapper">

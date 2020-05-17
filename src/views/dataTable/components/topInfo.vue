@@ -52,8 +52,7 @@
         </el-col>
         <el-col :span="6" class="top-right-container top-container-common">
           <div class="button-group">
-            <el-button type="primary" plain>监控下次视频发布</el-button>
-            <el-button type="primary">立即分析</el-button>
+            <el-button type="primary" plain @click="addMonitor(infoData.mid)">添加监控任务</el-button>
             <el-button type="success" v-if="!is_favorite" @click="favorite">收藏</el-button>
             <el-button type="warning" v-else @click="cancelFavorite">取消收藏</el-button>
           </div>
@@ -100,6 +99,9 @@ export default {
     });
   },
   methods: {
+    addMonitor(mid){
+      this.$router.push({ name: "DetectAdd", params: { id: mid,type:"uploader"} });
+    },
     favorite() {
       doFavorite(this.user_id, this.mid, "uploader").then(response => {
         this.is_favorite = true;

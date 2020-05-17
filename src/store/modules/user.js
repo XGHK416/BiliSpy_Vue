@@ -51,10 +51,11 @@ const actions = {
         // 解构赋值，相当于const data = response.data
         const { data } = response
         // 模拟设置token
-        commit('SET_TOKEN', data.token)
-        commit('SET_USER_ID', data.userId)
-        setToken(data.token)
-        setId(data.userId)
+        commit('SET_TOKEN', data.sessionId)
+        commit('SET_USER_ID', data.user_id)
+        setToken(data.sessionId)
+        setId(data.user_id)
+        console.log("sessionId"+getToken())
         resolve()
       }).catch(error => {
         reject(error)

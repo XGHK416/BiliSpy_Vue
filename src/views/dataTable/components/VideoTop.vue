@@ -24,6 +24,7 @@
                 </div>
                 <div class="tag">
                   <el-tag
+                    class="tags"
                     type="success"
                     size="medium"
                     v-for="item in data.dynamic"
@@ -236,6 +237,9 @@ export default {
           position: absolute;
           bottom: 10px;
           text-align: left;
+          .tags{
+            margin-right: 10px;
+          }
         }
       }
     }
