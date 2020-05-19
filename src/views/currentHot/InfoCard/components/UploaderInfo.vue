@@ -33,7 +33,7 @@
       <el-col :span="5">
         <div class="uploader-option">
           <div>
-            <el-button type="primary" style="width:100%" :disabled="isDetect">提交侦测</el-button>
+            <el-button type="primary" style="width:100%" :disabled="isDetect" @click="handleDetect">提交侦测</el-button>
           </div>
           <div>
             <el-button type="success" style="width:100%;margin-top:10px" v-if="!isFavorite&&isDetect" @click="hadleFavorite">收藏</el-button>
@@ -80,12 +80,17 @@
         </el-col>
       </el-row>
     </div>
+    <password-test ref="test_passwrod" @confirmSuccess="passwordCoinfirm"></password-test>
   </div>
 </template>
 
 <script>
+import PasswordTest from '@/views/mo/components/PasswordTest'
 export default {
   name: "UploaderInfo",
+  components:{
+    PasswordTest
+  },
   props: {
     data: {
       type: Object,
@@ -106,8 +111,6 @@ export default {
       isMoniter:true,
       // 提交选单
       dialog_visible:false,
-      
-
 
       level_color: {
         0: {
@@ -145,6 +148,9 @@ export default {
     data(val) {}
   },
   methods: {
+    passwordCoinfirm(){
+      alert('success')
+    },
     hadleFavorite(){
       this.isFavorite = true
     },
@@ -152,7 +158,11 @@ export default {
       this.isFavorite = false
     },
     handleMoniter(){
-
+      this.$router.push({ name: "DetectAdd", params: { id: this.data.info.mid,type:"uploader"} });
+    },
+    // 添加至侦测
+    handleDetect(){
+      this.$refs.test_passwrod.passwordDialog = true;
     },
     request_profile(profile) {
       return "https://images.weserv.nl/?url=" + profile;

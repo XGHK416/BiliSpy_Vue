@@ -54,8 +54,16 @@ export default {
   data() {
     return {
       card_visible: false,
-      uploaderInfo: {},
-      videoInfo: {}
+      uploaderInfo: {
+        info:{
+          face:''
+        }
+      },
+      videoInfo: {
+        stat:{
+          coin:0
+        }
+      }
     };
   },
   methods: {

@@ -115,7 +115,6 @@ export default {
       });
     },
     cancelFavorite() {
-      console.log(this.favorite_id)
       unFavorite(this.favorite_id).then(response => {
         this.is_favorite = false;
         this.$message({
@@ -125,7 +124,6 @@ export default {
       });
     },
     handleClick(tab, event) {
-      console.log(tab, event);
     }
   }
 };

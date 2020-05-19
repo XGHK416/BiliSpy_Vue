@@ -9,9 +9,6 @@
       </div>
     </div>
     <div style="margin-top:25px">
-      <div class="head">
-        <span>分区选择</span>
-      </div>
       <div class="list-wrapper">
         <section-list></section-list>
       </div>
@@ -38,6 +35,7 @@ export default {
 <style lang='scss' scope>
 .hot-wrapper {
   padding: 32px;
+  background: #f1f2f6;
   .head {
     background: #ffffff;
     padding: 5px;

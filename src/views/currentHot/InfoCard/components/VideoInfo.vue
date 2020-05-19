@@ -173,7 +173,7 @@ export default {
       this.isFavorite = false
     },
     handleMoniter(){
-
+      this.$router.push({ name: "DetectAdd", params: { id: this.video_data.bvid,type:"video"} });
     },
 
     randomTagColor(){

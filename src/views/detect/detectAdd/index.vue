@@ -97,7 +97,12 @@
 </template>
 
 <script>
-import { getVideoDetectInfo, addJob, getUploaderList,getUploader } from "@/api/detect_add";
+import {
+  getVideoDetectInfo,
+  addJob,
+  getUploaderList,
+  getUploader
+} from "@/api/detect_add";
 import { generateCron } from "@/utils/cron";
 import UploaderMenu from "@/components/UploaderMenu/index";
 export default {
@@ -131,23 +136,28 @@ export default {
       menu_select_data: []
     };
   },
-  created(){
+  created() {
     var type = this.$route.params.type;
     var id = this.$route.params.id;
-    if(id!=undefined){
-      var params = "mid="+id
-      getUploader(params).then(Response=>{
-        var data = Response.data
-        var item_ = {
-          name:data.name,
-          id:data.mid,
-          profile: "https://images.weserv.nl/?url=https:" +data.face
-        }
-        this.object_list.push(item_)
-
-      })
+    if (id != undefined) {
+      if (type == "uploader") {
+        var params = "mid=" + id;
+        getUploader(params).then(Response => {
+          var data = Response.data;
+          var item_ = {
+            name: data.name,
+            id: data.mid,
+            profile: "https://images.weserv.nl/?url=https:" + data.face
+          };
+          this.object_list.push(item_);
+        });
+      }
+      else{
+        this.video_key = id,
+        this.selectVideo();
+      }
     }
-    this.activeName = type
+    this.activeName = type;
   },
   methods: {
     // 提交申请
@@ -169,10 +179,10 @@ export default {
           detectTime: this.num,
           duringDate: this.date_select[0] + "," + this.date_select[1]
         };
-        if("videoJob"==jobInfo.jobType){
-          jobInfo.auths=this.object_list[0].auths,
-          jobInfo.auths_id=this.object_list[0].auths_id
-          jobInfo.auths_profile=this.object_list[0].auths_profile
+        if ("videoJob" == jobInfo.jobType) {
+          (jobInfo.auths = this.object_list[0].auths),
+            (jobInfo.auths_id = this.object_list[0].auths_id);
+          jobInfo.auths_profile = this.object_list[0].auths_profile;
         }
         addJob(jobInfo).then(Response => {});
       }

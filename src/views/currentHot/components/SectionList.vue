@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-table :data="tableData" style="width: 100%" :show-header="false">
+  <div style="height:100%">
+    <el-table :data="tableData" :show-header="false">
       <el-table-column width="90">
         <template slot-scope="scope">
           <div style="margin-left: 10px;color:#666;height:60px;line-height:60px">
@@ -34,7 +34,6 @@
       </el-table-column>
     </el-table>
     <info-card :visible="card_visible" @handleClose="handleCardClose">
-
     </info-card>
   </div>
 </template>
