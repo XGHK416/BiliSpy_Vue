@@ -94,7 +94,7 @@
 
 <script>
 import PieChart from "../../baseAnalysis/components/PieChart";
-import CrossChart from "./CrossChart";
+import CrossChart from "./chart/CrossChart";
 import {fansChange,getRecentVideo,getVideoAna} from "@/api/uploaderAna"
 import router from '../../../router';
 export default {

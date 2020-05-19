@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import CrossChart from "./CrossChart";
+import CrossChart from "./chart/CrossChart";
 import UploaderMenu from "@/components/UploaderMenu/index";
 import qs from "qs";
 import {

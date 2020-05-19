@@ -5,7 +5,7 @@
 <script>
 import echarts from "echarts";
 require("echarts/theme/macarons"); // echarts theme
-import resize from "./mixins/resize";
+import resize from "../mixins/resize";
 const animationDuration = 6000;
 export default {
   mixins: [resize],
@@ -20,9 +20,9 @@ export default {
     },
     height: {
       type: String,
-      default: "420px"
+      default: "350px"
     },
-    crossData: {
+    barData: {
       type: Object,
       required: true
     }
@@ -33,6 +33,7 @@ export default {
     };
   },
   mounted() {
+    // this.initChart();
     this.$nextTick(() => {
       this.initChart();
     });
@@ -45,76 +46,68 @@ export default {
     this.chart = null;
   },
   watch: {
-    crossData: {
+    barData: {
       deep: true,
       handler(val) {
         this.setOptions(val);
-
-      } 
+      }
     }
   },
   methods: {
-    // { title_text, x_axis, series_data } = {}
-    setOptions(crossData) {
-      console.log('crossDate_axis'+crossData.x_axis)
-      this.chart.clear()
+    setOptions({ x_axis, series_data,color } = {}) {
       this.chart.setOption({
+        color: color,
         title: {
-          text: crossData["title_text"]
+          text: "近期作品情况",
+          left: "left"
         },
         tooltip: {
           trigger: "axis",
           axisPointer: {
-            type: "cross",
-            label: {
-              backgroundColor: "#6a7985"
-            }
-          }
-        },
-        legend: {
-          data: crossData.legend
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {}
+            // 坐标轴指示器，坐标轴触发有效
+            type: "line" // 默认为直线，可选为：'line' | 'shadow'
           }
         },
         grid: {
-          left: "3%",
-          right: "4%",
+          left: "1%",
+          right: "1%",
           bottom: "3%",
           containLabel: true
         },
         xAxis: [
           {
             type: "category",
-            boundaryGap: false,
-            data: crossData.x_axis
+            data: x_axis,
+            axisTick: {
+              alignWithLabel: true
+            }
           }
         ],
         yAxis: [
           {
             type: "value",
-            // splitNumber: 5,
-            min: function(value) {
-              return value.min;
-            },
-            max: function(value) {
-              return value.max;
+            axisTick: {
+              show: false
             }
           }
         ],
-        // yAxis: {
-        //   type: "value"
-        // },
-        series: crossData.series
-      },true);
+        series: [
+          {
+            type: "bar",
+            stack: "vistors",
+            barWidth: "10%",
+            data: series_data,
+            animationDuration,
+            backgroundStyle: {
+              color: "RGBA(252, 185, 162, 1)"
+            }
+          }
+        ]
+      });
     },
     initChart() {
       this.chart = echarts.init(this.$el, "macarons");
-      // console.log(this.barData["x_axis"]);
-      // this.setOptions(this.barData);
-      this.setOptions(this.crossData);
+      this.setOptions(this.barData);
     }
   }
 };

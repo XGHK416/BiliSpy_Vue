@@ -9,6 +9,9 @@
         <el-tab-pane label="竞品分析" name="Competing" :lazy="lazy">
           <Competing></Competing>
         </el-tab-pane>
+        <el-tab-pane label="作品分析" name="ObjectAnalysis" :lazy="lazy">
+          <ObjectAnalysis></ObjectAnalysis>
+        </el-tab-pane>
       </el-tabs>
     </div>
 
@@ -20,6 +23,7 @@
 import TopInfo from "./components/topInfo";
 import InfoContent from "./components/infoContent"
 import Competing from "./components/competing"
+import ObjectAnalysis from "./components/objectAnalysis"
 
 import {getBasicInfo,getVideoAna} from "@/api/uploaderAna"
 import { init } from 'echarts/lib/echarts';
@@ -29,6 +33,7 @@ export default {
     "TopInfo": TopInfo,
     "InfoContent": InfoContent,
     "Competing": Competing,
+    "ObjectAnalysis":ObjectAnalysis
   },
   data() {
     return {
