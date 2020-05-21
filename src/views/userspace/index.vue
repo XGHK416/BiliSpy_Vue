@@ -93,6 +93,7 @@ export default {
 <style lang="scss" scoped>
 .user-container {
   padding: 32px;
+  min-height: calc(100vh - 50px);
   background-color: rgb(240, 242, 245);
   position: relative;
   .logging-wrapper {

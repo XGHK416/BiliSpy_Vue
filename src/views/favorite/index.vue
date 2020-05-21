@@ -16,7 +16,7 @@
           </div>
         </el-header>
 
-        <el-main>
+        <el-main style="background: #f1f2f6;">
           <div class="manage-favorites" style="text-align:right;padding-right:16px">
             <el-button type="primary" @click="handleManager()">管理收藏夹</el-button>
           </div>

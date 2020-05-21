@@ -7,30 +7,34 @@
             <div class="works_imgs">
               <el-popover placement="right" width="300" trigger="hover">
                 <div>
-                  <span>名称：《【星轨】明日方舟 H7-4 龙羊核心 中配及高配打法记录》</span>
+                  <span>名称：{{topThree[1].video_title}}</span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#f22258;display: inline-block;margin-right:5px"
-                    ></i>播放：12312
+                    ></i>
+                    播放：{{topThree[1].video_view}}
                   </span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#3494e6;display: inline-block;margin-right:5px"
-                    ></i>点赞：12312
+                    ></i>
+                    点赞：{{topThree[1].video_like}}
                   </span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#ec6ead;display: inline-block;margin-right:5px"
-                    ></i>硬币：12312
+                    ></i>
+                    硬币：{{topThree[1].coins}}
                   </span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#b7f8db;display: inline-block;margin-right:5px"
-                    ></i>收藏：12312
+                    ></i>
+                    收藏：{{topThree[1].video_favorite}}
                   </span>
                   <br />
                 </div>
@@ -38,12 +42,12 @@
                   style="cursor: pointer;"
                   slot="reference"
                   referrerpolicy="no-referrer"
-                  src="http://i2.hdslb.com/bfs/archive/d688b14bc9b6f36adf5425a430eaec56a187c3f1.jpg@160w_100h_100Q_1c.webp"
+                  :src="topThree[1].video_profile"
                   alt
                   width="220px"
                 />
               </el-popover>
-              <div class="topthree_item_title">【星轨】明日方舟 H7-4 龙羊核心 中配及高配打法记录</div>
+              <div class="topthree_item_title">{{topThree[1].video_title}}</div>
 
               <div class="works_rank">
                 <svg-icon icon-class="second_one" class-name="works_rank_icon" />
@@ -56,30 +60,34 @@
             <div class="works_imgs">
               <el-popover placement="right" width="300" trigger="hover">
                 <div>
-                  <span>名称：《【星轨】明日方舟 H7-4 龙羊核心 中配及高配打法记录》</span>
+                  <span>名称：{{topThree[0].video_title}}</span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#f22258;display: inline-block;margin-right:5px"
-                    ></i>播放：12312
+                    ></i>
+                    播放：{{topThree[0].video_view}}
                   </span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#3494e6;display: inline-block;margin-right:5px"
-                    ></i>点赞：12312
+                    ></i>
+                    点赞：{{topThree[0].video_like}}
                   </span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#ec6ead;display: inline-block;margin-right:5px"
-                    ></i>硬币：12312
+                    ></i>
+                    硬币：{{topThree[0].coins}}
                   </span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#b7f8db;display: inline-block;margin-right:5px"
-                    ></i>收藏：12312
+                    ></i>
+                    收藏：{{topThree[0].video_favorite}}
                   </span>
                   <br />
                 </div>
@@ -87,12 +95,12 @@
                   style="cursor: pointer;"
                   slot="reference"
                   referrerpolicy="no-referrer"
-                  src="http://i2.hdslb.com/bfs/archive/d688b14bc9b6f36adf5425a430eaec56a187c3f1.jpg@160w_100h_100Q_1c.webp"
+                  :src="topThree[0].video_profile"
                   alt
                   width="250px"
                 />
               </el-popover>
-              <div class="topthree_item_title">【星轨】明日方舟 H7-4 龙羊核心 中配及高配打法记录</div>
+              <div class="topthree_item_title">{{topThree[0].video_title}}</div>
               <div class="works_rank">
                 <svg-icon
                   icon-class="first_one"
@@ -107,30 +115,34 @@
             <div class="works_imgs">
               <el-popover placement="right" width="300" trigger="hover">
                 <div>
-                  <span>名称：《【星轨】明日方舟 H7-4 龙羊核心 中配及高配打法记录》</span>
+                  <span>名称：{{topThree[2].video_title}}</span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#f22258;display: inline-block;margin-right:5px"
-                    ></i>播放：12312
+                    ></i>
+                    播放：{{topThree[2].video_view}}
                   </span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#3494e6;display: inline-block;margin-right:5px"
-                    ></i>点赞：12312
+                    ></i>
+                    点赞：{{topThree[2].video_like}}
                   </span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#ec6ead;display: inline-block;margin-right:5px"
-                    ></i>硬币：12312
+                    ></i>
+                    硬币：{{topThree[2].coins}}
                   </span>
                   <br />
                   <span>
                     <i
                       style="width:10px;height:10px;border-radius:50%;background-color:#b7f8db;display: inline-block;margin-right:5px"
-                    ></i>收藏：12312
+                    ></i>
+                    收藏：{{topThree[2].video_favorite}}
                   </span>
                   <br />
                 </div>
@@ -138,12 +150,12 @@
                   style="cursor: pointer;"
                   slot="reference"
                   referrerpolicy="no-referrer"
-                  src="http://i2.hdslb.com/bfs/archive/d688b14bc9b6f36adf5425a430eaec56a187c3f1.jpg@160w_100h_100Q_1c.webp"
+                  :src="topThree[2].video_profile"
                   alt
                   width="220px"
                 />
               </el-popover>
-              <div class="topthree_item_title">【星轨】明日方舟 H7-4 龙羊核心 中配及高配打法记录</div>
+              <div class="topthree_item_title">{{topThree[2].video_title}}</div>
               <div class="works_rank">
                 <svg-icon icon-class="third_one" class-name="works_rank_icon" />
               </div>
@@ -162,32 +174,32 @@
                 <el-card
                   :body-style="{ padding: '20px',background:'linear-gradient(90deg, #b7f8db 0%,#50a7c2 100% )' }"
                 >
-                  <div class="analysis_title">视频总数</div>
-                  <div class="analysis_num">120万</div>
+                  <div class="analysis_title">平均播放</div>
+                  <div class="analysis_num">{{totalAna.view}}</div>
                 </el-card>
               </el-col>
               <el-col :span="12" class="analysis_card_item">
                 <el-card
                   :body-style="{ padding: '20px',background:'linear-gradient(90deg, #ff758c 0%,#ff7eb3 100% )'}"
                 >
-                  <div class="analysis_title">视频总数</div>
-                  <div class="analysis_num">120万</div>
+                  <div class="analysis_title">平均点赞</div>
+                  <div class="analysis_num">{{totalAna.like}}</div>
                 </el-card>
               </el-col>
               <el-col :span="12" class="analysis_card_item">
                 <el-card
                   :body-style="{ padding: '20px',background:'linear-gradient(90deg, #89f7fe 0%,#66a6ff 100% )' }"
                 >
-                  <div class="analysis_title">视频总数</div>
-                  <div class="analysis_num">120万</div>
+                  <div class="analysis_title">平均硬币</div>
+                  <div class="analysis_num">{{totalAna.coins}}</div>
                 </el-card>
               </el-col>
               <el-col :span="12" class="analysis_card_item">
                 <el-card
                   :body-style="{ padding: '20px',background:'linear-gradient(90deg, #a1c4fd 0%,#c2e9fb 100% )' }"
                 >
-                  <div class="analysis_title">视频总数</div>
-                  <div class="analysis_num">120万</div>
+                  <div class="analysis_title">平均收藏</div>
+                  <div class="analysis_num">{{totalAna.favorite}}</div>
                 </el-card>
               </el-col>
             </el-row>
@@ -211,7 +223,7 @@
             <el-progress type="dashboard" :percentage="100" :format="formatDate"></el-progress>
           </div>
           <div class="predect_button">
-            <el-button type="primary" size>预测下个月</el-button>
+            <el-button type="primary" @click="predictNextCount">预测下个月</el-button>
           </div>
         </el-col>
       </el-row>
@@ -235,7 +247,7 @@
                 <el-card :body-style="{ padding: '15px' }">
                   <div class="predect_status_item">
                     <div class="status_item_title">播放</div>
-                    <div class="status_item_num">0</div>
+                    <div class="status_item_num">{{pre_status.view}}</div>
                   </div>
                 </el-card>
               </el-col>
@@ -243,7 +255,7 @@
                 <el-card :body-style="{ padding: '15px' }">
                   <div class="predect_status_item">
                     <div class="status_item_title">点赞</div>
-                    <div class="status_item_num">0</div>
+                    <div class="status_item_num">{{pre_status.like}}</div>
                   </div>
                 </el-card>
               </el-col>
@@ -251,7 +263,7 @@
                 <el-card :body-style="{ padding: '15px' }">
                   <div class="predect_status_item">
                     <div class="status_item_title">硬币</div>
-                    <div class="status_item_num">0</div>
+                    <div class="status_item_num">{{pre_status.coins}}</div>
                   </div>
                 </el-card>
               </el-col>
@@ -259,14 +271,24 @@
                 <el-card :body-style="{ padding: '15px' }">
                   <div class="predect_status_item">
                     <div class="status_item_title">收藏</div>
-                    <div class="status_item_num">0</div>
+                    <div class="status_item_num">{{pre_status.favorite}}</div>
                   </div>
                 </el-card>
               </el-col>
             </el-row>
           </div>
+          <div>
+            <el-select v-model="current_section" placeholder="请选择" style="width:90%;margin:10px 0px">
+              <el-option
+                v-for="item in section"
+                :key="item.tid"
+                :label="item.tname"
+                :value="item.tid"
+              ></el-option>
+            </el-select>
+          </div>
           <div class="predect_button">
-            <el-button type="primary" size>预测下个视频</el-button>
+            <el-button type="primary" @click="predectNextStatus">预测下个视频</el-button>
           </div>
         </el-col>
       </el-row>
@@ -278,6 +300,15 @@
 import WorldCloud from "@/views/dataTable/components/chart/WorldCloud";
 import CrossChart from "@/views/dataTable/components/chart/CrossChart";
 import WorksStatusBar from "@/views/dataTable/components/chart/WorksStatusBar";
+import {
+  getTopThree,
+  getAverage,
+  getCommonlyTags,
+  getMonthWorksNum,
+  getRecentWorksStatus,
+  predectNextCount,
+  predectNextStatus
+} from "@/api/workAna";
 export default {
   name: "ObjectAnalysis",
   components: {
@@ -287,90 +318,49 @@ export default {
   },
   data() {
     return {
+      mid: this.$route.params["id"],
+      nextCount: 0,
+      section: [],
+      current_section:'',
+      pre_status:{
+        favorite:0,
+        view:0,
+        coins:0,
+        like:0
+      },
+      topThree: [
+        {
+          video_title: 0,
+          video_view: "",
+          video_like: "",
+          coins: "",
+          video_favorite: ""
+        },
+        {
+          video_title: 0,
+          video_view: "",
+          video_like: "",
+          coins: "",
+          video_favorite: ""
+        },
+        {
+          video_title: 0,
+          video_view: "",
+          video_like: "",
+          coins: "",
+          video_favorite: ""
+        }
+      ],
+      totalAna: {
+        view: "",
+        like: "",
+        coins: "",
+        favorite: ""
+      },
       worldCloudData: [
         {
           name: "Sam S Club",
           value: 10000
-        },
-        {
-          name: "Macys",
-          value: 6181
-        },
-        {
-          name: "Amy Schumer",
-          value: 4386
-        },
-        {
-          name: "Jurassic World",
-          value: 4055
-        },
-        {
-          name: "Charter Communications",
-          value: 2467
-        },
-        {
-          name: "Chick Fil A",
-          value: 2244
-        },
-        {
-          name: "Planet Fitness",
-          value: 1898
-        },
-        {
-          name: "Pitch Perfect",
-          value: 1484
-        },
-        {
-          name: "Express",
-          value: 1112
-        },
-        {
-          name: "Home",
-          value: 965
-        },
-        {
-          name: "Johnny Depp",
-          value: 847
-        },
-        {
-          name: "Lena Dunham",
-          value: 582
-        },
-        {
-          name: "Lewis Hamilton",
-          value: 555
-        },
-        {
-          name: "KXAN",
-          value: 550
-        },
-        {
-          name: "Mary Ellen Mark",
-          value: 462
-        },
-        {
-          name: "Farrah Abraham",
-          value: 366
-        },
-        {
-          name: "Rita Ora",
-          value: 360
-        },
-        {
-          name: "Serena Williams",
-          value: 282
-        },
-        {
-          name: "NCAA baseball tournament",
-          value: 273
-        },
-        {
-          name: "Point",
-          value: 273
-        },
-        {
-          name: "Point Break",
-          value: 265
         }
       ],
       publishData: {
@@ -410,16 +400,76 @@ export default {
     };
   },
   methods: {
-    formatDate(num) {
-      if (num / 10000 > 1) {
-        return (num / 10000).toFixed(2) + "万个";
+    formatDate() {
+      if (this.nextCount / 10000 > 1) {
+        return (this.nextCount / 10000).toFixed(2) + "万个";
       } else {
-        return num + "个";
+        return this.nextCount + "个";
+      }
+    },
+    predictNextCount() {
+      predectNextCount(this.mid).then(Response => {
+        this.nextCount = Response.data.num;
+      });
+    },
+    predectNextStatus(){
+      if(this.current_section!=''){
+        predectNextStatus(this.mid,this.current_section).then(Response=>{
+          var data = Response.data
+          this.pre_status.view = data.view
+          this.pre_status.like = data.like
+          this.pre_status.favorite = data.favorite
+          this.pre_status.coins = data.coins
+        })
       }
     }
   },
   created() {
     this.formatDate(1000);
+    getTopThree(this.mid).then(Response => {
+      this.topThree = Response.data;
+    });
+    getAverage(this.mid).then(Response => {
+      this.totalAna = Response.data;
+    });
+    getCommonlyTags(this.mid).then(Response => {
+      this.worldCloudData = Response.data;
+    });
+    getMonthWorksNum(this.mid).then(Response => {
+      var data = Response.data;
+      this.publishData.x_axis = data.xAxis;
+      this.publishData.series.data = data.series;
+    });
+    getRecentWorksStatus(this.mid).then(Response => {
+      var { video, section } = Response.data;
+
+      var view_series = [];
+      var like_series = [];
+      var favorite_series = [];
+      var coins_series = [];
+      var x_axis = [];
+      this.section = section;
+      video.forEach(element => {
+        console.log(element);
+        view_series.push(element.videoView);
+        like_series.push(element.videoLike);
+        favorite_series.push(element.videoFavorite);
+        coins_series.push(element.coins);
+        x_axis.push(element.videoTitle);
+      });
+      console.log(view_series);
+      this.workStatusData.viewer.x_axis = x_axis;
+      this.workStatusData.viewer.series_data = view_series;
+
+      this.workStatusData.like.x_axis = x_axis;
+      this.workStatusData.like.series_data = like_series;
+
+      this.workStatusData.favorite.x_axis = x_axis;
+      this.workStatusData.favorite.series_data = favorite_series;
+
+      this.workStatusData.coins.x_axis = x_axis;
+      this.workStatusData.coins.series_data = coins_series;
+    });
   }
 };
 </script>

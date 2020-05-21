@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="min-height: calc(100vh - 50px);">
     <div class="info-head-wrapper">
       <span>监控模块</span>
     </div>
@@ -58,6 +58,8 @@ handleClick(){}
 }
 .info-contain-wrapper {
   padding: 32px;
+  background: #f1f2f6;
+  min-height: calc(100vh - 120px);
   .info-contain {
       font-size: 15px;
     padding-top: 5px;

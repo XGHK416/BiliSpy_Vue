@@ -302,6 +302,8 @@ export default {
 }
 .detect-add-wrapper {
   padding: 32px;
+  background:#f1f2f6;
+  min-height: calc(100vh - 120px);
   .detect-add {
     padding: 16px;
     background: #ffffff;
