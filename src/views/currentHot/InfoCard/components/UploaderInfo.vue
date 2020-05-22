@@ -33,14 +33,14 @@
       <el-col :span="5">
         <div class="uploader-option">
           <div>
-            <el-button type="primary" style="width:100%" :disabled="isDetect" @click="handleDetect">提交侦测</el-button>
+            <el-button type="primary" style="width:100%" :disabled="data.isDetect" @click="handleDetect">提交侦测</el-button>
           </div>
           <div>
-            <el-button type="success" style="width:100%;margin-top:10px" v-if="!isFavorite&&isDetect" @click="hadleFavorite">收藏</el-button>
-            <el-button type="warning" style="width:100%;margin-top:10px" v-else-if="isFavorite&&isDetect" @click="hadleDisFavorite">取消收藏</el-button>
+            <el-button type="success" style="width:100%;margin-top:10px" v-if="!isFavorite&&data.isDetect" @click="hadleFavorite">收藏</el-button>
+            <el-button type="warning" style="width:100%;margin-top:10px" v-else-if="isFavorite&&data.isDetect" @click="hadleDisFavorite">取消收藏</el-button>
           </div>
           <div>
-            <el-button type="info" style="width:100%;margin-top:10px" v-if="isMoniter&&isDetect" @click="handleMoniter">监控</el-button>
+            <el-button type="info" style="width:100%;margin-top:10px" v-if="isMoniter&&data.isDetect" @click="handleMoniter">监控</el-button>
           </div>
         </div>
       </el-col>
@@ -86,6 +86,7 @@
 
 <script>
 import PasswordTest from '@/views/mo/components/PasswordTest'
+import {addUploaderDetect} from '@/api/hot_bili'
 export default {
   name: "UploaderInfo",
   components:{
@@ -96,13 +97,18 @@ export default {
       type: Object,
       default: {
         info: {
-          face: ""
+          face: "",
+          level:0
         }
       }
     }
   },
+
   data() {
     return {
+      user_id:this.$store.state.user.user_id,
+
+
       // 是否存在侦测
       isDetect:false,
       // 是否收藏
@@ -149,7 +155,26 @@ export default {
   },
   methods: {
     passwordCoinfirm(){
-      alert('success')
+      var params = {
+        user_id:this.user_id,
+        mid:this.data.info.mid
+      }
+      addUploaderDetect(params).then(Response=>{
+        if(Response.code!=20000){
+          this.$message({
+            message: Response.msg,
+            type: 'error'
+          })
+        }
+        else{
+          this.$message({
+            message: '插入成功',
+            type: 'success'
+          })
+          this.$emit("changeDetectStatus")
+        }
+      })
+      
     },
     hadleFavorite(){
       this.isFavorite = true

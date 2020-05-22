@@ -35,9 +35,9 @@
       </el-col>
       <el-col :span="8">
         <div class="video-option-wrapper">
-          <el-button type="primary"  :disabled="isDetect">提交侦测</el-button>
+          <!-- <el-button type="primary"  :disabled="isDetect">提交侦测</el-button>
           <el-button type="success" v-if="!isFavorite&&isDetect" @click="hadleFavorite">收藏</el-button>
-          <el-button type="warning" v-else-if="isFavorite&&isDetect" @click="hadleDisFavorite">取消收藏</el-button>
+          <el-button type="warning" v-else-if="isFavorite&&isDetect" @click="hadleDisFavorite">取消收藏</el-button> -->
           <el-button type="info"  v-if="isMoniter&&isDetect" @click="handleMoniter">监控</el-button>
           <el-button type="info" plain  v-if="!isMoniter&&isDetect" disabled>监控中</el-button>
         </div>
@@ -179,7 +179,6 @@ export default {
     randomTagColor(){
       var list = ['success','info','danger','warning']
       var index = Math.floor(Math.random()*4);
-      console.log(index)
       return list[index]
     },
     request_profile(profile) {

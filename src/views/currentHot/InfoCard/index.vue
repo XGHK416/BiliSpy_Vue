@@ -19,7 +19,7 @@
                 <div slot="header" class="clearfix">
                   <span>作者简介</span>
                 </div>
-                <uploader-info :data="uploaderInfo"></uploader-info>
+                <uploader-info :data="uploaderInfo" @changeDetectStatus="changeDetectStatus"></uploader-info>
               </el-card>
             </div>
           </el-col>
@@ -56,19 +56,30 @@ export default {
       card_visible: false,
       uploaderInfo: {
         info:{
-          face:''
+          face:'',
+          level:0,
+        },
+        stat:{
+
+        },
+        upstat:{
+          archive:{}
         }
       },
       videoInfo: {
         stat:{
           coin:0
-        }
+        },
+        dynamic:''
       }
     };
   },
   methods: {
     handleClose() {
       this.$emit("handleClose");
+    },
+    changeDetectStatus(){
+      this.uploaderInfo.isDetect = true
     }
   },
   mounted() {

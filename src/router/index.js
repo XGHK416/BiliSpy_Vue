@@ -173,6 +173,22 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/search',
+    component: Layout,
+    redirect: '/search',
+    children: [{
+        path: 'search',
+        name: '查询搜索',
+        component: () => import('@/views/searchModel/index'),
+        meta: {
+          title: '查询搜索',
+          icon: 'search',
+          roles: ['viewer']
+        },
+      },
+    ]
+  },
+  {
     path: '/detectModel',
     component: Layout,
     redirect: '/detectModel/detectInfo',

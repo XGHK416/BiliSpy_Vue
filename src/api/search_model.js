@@ -10,24 +10,6 @@ export function getRank(rid, day) {
     }
   })
 }
-export function getUploader(mid) {
-  return request({
-    url: '/bili-api/hotBili/getUploaderInfo',
-    method: 'get',
-    params: {
-      'mid': mid,
-    }
-  })
-}
-export function getVideo(aid) {
-  return request({
-    url: '/bili-api/hotBili/getVideoInfo',
-    method: 'get',
-    params: {
-      'aid': aid,
-    }
-  })
-}
 // 添加up主侦测
 export function addUploaderDetect(data) {
   let param = new URLSearchParams()
