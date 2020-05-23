@@ -1,23 +1,17 @@
 import request from '@/utils/request'
 
-export function getRank(rid, day) {
+export function searchUploader(params) {
   return request({
-    url: '/bili-api/hotBili/getRank',
+    url: '/bili-api/search/uploader',
     method: 'get',
-    params: {
-      'tid': rid,
-      'day': day,
-    }
+    params: params
   })
 }
 // 添加up主侦测
-export function addUploaderDetect(data) {
-  let param = new URLSearchParams()
-  param.append('userId', data.user_id)
-  param.append('mid', data.mid)
+export function searchVideo(params) {
   return request({
-    url: '/bili-api/hotBili/addDetect',
-    method: 'post',
-    data: param
+    url: '/bili-api/search/video',
+    method: 'get',
+    params: params
   })
 }

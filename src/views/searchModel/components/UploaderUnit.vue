@@ -9,8 +9,8 @@
         </el-col>
         <el-col :span="18">
           <div class="introduce">
-            <span class="nick_name">WM星轨</span>
-            <span class="mid">mid:{{data.mid}}</span>
+            <span class="nick_name">{{data.nickName}}</span>
+            <div><span class="mid">mid:{{data.mid}}</span></div>
             <div class="level">
               <img :src="returnLevel_(data.level)" style="height:12px" />
             </div>
@@ -65,11 +65,11 @@ export default {
 <style scope lang='scss'>
 .box-card {
   .img-wrapper {
-    height: 70px;
-    width: 70px;
+    height: 80px;
+    width: 80px;
     img {
-      height: 70px;
-      width: 70px;
+      height: 80px;
+      width: 80px;
     }
   }
   .introduce {
@@ -79,7 +79,6 @@ export default {
       font-weight: 600;
     }
     .mid {
-      margin-left: 10px;
       font-size: 15px;
       color: #666;
     }

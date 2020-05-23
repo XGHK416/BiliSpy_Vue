@@ -1,8 +1,8 @@
 <template>
-<div style="margin-bottom:5px">
-    <el-card :body-style="{ padding: '0px' }">
+<div style="margin-bottom:15px">
+    <el-card :body-style="{ padding: '0px' }" shadow="hover">
       <div class="pic">
-          <img :src="data.pic" alt="" referrerpolicy="no-referrer" width="100%">
+          <img :src="data.pic" alt="" referrerpolicy="no-referrer" width="100%" height="170px">
       </div>
       <div class="title">
           {{data.title}}
