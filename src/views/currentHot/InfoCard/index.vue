@@ -9,7 +9,11 @@
                 <div slot="header" class="clearfix">
                   <span>视频详情</span>
                 </div>
-                <video-info :data="videoInfo"></video-info>
+                <video-info
+                  :data="videoInfoData"
+                  @changeDetectStatus="changeVideoDetectStatus"
+                  @changeFavoriteStatus="changeVideoFavoriteStatus"
+                ></video-info>
               </el-card>
             </div>
           </el-col>
@@ -19,7 +23,11 @@
                 <div slot="header" class="clearfix">
                   <span>作者简介</span>
                 </div>
-                <uploader-info :data="uploaderInfo" @changeDetectStatus="changeDetectStatus"></uploader-info>
+                <uploader-info
+                  :data="uploaderInfoData"
+                  @changeDetectStatus="changeUploaderDetectStatus"
+                  @changeFavoriteStatus="changeUploaderFavoriteStatus"
+                ></uploader-info>
               </el-card>
             </div>
           </el-col>
@@ -53,24 +61,52 @@ export default {
   },
   data() {
     return {
+      user_id: this.$store.state.user.user_id,
       card_visible: false,
-      uploaderInfo: {
-        info:{
-          face:'',
-          level:0,
+      uploaderInfoData: {
+        info: {
+          face:
+            "",
+          mid: 0,
+          name: "",
+          level: 6
         },
-        stat:{
-
+        stat: {
+          following: 0,
+          follower: 0
         },
-        upstat:{
-          archive:{}
-        }
+        upstat: {
+          likes: 0,
+          archive: {
+            view: 0
+          }
+        },
+        isDetect: true,
+        isFavorite: false,
+        favorite_id: -1,
+        notice: ""
       },
-      videoInfo: {
-        stat:{
-          coin:0
+      videoInfoData: {
+       data: {
+          pic:
+            "",
+          title: "",
+          bvid: "",
+          aid: 0,
+          tname: "sdfa",
+          desc: "ssa",
+          stat: {
+            coin: 0,
+            favorite: 0,
+            share: 0,
+            like: 0,
+            view: 0
+          },
+          dynamic: "sdfsa##dfsfs"
         },
-        dynamic:''
+
+        favoriteId: -1,
+        isDetect: true
       }
     };
   },
@@ -78,20 +114,38 @@ export default {
     handleClose() {
       this.$emit("handleClose");
     },
-    changeDetectStatus(){
-      this.uploaderInfo.isDetect = true
-    }
+    // 侦测状态
+    changeUploaderDetectStatus() {
+      this.uploaderInfoData.isDetect = true;
+    },
+    changeVideoDetectStatus() {
+      this.videoInfoData.isDetect = true;
+    },
+    // 修改收藏的状态
+    changeUploaderFavoriteStatus(id) {
+      if (id > 0) {
+        this.uploaderInfoData.favoriteId = id;
+      } else {
+        this.uploaderInfoData.favoriteId = -1;
+      }
+    },
+    changeVideoFavoriteStatus(id) {
+      if (id > 0) {
+        this.videoInfoData.favoriteId = id;
+      } else {
+        this.videoInfoData.favoriteId = -1;
+      }
+    },
   },
   mounted() {
     this.$nextTick(function() {
       $bus.$on("handleInfo", item => {
-        getUploader(item.mid).then(response => {
-          this.uploaderInfo = response.data;
+        getUploader(item.mid, this.user_id).then(response => {
+          this.uploaderInfoData = response.data;
         });
-        getVideo(item.aid).then(response => {
-          this.videoInfo = response.data;
+        getVideo(item.aid, this.user_id).then(response => {
+          this.videoInfoData = response.data;
         });
-        
       });
     });
   }

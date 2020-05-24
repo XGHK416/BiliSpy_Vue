@@ -3,14 +3,23 @@
     <el-row type="flex" :gutter="20">
       <el-col :span="4">
         <div>
-          <img class="video-profile" :src="request_profile(video_data.profile)" referrerPolicy="no-referrer" />
+          <img
+            class="video-profile"
+            :src="request_profile(video_data.profile)"
+            referrerpolicy="no-referrer"
+          />
         </div>
       </el-col>
       <el-col :span="12">
         <div class="video-section-wrapper">
           <div class="video-title">
-            <el-tooltip class="item" effect="dark" :content="'即将访问 https://www.bilibili.com/video/'+video_data.bvid" placement="top-start">
-              <a :href="'https://www.bilibili.com/video/'+video_data.bvid" target="_blank" >
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="'即将访问 https://www.bilibili.com/video/'+video_data.bvid"
+              placement="top-start"
+            >
+              <a :href="'https://www.bilibili.com/video/'+video_data.bvid" target="_blank">
                 <span>{{this.video_data.title}}</span>
               </a>
             </el-tooltip>
@@ -35,11 +44,18 @@
       </el-col>
       <el-col :span="8">
         <div class="video-option-wrapper">
-          <!-- <el-button type="primary"  :disabled="isDetect">提交侦测</el-button>
-          <el-button type="success" v-if="!isFavorite&&isDetect" @click="hadleFavorite">收藏</el-button>
-          <el-button type="warning" v-else-if="isFavorite&&isDetect" @click="hadleDisFavorite">取消收藏</el-button> -->
-          <el-button type="info"  v-if="isMoniter&&isDetect" @click="handleMoniter">监控</el-button>
-          <el-button type="info" plain  v-if="!isMoniter&&isDetect" disabled>监控中</el-button>
+          <el-button type="primary" :disabled="data.isDetect" @click="handleDetect">提交侦测</el-button>
+          <el-button
+            type="success"
+            v-if="data.favoriteId<0&&data.isDetect"
+            @click="hadleFavorite"
+          >收藏</el-button>
+          <el-button
+            type="warning"
+            v-else-if="data.favoriteId>0&&data.isDetect"
+            @click="hadleDisFavorite"
+          >取消收藏</el-button>
+          <el-button type="info" v-if="isMoniter&&isDetect" @click="handleMoniter">监控</el-button>
         </div>
       </el-col>
     </el-row>
@@ -99,29 +115,39 @@
         </el-col>
       </el-row>
     </div>
+    <password-test ref="test_passwrod" @confirmSuccess="passwordCoinfirm"></password-test>
   </div>
 </template>
 
 <script>
+import { doFavorite, unFavorite, findFavorite } from "@/api/favorite";
+import PasswordTest from "@/views/mo/components/PasswordTest";
+import { addVideoDetect } from "@/api/hot_bili";
 export default {
   name: "VideoInfo",
+  components: {
+    PasswordTest
+  },
   props: {
     data: {
       type: Object,
-      default:{
-        stat:{
-          coin:0
+      default: {
+        data: {
+          stat: {
+            coin: 0
+          }
         }
       }
     }
   },
   data() {
     return {
-      isDetect:true,
-      isFavorite:false,
-      isMoniter:true,
-      dialogVisible:false,
+      user_id: this.$store.state.user.user_id,
 
+      isDetect: true,
+      isFavorite: false,
+      isMoniter: true,
+      dialogVisible: false,
 
       video_data: {
         title: "123",
@@ -166,37 +192,78 @@ export default {
     this.initData();
   },
   methods: {
-    hadleFavorite(){
-      this.isFavorite = true
+    // 添加检测
+    passwordCoinfirm() {
+      var params = {
+        user_id: this.user_id,
+        aid: this.video_data.aid
+      };
+      addVideoDetect(params).then(Response => {
+        if (Response.code != 20000) {
+          this.$message({
+            message: Response.msg,
+            type: "error"
+          });
+        } else {
+          this.$message({
+            message: "插入成功",
+            type: "success"
+          });
+          this.$emit("changeVideoDetectStatus");
+        }
+      });
     },
-    hadleDisFavorite(){
-      this.isFavorite = false
+    handleDetect() {
+      this.$refs.test_passwrod.passwordDialog = true;
     },
-    handleMoniter(){
-      this.$router.push({ name: "DetectAdd", params: { id: this.video_data.bvid,type:"video"} });
+    // 收藏
+    hadleFavorite() {
+      doFavorite(this.user_id, this.video_data.aid, "video").then(response => {
+        this.$emit("changeFavoriteStatus", response.data);
+        this.$message({
+          type: "success",
+          message: "收藏成功"
+        });
+      });
+    },
+    hadleDisFavorite() {
+      unFavorite(this.data.favoriteId).then(response => {
+        this.$emit("changeFavoriteStatus", -1);
+        this.$message({
+          type: "warning",
+          message: "已取消收藏"
+        });
+      });
+    },
+    // 监控
+    handleMoniter() {
+      this.$router.push({
+        name: "DetectAdd",
+        params: { id: this.video_data.bvid, type: "video" }
+      });
     },
 
-    randomTagColor(){
-      var list = ['success','info','danger','warning']
-      var index = Math.floor(Math.random()*4);
-      return list[index]
+    randomTagColor() {
+      var list = ["success", "info", "danger", "warning"];
+      var index = Math.floor(Math.random() * 4);
+      return list[index];
     },
     request_profile(profile) {
       return profile;
     },
     initData() {
-      this.video_data.profile = this.data.pic;
-      this.video_data.title = this.data.title;
-      this.video_data.bvid = this.data.bvid;
-      this.video_data.aid = this.data.aid;
-      this.video_data.section = this.data.tname;
-      this.video_data.desc = this.data.desc;
-      this.video_data.coins = this.data.stat.coin;
-      this.video_data.favorite = this.data.stat.favorite;
-      this.video_data.share = this.data.stat.share;
-      this.video_data.like = this.data.stat.like;
-      this.video_data.view = this.data.stat.view;
-      this.video_data.dynamic = this.formatDynamic(this.data.dynamic);
+      this.video_data.profile = this.data.data.pic;
+      this.video_data.title = this.data.data.title;
+      this.video_data.bvid = this.data.data.bvid;
+      this.video_data.aid = this.data.data.aid;
+      this.video_data.section = this.data.data.tname;
+      this.video_data.desc = this.data.data.desc;
+      this.video_data.coins = this.data.data.stat.coin;
+      this.video_data.favorite = this.data.data.stat.favorite;
+      this.video_data.share = this.data.data.stat.share;
+      this.video_data.like = this.data.data.stat.like;
+      this.video_data.view = this.data.data.stat.view;
+      this.video_data.dynamic = this.formatDynamic(this.data.data.dynamic);
     },
     formatDynamic(dynamic) {
       var index = dynamic.replace(/[\r\n]/g, "|").indexOf("|");

@@ -32,7 +32,10 @@
     </div>
     <div class="result_wrapper">
       <div class="list_wrapper">
-        <div v-if="uploaderListData.length==0||videoListData.length==0" class="empty_list">暂时没有你要的内容</div>
+        <div
+          v-if="uploaderListData.length==0&&currentOption=='uploader'||videoListData.length==0&&currentOption=='video'"
+          class="empty_list"
+        >暂时没有你要的内容</div>
         <div v-else class="result_list">
           <div class="uploader_result" v-if="currentOption=='uploader'">
             <el-row :gutter="10">
@@ -57,18 +60,29 @@
           :total="totalNum"
           :current-page="currentPage"
           :page-size="pageSize"
+          @current-change="handlePageChange"
+          @prev-click="handlePageChange"
+          @next-click="handlePageChange"
         ></el-pagination>
       </div>
     </div>
 
-    <el-dialog title width="30%" :visible.sync="uploaderDialogVisible">
+    <el-dialog title width="30%" :visible.sync="uploaderDialogVisible" :destroy-on-close="true">
       <div>
-        <uploader-info :data="uploaderInfoData"></uploader-info>
+        <uploader-info
+          :data="uploaderInfoData"
+          @changeDetectStatus="changeUploaderDetectStatus"
+          @changeFavoriteStatus="changeUploaderFavoriteStatus"
+        ></uploader-info>
       </div>
     </el-dialog>
-    <el-dialog title :visible.sync="videoDialogVisible">
+    <el-dialog title :visible.sync="videoDialogVisible" :destroy-on-close="true">
       <div>
-        <video-info :data="videoInfoData"></video-info>
+        <video-info
+          :data="videoInfoData"
+          @changeDetectStatus="changeVideoDetectStatus"
+          @changeFavoriteStatus="changeVideoFavoriteStatus"
+        ></video-info>
       </div>
     </el-dialog>
   </div>
@@ -81,6 +95,8 @@ import UploaderInfo from "@/views/currentHot/InfoCard/components/UploaderInfo";
 import VideoInfo from "@/views/currentHot/InfoCard/components/VideoInfo";
 
 import { searchUploader, searchVideo } from "@/api/search_model";
+import { getUploader, getVideo } from "@/api/hot_bili";
+import { findFavorite } from "@/api/favorite";
 export default {
   name: "SearchModel",
   components: {
@@ -91,10 +107,12 @@ export default {
   },
   data() {
     return {
+      user_id: this.$store.state.user.user_id,
+
       searchInput: "",
       searchOption: "",
       dataOrigin: "system",
-      currentOption: "video",
+      currentOption: "uploader",
       currentOrderOption: "",
 
       // 分页
@@ -120,63 +138,70 @@ export default {
       },
 
       uploaderListData: [
-        {
-          id: 1,
-          level: "Level6",
-          nickName: "WM星轨",
-          vip: "年度大会员",
-          mid: 123123,
-          profile:
-            "https://i0.hdslb.com/bfs/face/a43fa679fc18b11468ce1566ece25534e2114865.jpg@150w_150h.jpg"
-        }
+        // {
+        //   id: 1,
+        //   level: "Level6",
+        //   nickName: "WM星轨",
+        //   vip: "年度大会员",
+        //   mid: 123123,
+        //   profile:
+        //     "https://i0.hdslb.com/bfs/face/a43fa679fc18b11468ce1566ece25534e2114865.jpg@150w_150h.jpg"
+        // }
       ],
       videoListData: [
-        {
-          aid: 123,
-          author: "XGHK416",
-          title: "【PV】《Shiny Smily Story》hololive China成员歌唱版",
-          pic:
-            "https://i1.hdslb.com/bfs/archive/040408d7b550ed9fe6d1854eff14cf694e1bc06d.jpg@412w_232h_1c_100q.jpg"
-        }
+        // {
+        //   aid: 123,
+        //   author: "XGHK416",
+        //   title: "【PV】《Shiny Smily Story》hololive China成员歌唱版",
+        //   pic:
+        //     "https://i1.hdslb.com/bfs/archive/040408d7b550ed9fe6d1854eff14cf694e1bc06d.jpg@412w_232h_1c_100q.jpg"
+        // }
       ],
 
       uploaderInfoData: {
         info: {
           face:
-            "https://i0.hdslb.com/bfs/face/a43fa679fc18b11468ce1566ece25534e2114865.jpg@150w_150h.jpg",
-          mid: 123123,
-          name: "WM星轨",
+            "",
+          mid: 0,
+          name: "",
           level: 6
         },
         stat: {
-          following: 1231,
-          follower: 32131
+          following: 0,
+          follower: 0
         },
         upstat: {
-          likes: 12313,
+          likes: 0,
           archive: {
-            view: 123123
+            view: 0
           }
         },
-        isDetect: false,
-        notice: "sdfasfda"
+        isDetect: true,
+        isFavorite: false,
+        favorite_id: -1,
+        notice: ""
       },
       videoInfoData: {
-        pic:
-          "https://i1.hdslb.com/bfs/archive/040408d7b550ed9fe6d1854eff14cf694e1bc06d.jpg@412w_232h_1c_100q.jpg",
-        title: "【PV】《Shiny Smily Story》hololive China成员歌唱版",
-        bvid: "BV1hp4y197G9",
-        aid: 123123,
-        tname: "sdfa",
-        desc: "ssa",
-        stat: {
-          coin: 123123,
-          favorite: 123213,
-          share: 1231,
-          like: 123123,
-          view: 112313
+        data: {
+          pic:
+            "",
+          title: "",
+          bvid: "",
+          aid: 0,
+          tname: "sdfa",
+          desc: "ssa",
+          stat: {
+            coin: 0,
+            favorite: 0,
+            share: 0,
+            like: 0,
+            view: 0
+          },
+          dynamic: "sdfsa##dfsfs"
         },
-        dynamic: "sdfsa##dfsfs"
+
+        favoriteId: -1,
+        isDetect: true
       }
     };
   },
@@ -190,17 +215,48 @@ export default {
     }
   },
   methods: {
+    handlePageChange(page) {
+      this.currentPage = page;
+      this.handleSearch();
+    },
+    // 侦测状态
+    changeUploaderDetectStatus() {
+      this.uploaderInfoData.isDetect = true;
+    },
+    changeVideoDetectStatus() {
+      this.uploaderInfoData.isDetect = true;
+    },
+    // 修改收藏的状态
+    changeUploaderFavoriteStatus(id) {
+      if (id > 0) {
+        this.uploaderInfoData.favoriteId = id;
+      } else {
+        this.uploaderInfoData.favoriteId = -1;
+      }
+    },
+    changeVideoFavoriteStatus(id) {
+      if (id > 0) {
+        this.videoInfoData.favoriteId = id;
+      } else {
+        this.videoInfoData.favoriteId = -1;
+      }
+    },
+
+    // 打开信息框
     openUploaderDialog(mid) {
-      console.log(mid);
-      //todo 获取详细数据
       this.uploaderDialogVisible = true;
+      getUploader(mid, this.user_id).then(response => {
+        this.uploaderInfoData = response.data;
+      });
     },
     openVideoDialog(aid) {
-      console.log(aid);
-      //todo 获取详细数据
       this.videoDialogVisible = true;
+      getVideo(aid, this.user_id).then(response => {
+        this.videoInfoData = response.data;
+      });
     },
     handleSearch() {
+      (this.uploaderListData = []), (this.videoListData = []);
       if (this.searchOption == "") {
         this.$message({
           message: "请选择搜索类型",
@@ -224,7 +280,7 @@ export default {
           params["orderSort"] = order[1];
 
           searchUploader(params).then(Response => {
-            this.uploaderListData = [];
+            // this.uploaderListData = [];
             var item = {};
             if (this.dataOrigin == "system") {
               var list = Response.data.list;
@@ -246,7 +302,7 @@ export default {
                 item["id"] = element.mid;
                 item["level"] = this.returnLevel(element.level);
                 item["nickName"] = element.uname;
-                item["vip"] = '大会员';
+                item["vip"] = "大会员";
                 item["mid"] = element.mid;
                 item["profile"] = element.upic;
                 this.uploaderListData.push(item);
@@ -255,7 +311,6 @@ export default {
               this.totalNum = 200;
             }
             this.currentOption = "uploader";
-            console.log(Response.data);
           });
         } else if (this.searchOption == "video") {
           // 搜索视频
@@ -275,8 +330,7 @@ export default {
                 item = {};
               });
               this.totalNum = Response.data.count;
-            } 
-            else {
+            } else {
               var list = Response.data.result;
               list.forEach(element => {
                 item["aid"] = element.aid;
@@ -289,7 +343,6 @@ export default {
               this.totalNum = 200;
             }
             this.currentOption = "video";
-            console.log(Response.data);
           });
         }
       }

@@ -3,7 +3,7 @@
     <el-row :gutter="10" type="flex" style="height:120px">
       <el-col :span="6">
         <div class="avatar-wrapper">
-          <el-avatar shape="square" :size="120" :src="request_profile(data.info.face)"></el-avatar>
+          <img :src="request_profile(data.info.face)" alt referrerpolicy="no-referrer" />
         </div>
       </el-col>
       <el-col :span="12">
@@ -33,14 +33,34 @@
       <el-col :span="5">
         <div class="uploader-option">
           <div>
-            <el-button type="primary" style="width:100%" :disabled="data.isDetect" @click="handleDetect">提交侦测</el-button>
+            <el-button
+              type="primary"
+              style="width:100%"
+              :disabled="data.isDetect"
+              @click="handleDetect"
+            >提交侦测</el-button>
           </div>
           <div>
-            <el-button type="success" style="width:100%;margin-top:10px" v-if="!isFavorite&&data.isDetect" @click="hadleFavorite">收藏</el-button>
-            <el-button type="warning" style="width:100%;margin-top:10px" v-else-if="isFavorite&&data.isDetect" @click="hadleDisFavorite">取消收藏</el-button>
+            <el-button
+              type="success"
+              style="width:100%;margin-top:10px"
+              v-if="data.favoriteId<0&&data.isDetect"
+              @click="hadleFavorite"
+            >收藏</el-button>
+            <el-button
+              type="warning"
+              style="width:100%;margin-top:10px"
+              v-else-if="data.favoriteId>0&&data.isDetect"
+              @click="hadleDisFavorite"
+            >取消收藏</el-button>
           </div>
           <div>
-            <el-button type="info" style="width:100%;margin-top:10px" v-if="isMoniter&&data.isDetect" @click="handleMoniter">监控</el-button>
+            <el-button
+              type="info"
+              style="width:100%;margin-top:10px"
+              v-if="data.isDetect"
+              @click="handleMoniter"
+            >监控</el-button>
           </div>
         </div>
       </el-col>
@@ -85,11 +105,12 @@
 </template>
 
 <script>
-import PasswordTest from '@/views/mo/components/PasswordTest'
-import {addUploaderDetect} from '@/api/hot_bili'
+import PasswordTest from "@/views/mo/components/PasswordTest";
+import { doFavorite, unFavorite, findFavorite } from "@/api/favorite";
+import { addUploaderDetect } from "@/api/hot_bili";
 export default {
   name: "UploaderInfo",
-  components:{
+  components: {
     PasswordTest
   },
   props: {
@@ -98,25 +119,21 @@ export default {
       default: {
         info: {
           face: "",
-          level:0
-        }
+          level: 0
+        },
+        isFavorite:false
       }
     }
   },
 
   data() {
     return {
-      user_id:this.$store.state.user.user_id,
+      user_id: this.$store.state.user.user_id,
 
-
-      // 是否存在侦测
-      isDetect:false,
-      // 是否收藏
-      isFavorite:false,
       // 是否监控
-      isMoniter:true,
+      isMoniter: true,
       // 提交选单
-      dialog_visible:false,
+      dialog_visible: false,
 
       level_color: {
         0: {
@@ -150,43 +167,55 @@ export default {
       }
     };
   },
-  watch: {
-    data(val) {}
-  },
   methods: {
-    passwordCoinfirm(){
+    passwordCoinfirm() {
       var params = {
-        user_id:this.user_id,
-        mid:this.data.info.mid
-      }
-      addUploaderDetect(params).then(Response=>{
-        if(Response.code!=20000){
+        user_id: this.user_id,
+        mid: this.data.info.mid
+      };
+      addUploaderDetect(params).then(Response => {
+        if (Response.code != 20000) {
           this.$message({
             message: Response.msg,
-            type: 'error'
-          })
-        }
-        else{
+            type: "error"
+          });
+        } else {
           this.$message({
-            message: '插入成功',
-            type: 'success'
-          })
-          this.$emit("changeDetectStatus")
+            message: "插入成功",
+            type: "success"
+          });
+          this.$emit("changeUploaderDetectStatus");
         }
-      })
-      
+      });
     },
-    hadleFavorite(){
-      this.isFavorite = true
+    hadleFavorite() {
+      doFavorite(this.user_id, this.data.info.mid, "uploader").then(
+        response => {
+          this.$emit("changeFavoriteStatus", response.data);
+          this.$message({
+            type: "success",
+            message: "收藏成功"
+          });
+        }
+      );
     },
-    hadleDisFavorite(){
-      this.isFavorite = false
+    hadleDisFavorite() {
+      unFavorite(this.data.favoriteId).then(response => {
+        this.$emit("changeFavoriteStatus", -1);
+        this.$message({
+          type: "warning",
+          message: "已取消收藏"
+        });
+      });
     },
-    handleMoniter(){
-      this.$router.push({ name: "DetectAdd", params: { id: this.data.info.mid,type:"uploader"} });
+    handleMoniter() {
+      this.$router.push({
+        name: "DetectAdd",
+        params: { id: this.data.info.mid, type: "uploader" }
+      });
     },
     // 添加至侦测
-    handleDetect(){
+    handleDetect() {
       this.$refs.test_passwrod.passwordDialog = true;
     },
     request_profile(profile) {
@@ -204,6 +233,12 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.avatar-wrapper {
+  img {
+    width: 120px;
+    height: 120px;
+  }
+}
 .identity-wrapper {
   .name {
     color: #666;

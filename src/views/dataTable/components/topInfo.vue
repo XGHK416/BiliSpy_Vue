@@ -105,12 +105,10 @@ export default {
     favorite() {
       doFavorite(this.user_id, this.mid, "uploader").then(response => {
         this.is_favorite = true;
+        this.favorite_id = response.data
         this.$message({
           type: "success",
           message: "收藏成功"
-        });
-        findFavorite(this.user_id, this.mid, "uploader").then(response => {
-          this.favorite_id = response.data.id;
         });
       });
     },

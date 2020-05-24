@@ -1,6 +1,7 @@
 <template>
   <div>
-    <TopInfo :info-data="topInfoData"></TopInfo>
+    <div v-if="haveData">
+      <TopInfo :info-data="topInfoData"></TopInfo>
     <div class="main-info-container">
       <el-tabs class="main-tab" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="内容分析" name="Content">
@@ -14,6 +15,16 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    </div>
+    <div v-else>
+      <div class="haveNotData" v-show="showNoDataMessage">
+        <el-card :body-style="{ padding: '0px' }">
+          <h1>这个对象今天才加入侦测列表，展示没有数据哦，请明天下午再来吧</h1>
+        </el-card>
+        
+      </div>
+    </div>
+    
 
     <!-- {{this.$route.params}} -->
   </div>
@@ -37,6 +48,9 @@ export default {
   },
   data() {
     return {
+      haveData:false,
+      showNoDataMessage:false,
+
       lazy:true,
       activeName: "Content",
       mid:this.$route.params['id'],
@@ -56,6 +70,16 @@ export default {
     },
     initTopInfo(){
       getBasicInfo(this.mid).then(response=>{
+        if(response.data==-1){
+          this.haveData=false
+          this.$message({
+            message: '没有数据',
+            type: 'warning'
+          })
+          this.showNoDataMessage = true
+          return 0
+        }
+        this.haveData = true
         let data = response['data']
         this.topInfoData= data
         this.topInfoData['profile']= this.return_profile(this.topInfoData['profile'])
@@ -74,5 +98,11 @@ export default {
     padding: 10px 20px 100px 20px;
     background-color: #ffffff;
   }
+}
+.haveNotData{
+  width: 50%;
+  margin: 0 auto;
+  height: 400px;
+  padding: 15px;
 }
 </style>

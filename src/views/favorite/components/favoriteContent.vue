@@ -54,6 +54,7 @@
           <template slot-scope="{row}">
             <el-button type="primary" size="mini" plain @click="cancle(row.favorite_id)">取消</el-button>
             <el-button type="success" size="mini" plain @click="info(row)">查看</el-button>
+            <el-button type="warning" size="mini" plain @click="jumpTo(row)">跳转</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -146,7 +147,19 @@ export default {
     // getVideoGroup(data) {
     //   this.video_group = data;
     // },
-
+    jumpTo(row){
+      if(row.type=="uploader")
+      this.$router.push({
+        name: "UploaderInfo",
+        params: { id: row.id }
+      });
+      else{
+         this.$router.push({
+        name: "VideoInfo",
+        params: { id: row.id }
+      });
+      }
+    },
     doRefresh() {
       this.$emit("reflashDate");
     },
