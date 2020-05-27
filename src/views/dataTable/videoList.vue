@@ -33,7 +33,7 @@
       <el-table-column label="封面" align="center">
         <template slot-scope="{row}">
           <a :href="return_href(row.video.videoId)">
-            <img :src="return_profile(row.video.videoProfile)" alt style="height:70px;width:112px" />
+            <img :src="row.video.videoProfile" alt style="height:70px;width:112px" referrerPolicy="no-referrer"/>
             <!-- <el-avatar shape="square" :src="return_profile(row.video.videoProfile)"></el-avatar> -->
             <div>{{ row.nick_name}}</div>
           </a>

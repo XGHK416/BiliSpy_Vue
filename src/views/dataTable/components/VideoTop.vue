@@ -8,7 +8,8 @@
               <div class="img-wrapper">
                 <img
                   style="min-height:50px;width:100%;max-height:150px"
-                  :src="return_profile(data.videoProfile)"
+                  :src="data.videoProfile"
+                  referrerPolicy="no-referrer"
                   alt
                 />
               </div>
@@ -119,6 +120,7 @@
 <script>
 import CountTo from "vue-count-to";
 import { getVideoInfo } from "@/api/videoAna";
+import {formatDynamic} from "@/utils/formatDynamic"
 import { doFavorite, unFavorite, findFavorite } from "@/api/favorite";
 export default {
   name: "VideoTop",
@@ -153,6 +155,9 @@ export default {
     };
   },
   methods: {
+    returnTag(dynamic){
+      return formatDynamic(dynamic)
+    },
     favorite() {
       doFavorite(this.user_id, this.aid, "video").then(response => {
         this.is_favorite = true;
@@ -184,18 +189,7 @@ export default {
     getVideoInfo(this.aid).then(response => {
       this.data = response.data;
       var dynamic = this.data.dynamic;
-      if (dynamic.length == 0) {
-        this.data.dynamic = [];
-      } else {
-        var tag_list = dynamic.split("#");
-        var list = [];
-        tag_list.forEach(element => {
-          if (element != "") {
-            list.push(element);
-          }
-        });
-        this.data.dynamic = list;
-      }
+      this.data.dynamic = this.returnTag(dynamic);
     });
   },
   mounted() {

@@ -29,8 +29,11 @@
       <el-table-column label="up主" align="center">
         <template slot-scope="{row}">
           <a :href="return_href(row.mid)">
-            <el-avatar shape="square" :src="return_profile(row.profile)"></el-avatar>
-            <div>{{ row.nick_name}}</div>
+            <div style="height:50px;width:50px;margin:0 auto">
+              <img :src="row.profile" alt="" style="height:50px;width:50px" referrerPolicy="no-referrer" >
+            </div>
+            <!-- <el-avatar shape="square" :src="return_profile(row.profile)"></el-avatar> -->
+            <div style="margin-top:1px">{{ row.nick_name}}</div>
           </a>
         </template>
       </el-table-column>

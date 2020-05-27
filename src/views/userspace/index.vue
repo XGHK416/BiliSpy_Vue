@@ -4,7 +4,7 @@
     <el-row>
       <el-col :span="14" :offset="5">
         <UserTop :info="base_info"></UserTop>
-          <UserAuths :auths="auths" style="margin:30px 0"></UserAuths>
+        <UserAuths :auths="auths" style="margin:30px 0"></UserAuths>
         <el-row type="flex" style="margin-top:15px" :gutter="20">
           <el-col :span="5">
             <div class="logging-wrapper">
@@ -54,17 +54,10 @@ export default {
       reverse: true,
       activities: [
         {
-          content: "活动按期开始",
-          timestamp: "2018-04-15"
+          content: "",
+          timestamp: ""
         },
-        {
-          content: "通过审核",
-          timestamp: "2018-04-13"
-        },
-        {
-          content: "创建成功",
-          timestamp: "2018-04-11"
-        }
+        
       ]
     };
   },

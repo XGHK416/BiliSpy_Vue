@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-    <div class="result_wrapper">
+    <div class="result_wrapper" v-loading="loading">
       <div class="list_wrapper">
         <div
           v-if="uploaderListData.length==0&&currentOption=='uploader'||videoListData.length==0&&currentOption=='video'"
@@ -39,14 +39,14 @@
         <div v-else class="result_list">
           <div class="uploader_result" v-if="currentOption=='uploader'">
             <el-row :gutter="10">
-              <el-col :span="6" v-for="item in uploaderListData" :key="item.id">
+              <el-col :sm="8" :md="6" v-for="item in uploaderListData" :key="item.id">
                 <uploader-unit :data="item" @openUploaderDialog="openUploaderDialog"></uploader-unit>
               </el-col>
             </el-row>
           </div>
           <div class="video_result" v-if="currentOption=='video'">
             <el-row :gutter="50">
-              <el-col :span="6" v-for="item in videoListData" :key="item.id">
+              <el-col :sm="8" :md="6" v-for="item in videoListData" :key="item.id">
                 <video-unit :data="item" @openVideoDialog="openVideoDialog"></video-unit>
               </el-col>
             </el-row>
@@ -107,6 +107,8 @@ export default {
   },
   data() {
     return {
+      loading: false,
+
       user_id: this.$store.state.user.user_id,
 
       searchInput: "",
@@ -160,8 +162,7 @@ export default {
 
       uploaderInfoData: {
         info: {
-          face:
-            "",
+          face: "",
           mid: 0,
           name: "",
           level: 6
@@ -183,8 +184,7 @@ export default {
       },
       videoInfoData: {
         data: {
-          pic:
-            "",
+          pic: "",
           title: "",
           bvid: "",
           aid: 0,
@@ -265,9 +265,10 @@ export default {
       } else if (this.searchInput == "") {
         this.$message({
           message: "请输入查询内容",
-          type: "warning"
+          type: "warning" 
         });
       } else {
+        this.loading = true;
         var params = {};
         params["key"] = this.searchInput;
         params["searchType"] = this.dataOrigin;
@@ -311,6 +312,7 @@ export default {
               this.totalNum = 200;
             }
             this.currentOption = "uploader";
+            this.loading = false;
           });
         } else if (this.searchOption == "video") {
           // 搜索视频
@@ -343,6 +345,7 @@ export default {
               this.totalNum = 200;
             }
             this.currentOption = "video";
+            this.loading = false;
           });
         }
       }
@@ -409,7 +412,7 @@ export default {
   min-height: calc(100vh - 185px);
   .list_wrapper {
     margin: 0 auto;
-    width: 60%;
+    width: 75%;
     .empty_list {
       text-align: center;
       padding-top: 130px;

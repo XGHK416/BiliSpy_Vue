@@ -113,7 +113,7 @@ export default {
 
 <style lang='scss' scope>
 .top-wrapper {
-  min-height: 150px;
+  max-height: 200px;
   background: #ffffff;
   .info-head {
     padding: 5px;

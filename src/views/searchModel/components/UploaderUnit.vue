@@ -10,7 +10,9 @@
         <el-col :span="18">
           <div class="introduce">
             <span class="nick_name">{{data.nickName}}</span>
-            <div><span class="mid">mid:{{data.mid}}</span></div>
+            <div>
+              <span class="mid">mid:{{data.mid}}</span>
+            </div>
             <div class="level">
               <img :src="returnLevel_(data.level)" style="height:12px" />
             </div>
@@ -52,8 +54,8 @@ export default {
     return {};
   },
   methods: {
-    handleInfo(){
-      this.$emit('openUploaderDialog',this.data.mid)
+    handleInfo() {
+      this.$emit("openUploaderDialog", this.data.mid);
     },
     returnLevel_(level) {
       return returnLevel(level);
@@ -65,11 +67,11 @@ export default {
 <style scope lang='scss'>
 .box-card {
   .img-wrapper {
-    height: 80px;
-    width: 80px;
+    max-height: 80px;
+    max-width: 80px;
     img {
-      height: 80px;
-      width: 80px;
+      max-height: 80px;
+      max-width: 80px;
     }
   }
   .introduce {
@@ -77,6 +79,10 @@ export default {
     .nick_name {
       font-size: 20px;
       font-weight: 600;
+      white-space: nowrap;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .mid {
       font-size: 15px;

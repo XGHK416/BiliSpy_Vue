@@ -36,7 +36,7 @@
             <el-button
               type="primary"
               style="width:100%"
-              :disabled="data.isDetect"
+              :disabled="data.isDetect===true"
               @click="handleDetect"
             >提交侦测</el-button>
           </div>

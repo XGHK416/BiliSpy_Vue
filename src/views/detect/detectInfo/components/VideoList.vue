@@ -33,7 +33,7 @@
               <div class="detect-rate info-item">监控频率：{{getRate_(item.cornExpression)}} 分钟</div>
               <div class="state info-item">
                 状态:&nbsp;
-                <el-tag :type="getState(item.isClose).type" size="small">{{getState(item.isClose).msg}}</el-tag>
+                <el-tag :type="getState(item.startTime,item.endTime).type" size="small">{{getState(item.startTime,item.endTime).msg}}</el-tag>
               </div>
             </div>
           </el-card>
@@ -78,7 +78,20 @@ export default {
       return getRate(cron)
     },
     // 获取当前运行状态
-    getState(state){
+    getState(start,end){
+      var now =new Date()
+      var startTime =new Date(start)
+      var endTime =new Date(end)
+      console.log(startTime<now&&now<endTime)
+      var state = 0
+      if(startTime >now){
+        state = -1
+      }else if(startTime<now&&now<endTime){
+        state = 0
+      }else if(now>endTime){
+        state = 1
+      }
+      console.log(state)
       switch (state) {
         case 0:
           return {

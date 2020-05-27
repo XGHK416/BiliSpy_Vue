@@ -11,7 +11,7 @@
                 </div>
                 <video-info
                   :data="videoInfoData"
-                  @changeDetectStatus="changeVideoDetectStatus"
+                  @changeVideoDetectStatus="changeVideoDetectStatus"
                   @changeFavoriteStatus="changeVideoFavoriteStatus"
                 ></video-info>
               </el-card>
@@ -25,7 +25,7 @@
                 </div>
                 <uploader-info
                   :data="uploaderInfoData"
-                  @changeDetectStatus="changeUploaderDetectStatus"
+                  @changeUploaderDetectStatus="changeUploaderDetectStatus"
                   @changeFavoriteStatus="changeUploaderFavoriteStatus"
                 ></uploader-info>
               </el-card>

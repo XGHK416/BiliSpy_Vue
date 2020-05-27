@@ -121,6 +121,7 @@
 
 <script>
 import { doFavorite, unFavorite, findFavorite } from "@/api/favorite";
+import {formatDynamic} from "@/utils/formatDynamic"
 import PasswordTest from "@/views/mo/components/PasswordTest";
 import { addVideoDetect } from "@/api/hot_bili";
 export default {
@@ -263,17 +264,7 @@ export default {
       this.video_data.share = this.data.data.stat.share;
       this.video_data.like = this.data.data.stat.like;
       this.video_data.view = this.data.data.stat.view;
-      this.video_data.dynamic = this.formatDynamic(this.data.data.dynamic);
-    },
-    formatDynamic(dynamic) {
-      var index = dynamic.replace(/[\r\n]/g, "|").indexOf("|");
-      if (index > 0) {
-        var stream = dynamic.substring(1, index - 1);
-      } else {
-        var stream = dynamic.substring(1, dynamic.length - 1);
-      }
-      var list = stream.split("##");
-      return list;
+      this.video_data.dynamic = formatDynamic(this.data.data.dynamic);
     },
     formatLike() {
       return this.formatDate(this.video_data.like);

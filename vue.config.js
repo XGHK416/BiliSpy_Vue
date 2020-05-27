@@ -46,7 +46,7 @@ module.exports = {
               '^/bili-api': '/bili-api' //填写项目名称
           }
       }
-  },
+   },
     // before: require('./mock/mock-server.js')
     before: app => {}
   },
