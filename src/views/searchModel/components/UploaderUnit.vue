@@ -16,7 +16,7 @@
             <div class="level">
               <img :src="returnLevel_(data.level)" style="height:12px" />
             </div>
-            <div class="vip">{{data.vip}}</div>
+            <div class="vip">{{returnVip_(data.vip)}}</div>
           </div>
         </el-col>
         <el-col :span="24">
@@ -42,6 +42,7 @@
 
 <script>
 import { returnLevel } from "@/utils/return-level";
+import {returnVip} from "@/utils/return-vip"
 export default {
   name: "UplaoderUnit",
   props: {
@@ -54,6 +55,9 @@ export default {
     return {};
   },
   methods: {
+    returnVip_(vip){
+      return returnVip(vip)
+    },
     handleInfo() {
       this.$emit("openUploaderDialog", this.data.mid);
     },

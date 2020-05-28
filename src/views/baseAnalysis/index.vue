@@ -48,12 +48,6 @@ import VideoSpiderBar from "./components/VideoSpiderBar"
 import WorldCloud from "./components/WorldCloud"
 
 import {getBaseTopInfo,getTopFansLevelUploader,getCountUploaderInfo,getSpiderVideoCount,getWorldCloud,getVideoSectionCount} from '@/api/base_analysis'
-const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-};
 export default {
   components: {
     TopInfo,
@@ -66,7 +60,6 @@ export default {
   data() {
     return {
       TopInfo:{
-        run_time_second:['','']
       },
       WorldCloudData: [],
       UploaderFansBarData: {},
@@ -78,9 +71,6 @@ export default {
     };
   },
   methods: {
-    handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type];
-    },
     initData() {
       getSpiderVideoCount().then(response => {
         this.VideoSpiderBarData = response['data']

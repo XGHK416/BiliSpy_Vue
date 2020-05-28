@@ -85,6 +85,7 @@
       @handleDiselect="handleDiselect"
       @handleClose="handleClose"
       @handleSearch="handleSearch"
+       ref="uploaderMenu"
     ></uploader-menu>
     <!-- 视频选单 -->
     <el-dialog title="视频选单" :visible.sync="video_menu_visible" width="25%" center>
@@ -238,6 +239,7 @@ export default {
       this.getUploaderList_(params);
     },
     getUploaderList_(params) {
+      this.$refs.uploaderMenu.loading=true
       getUploaderList(params).then(Response => {
         this.menu_select_data = [];
         var item = {};
@@ -250,6 +252,7 @@ export default {
           this.menu_select_data.push(item);
           item = {};
         });
+        this.$refs.uploaderMenu.loading=false
       });
     },
 

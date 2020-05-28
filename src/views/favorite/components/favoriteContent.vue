@@ -17,7 +17,7 @@
         </el-table-column>
         <el-table-column label="名称">
           <template slot-scope="{row}">
-            <span>{{ row.name }}</span>
+            <span>{{ row.NAME }}</span>
           </template>
         </el-table-column>
         <el-table-column label="名称">

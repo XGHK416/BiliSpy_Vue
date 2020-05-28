@@ -48,6 +48,8 @@ export default {
   },
   data() {
     return {
+      user_id:this.$store.state.user.user_id,
+
       haveData:false,
       showNoDataMessage:false,
 
@@ -66,10 +68,10 @@ export default {
       return 'https://images.weserv.nl/?url='+url
     },
     handleClick(tab, event) {
-      console.log(tab, event);
+      // console.log(tab, event);
     },
     initTopInfo(){
-      getBasicInfo(this.mid).then(response=>{
+      getBasicInfo(this.mid,this.user_id).then(response=>{
         if(response.data==-1){
           this.haveData=false
           this.$message({

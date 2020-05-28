@@ -94,12 +94,12 @@ export default {
         yAxis: [
           {
             type: "value",
-            // splitNumber: 5,
+            splitNumber: 10,
             min: function(value) {
-              return value.min;
+              return parseInt(value.min*0.8);
             },
             max: function(value) {
-              return value.max;
+              return parseInt(value.max*1.2);
             }
           }
         ],

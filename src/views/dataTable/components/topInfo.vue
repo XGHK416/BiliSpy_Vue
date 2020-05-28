@@ -16,7 +16,7 @@
               <span class="context">mid: {{infoData.mid}}</span>
               <span class="context">
                 身份:
-                <el-tag type="danger" size="small">{{infoData.vip}}</el-tag>
+                <el-tag type="danger" size="small">{{returnVip_(infoData.vip)}}</el-tag>
               </span>
             </el-col>
             <el-col :span="10">
@@ -45,7 +45,7 @@
                 <span class="detect-time">{{infoData.detect_time}}</span> 次
               </div>
               <div class="detect-info">
-                <a href="/">查看监控历史</a>
+                <span @click="jumpToMonitor" style="cursor: pointer;">查看监控历史</span>
               </div>
             </el-col>
           </el-row>
@@ -68,6 +68,7 @@
 
 <script>
 import InfoContent from "./infoContent";
+import { returnVip } from "@/utils/return-vip";
 import { doFavorite, unFavorite, findFavorite } from "@/api/favorite";
 export default {
   name: "TopInfo",
@@ -87,25 +88,32 @@ export default {
     };
   },
   mounted() {
-    console.log(this.user_id)
     findFavorite(this.user_id, this.mid, "uploader").then(response => {
       if (response.data != null) {
         this.favorite_id = response.data.id;
         this.is_favorite = true;
-      }
-      else{
-        this.is_favorite = false
+      } else {
+        this.is_favorite = false;
       }
     });
   },
   methods: {
-    addMonitor(mid){
-      this.$router.push({ name: "DetectAdd", params: { id: mid,type:"uploader"} });
+    jumpToMonitor() {
+      this.$router.push({ name: "DetectInfo" });
+    },
+    returnVip_(vip) {
+      return returnVip(vip);
+    },
+    addMonitor(mid) {
+      this.$router.push({
+        name: "DetectAdd",
+        params: { id: mid, type: "uploader" }
+      });
     },
     favorite() {
       doFavorite(this.user_id, this.mid, "uploader").then(response => {
         this.is_favorite = true;
-        this.favorite_id = response.data
+        this.favorite_id = response.data;
         this.$message({
           type: "success",
           message: "收藏成功"
@@ -121,8 +129,7 @@ export default {
         });
       });
     },
-    handleClick(tab, event) {
-    }
+    handleClick(tab, event) {}
   }
 };
 </script>
@@ -155,6 +162,7 @@ export default {
       font-size: 25px;
       font-weight: bold;
       color: #f34949;
+      
     }
   }
   .top-middle-container {

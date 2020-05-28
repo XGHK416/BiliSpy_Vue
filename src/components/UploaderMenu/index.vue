@@ -17,7 +17,7 @@
         v-if="haveSearch"
         @click="handleSearch()"
       >搜索</el-button>
-      <div class="addList-wrapper">
+      <div class="addList-wrapper" v-loading="loading">
         <el-row :gutter="30">
           <el-col :span="12" v-for="(item,index) in data" :key="item.mid+''">
             <div class="list-item">
@@ -98,6 +98,7 @@ export default {
     },
     data() {
         return {
+          loading:false,
           current_selectNum:0,
           item_id_list:[],
           visible_:false,

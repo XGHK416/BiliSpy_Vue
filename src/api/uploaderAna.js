@@ -36,12 +36,13 @@ export function getVideoList(page,pageSize,selectId,date) {
 }
 
 // up主基本信息
-export function getBasicInfo(mid) {
+export function getBasicInfo(mid,userId) {
   return request({
     url: '/bili-api/info/uploader/base',
     method: 'get',
     params: {
         'mid': mid,
+        'userId': userId
     }
   })
 }
@@ -82,7 +83,7 @@ export function getRecentVideo(mid,page,pageSize) {
 // 推荐竞品列表
 export function getRecommendUploader(mid,page,pageSize) {
   return request({
-    url: '/bili-ap/info/uploader/recommendCompeteList',
+    url: '/bili-api/info/uploader/recommendCompeteList',
     method: 'get',
     params: {
         'page': page,

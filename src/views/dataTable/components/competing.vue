@@ -11,27 +11,27 @@
         </el-table-column>
         <el-table-column label="排名" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.rank }}</span>
+            <span>{{ row.rank }} 位</span>
           </template>
         </el-table-column>
         <el-table-column label="粉丝数" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.fans }}</span>
+            <span>{{ row.fans }} 名</span>
           </template>
         </el-table-column>
         <el-table-column label="粉丝增长率" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.fans_rate }}</span>
+            <span>{{ row.fans_rate }}/天</span>
           </template>
         </el-table-column>
         <el-table-column label="视频数" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.video_publish }}</span>
+            <span>{{ row.video_publish }} 个</span>
           </template>
         </el-table-column>
         <el-table-column label="平均视频观看人数" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.avage_watch }}</span>
+            <span>{{ row.avg_view }} 次</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center">
@@ -129,7 +129,7 @@ export default {
       menuTitle: "推荐加入",
       totalPage: 0,
       menuItems: [],
-      maxCompeter:5,
+      maxCompeter: 5,
       // 列表数据
       tableData: [],
 
@@ -170,7 +170,7 @@ export default {
         data: []
       },
       //折线图的mid列表
-      cross_mids:[]
+      cross_mids: []
     };
   },
   created() {
@@ -189,41 +189,44 @@ export default {
       this.menuVisiable = false;
     },
     pageChange(key, page, pageSize) {
-      if(this.menuTitle=="推荐加入"){
-        this.getRecommendDate(this.mind_mid.mid,page,pageSize)
-      }
-      else{
+      if (this.menuTitle == "推荐加入") {
+        this.getRecommendDate(this.mind_mid.mid, page, pageSize);
+      } else {
         this.getMenuData(key, page, pageSize);
-        }
+      }
       //   请求换页
     },
     handleSelect(item, list, index) {
-
-      // 选中时的事件
+      // 选中UploaderMenue中的选项时的事件
       // item.isSelect = true
       // 添加到table
       this.addInList(item);
 
-      var competing_list = list.slice(0)
-      competing_list.unshift(this.mind_mid.mid)
-      this.addToCross(competing_list,this.cross_option.current_option.key,7)
+      var competing_list = list.slice(0);
+      competing_list.unshift(this.mind_mid.mid);
+      this.addToCross(competing_list, this.cross_option.current_option.key, 7);
     },
     handleDiselect(item, list, index) {
       this.tableData.splice(index + 1, 1);
 
-      var competing_list = list.slice(0)
-      competing_list.unshift(this.mind_mid.mid)
-      this.addToCross(competing_list,this.cross_option.current_option.key,7)
+      var competing_list = list.slice(0);
+      competing_list.unshift(this.mind_mid.mid);
+      this.addToCross(competing_list, this.cross_option.current_option.key, 7);
       // 取消选中的事件
       // item.isSelect = false;
     },
+    //////////////////////////////
+    // 普通搜索名单
     getMenuData(key, page, pageSize) {
+      this.$refs.uploaderMenu.loading = true;
+
       getCompetingUploader(key, page, pageSize).then(response => {
+        this.totalPage = 50;
         // 先将menu列表清空
         this.menuItems = [];
         // 将数据更新到menu中
         var data = response["data"];
-        this.totalPage = data["count"];
+        // this.totalPage = data["count"];
         var list = data["list"];
         const table_data = [];
 
@@ -246,6 +249,8 @@ export default {
         // 添加至选单
         this.menuItems = table_data;
 
+        this.$refs.uploaderMenu.loading = false;
+
         // console.log("sss" + this.menuItems);
       });
     },
@@ -254,8 +259,9 @@ export default {
       // 查询事件
     },
     // 查找推荐名单
-    getRecommendDate(mid,page,pageSize){
-      getRecommendUploader(mid,page,pageSize).then(response=>{
+    getRecommendDate(mid, page, pageSize) {
+      this.$refs.uploaderMenu.loading = true;
+      getRecommendUploader(mid, page, pageSize).then(response => {
         // 先将menu列表清空
         this.menuItems = [];
         // 将数据更新到menu中
@@ -281,15 +287,24 @@ export default {
         }
         // 添加至选单
         this.menuItems = table_data;
-      })
+        this.$refs.uploaderMenu.loading = false;
+      });
     },
+    ////////////////////////////////
     addRecommend() {
+      this.menuItems = [];
+      this.totalPage = 0;
       this.haveSearch = false;
       this.menuVisiable = true;
       this.menuTitle = "推荐加入";
-      this.getRecommendDate(this.mind_mid.mid,1,6)
+      this.getRecommendDate(this.mind_mid.mid, 1, 6);
     },
     addMyself() {
+      if (this.menuTitle == "推荐加入") {
+        this.menuItems = [];
+        this.totalPage = 0;
+      }
+
       this.haveSearch = true;
       this.menuVisiable = true;
       this.menuTitle = "手动加入";
@@ -303,6 +318,13 @@ export default {
         let item_ = {};
         let data = response.data;
         let uploader = data.uploader;
+        let latestVideo = data.latestVideo;
+        let avg_view = 0;
+        latestVideo.forEach(element => {
+          avg_view = avg_view + element.videoView;
+        });
+        avg_view = parseInt(avg_view / latestVideo.length);
+
         let fans = data.fans.series_data;
         let fans_avg = 0;
         let latest_video = data.latestVideo.pop();
@@ -315,6 +337,7 @@ export default {
         item_.fans_rate = fans_avg;
         item_.video_publish = uploader.videoCount;
         item_.latest_watch = latest_video;
+        item_.avg_view = avg_view;
         // 判断是否本机
         if (item.mid === this.mind_mid.mid) {
           item_.isOri = true;
@@ -332,9 +355,9 @@ export default {
       list.splice(list_index, 1);
       this.tableData.splice(index, 1);
 
-      var competing_list = list.slice(0)
-      competing_list.unshift(this.mind_mid.mid)
-      this.addToCross(competing_list,this.cross_option.current_option.key,7)
+      var competing_list = list.slice(0);
+      competing_list.unshift(this.mind_mid.mid);
+      this.addToCross(competing_list, this.cross_option.current_option.key, 7);
     },
     return_profile(url) {
       return "https://images.weserv.nl/?url=" + url;
@@ -365,27 +388,26 @@ export default {
       this.cross_option.current_option.key = type;
       this.cross_option.current_option.name = label;
 
-      
-
-      var competing_list = this.$refs.uploaderMenu.item_id_list.slice(0)
-      competing_list.unshift(this.mind_mid.mid)
-      if(this.cross_mids.toString==competing_list.toString && JSON.stringify(this.cross_data[type])!='{}' && this.cross_mids.length==this.cross_data[type].series.length){
-      }else{
+      var competing_list = this.$refs.uploaderMenu.item_id_list.slice(0);
+      competing_list.unshift(this.mind_mid.mid);
+      if (
+        this.cross_mids.toString == competing_list.toString &&
+        JSON.stringify(this.cross_data[type]) != "{}" &&
+        this.cross_mids.length == this.cross_data[type].series.length
+      ) {
+      } else {
         this.addToCross(competing_list, type, 7);
       }
 
       // console.log(mids,type)
-
-
-
     },
-    return_crossData(){
+    return_crossData() {
       // console.log(this.cross_data[this.cross_option.current_option.key])
-      return this.cross_data[this.cross_option.current_option.key]
+      return this.cross_data[this.cross_option.current_option.key];
     },
     // 添加cross
     addToCross(mid, type, limit) {
-      this.cross_mids = mid.slice(0)
+      this.cross_mids = mid.slice(0);
       var params = qs.stringify(
         {
           mids: mid,
@@ -397,9 +419,9 @@ export default {
       getCompetingOnesData(params).then(response => {
         var data = response["data"];
         if (data != null) {
-          var list = data['list']
-          var uploaders = data['legend'];
-          var legend = []
+          var list = data["list"];
+          var uploaders = data["legend"];
+          var legend = [];
           // 以第一个的横坐标为准
           var data_flag = false;
           var x_axis = [];
@@ -407,7 +429,7 @@ export default {
           var series_list = [];
           var $this = this;
           uploaders.forEach(function(item, index) {
-            legend.push(item.name)
+            legend.push(item.name);
             // 遍历每个mid
             series.name = item.name;
             if (index == 0) {
@@ -425,8 +447,8 @@ export default {
             series_list.push(series);
             series = $this.resetCrossDataUnitSeries();
           });
-          var unit = this.resetCrossDataUnit()
-          unit.title_text = this.cross_option.current_option.name+"增长变化";
+          var unit = this.resetCrossDataUnit();
+          unit.title_text = this.cross_option.current_option.name + "增长变化";
           unit.legend = legend;
           unit.x_axis = x_axis;
           unit.series = series_list;
@@ -435,8 +457,7 @@ export default {
           this.cross_data[type] = unit;
           // console.log(this.cross_data)
           // console.log(this.cross_data['FANS'])
-          console.log(this.cross_data)
-
+          // console.log(this.cross_data);
         } else {
           // 数据为空时
         }

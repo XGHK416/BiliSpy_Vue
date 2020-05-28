@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+      <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="uploader" class-name="card-panel-icon" />
         </div>
@@ -9,7 +9,7 @@
           <div class="card-panel-text">检测up主</div>
           <count-to
             :start-val="0"
-            :end-val="topInfo.total_uploader"
+            :end-val="topInfo.uploaderNum"
             :duration="2600"
             class="card-panel-num"
           />名
@@ -17,7 +17,7 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
+      <div class="card-panel" >
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="total-video" class-name="card-panel-icon" />
         </div>
@@ -25,7 +25,7 @@
           <div class="card-panel-text">总视频数</div>
           <count-to
             :start-val="0"
-            :end-val="topInfo.total_video"
+            :end-val="topInfo.videoNum"
             :duration="3000"
             class="card-panel-num"
           />个
@@ -33,15 +33,15 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+      <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="today-video" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">今日爬取视频</div>
+          <div class="card-panel-text">今日更新视频</div>
           <count-to
             :start-val="0"
-            :end-val="topInfo.today_video"
+            :end-val="topInfo.videoUpdateNum"
             :duration="3200"
             class="card-panel-num"
           />个
@@ -49,13 +49,18 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
+      <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="runtime" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">爬虫运行时间</div>
-          <span class="card-panel-num">{{returnRuntime()}}</span>
+          <count-to
+            :start-val="0"
+            :end-val="topInfo.runTimeDay"
+            :duration="3200"
+            class="card-panel-num"
+          />天
         </div>
       </div>
     </el-col>
@@ -75,21 +80,7 @@ export default {
     }
   },
   methods: {
-    returnRuntime() {
-      var time_list =  this.topInfo.run_time_second;
-      var hour = time_list[0];
-      var minte = time_list[1];
-      if (hour.indexOf("days,") != -1) {
-        var list = hour.split(" days, ");
-        return list[0] + "天" + list[1] + "小时";
-      }
-    },
-    handleSetLineChartData(type) {
-      this.$emit("handleSetLineChartData", type);
-    },
-    getTopInfo(topInfo) {
-      this.topInfo = topInfo;
-    }
+   
   }
 };
 </script>
