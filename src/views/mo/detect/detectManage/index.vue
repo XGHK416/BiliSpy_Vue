@@ -12,11 +12,19 @@
         </el-form>
       </div>
       <div class="scanning-wrapper">
+        <el-popover placement="top" width="240" v-model="deleteAllConfiromVisible">
+          <p>你确定要全部删掉 {{totalNum}} 条侦测对象吗</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="deleteAllConfiromVisible = false">取消</el-button>
+            <el-button type="primary" size="mini" @click="handleAllDelete">确定</el-button>
+          </div>
+          <el-button slot="reference" type="danger" v-show="allDelete" v-loading="deletLoading">全部删除</el-button>
+        </el-popover>
         <el-button type="primary" @click="handleScan">扫描无用账号</el-button>
       </div>
     </div>
     <!-- ///////////////////////////////////////// -->
-    <div class="table-wrapper">
+    <div class="table-wrapper" v-loading="loading">
       <el-table :data="tableData" style="width: 100%" stripe>
         <el-table-column label="id" width="150" prop="user_id"></el-table-column>
         <el-table-column label="昵称" prop="nick_name"></el-table-column>
@@ -25,7 +33,8 @@
         <el-table-column label="视频数目" prop="video_count"></el-table-column>
         <el-table-column label="创建日期" prop="create_time"></el-table-column>
         <el-table-column label="侦测次数" prop="count"></el-table-column>
-        <el-table-column label="侦测次数" prop="count">
+        <el-table-column label="创建者" prop="create_id"></el-table-column>
+        <el-table-column label="操作" prop="count">
           <template slot-scope="scope">
             <el-button type="warning" plain @click="handleDelete(scope.$index,scope.row)">删除</el-button>
           </template>
@@ -34,7 +43,7 @@
       <div class="pagination">
         <el-pagination
           layout="prev, pager, next"
-          :total="100"
+          :total="totalNum"
           :page-size="page_size"
           :current-page="current_page"
           @current-change="paginationChange"
@@ -50,11 +59,16 @@
 import {
   deleteDetectObject,
   selectUploader,
-  scanUnusable
+  scanUnusable,
+  deleteDetectAllObject
 } from "@/api/detect_manager";
 export default {
   data() {
     return {
+      loading: false,
+      deletLoading:false,
+      totalNum: 0,
+
       flag: 0,
       user_id: this.$store.state.user.user_id,
       current_page: 1,
@@ -62,14 +76,21 @@ export default {
       search_input: "",
       squareUrl:
         "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
-      tableData: []
+      tableData: [],
+
+      allDelete: false,
+      deleteAllConfiromVisible: false
     };
   },
   methods: {
     handleScan() {
       this.flag = 1;
-      scanUnusable(1, this.page_size).then(Response => {
-        this.tableData = Response.data;
+      this.loading = true;
+      scanUnusable(this.current_page, this.page_size).then(Response => {
+        this.tableData = Response.data.result;
+        this.totalNum = Response.data.count;
+        this.loading = false;
+        this.allDelete = true;
       });
     },
     handleDelete(index, row) {
@@ -81,19 +102,44 @@ export default {
         this.tableData.splice(index, 1);
       });
     },
+    handleAllDelete() {
+      this.deleteAllConfiromVisible = false
+      this.deletLoading = true
+      deleteDetectAllObject(this.user_id).then(Response => {
+        this.$message({
+          message: "已删除",
+          type: "success"
+        });
+        this.deletLoading = false,
+        this.tableData = [],
+        scanUnusable(1, this.page_size).then(Response => {
+          this.tableData = Response.data.result;
+          this.totalNum = Response.data.count;
+          this.loading = false;
+          this.allDelete = true;
+        });
+      });
+    },
     handleSearch() {
       this.flag = 0;
+      this.loading = true;
       selectUploader(this.search_input, this.current_page, this.page_size).then(
         Response => {
-          this.tableData = Response.data;
+          this.tableData = Response.data.result;
+          this.totalNum = Response.data.count;
+          this.loading = false;
         }
       );
     },
     paginationChange(current_page) {
       this.current_page = current_page;
+      this.loading = true;
       if (this.flag == 1) {
         scanUnusable(this.current_page, this.page_size).then(Response => {
-          this.tableData = Response.data;
+          this.tableData = Response.data.result;
+          this.totalNum = Response.data.count;
+          this.loading = false;
+          this.allDelete = true;
         });
       } else {
         selectUploader(
@@ -101,7 +147,9 @@ export default {
           this.current_page,
           this.page_size
         ).then(Response => {
-          this.tableData = Response.data;
+          this.tableData = Response.data.result;
+          this.totalNum = Response.data.count;
+          this.loading = false;
         });
       }
     },

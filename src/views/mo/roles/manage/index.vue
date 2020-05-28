@@ -4,8 +4,8 @@
     <div class="manager-contain">
       <div class="manager-option-wrapper">
         <div class="manager-kind-wrapper">
-          <el-button type="primary" plain @click="mo_type='admin'">监督者 {{admin_count}}</el-button>
-          <el-button type="success" plain @click="mo_type='manager'">管理者 {{manager_count}}</el-button>
+          <!-- <el-button type="primary" plain @click="mo_type='admin'">监督者 {{}}</el-button> -->
+          <el-button type="success" plain @click="mo_type='manager'">管理员 {{admin_count}}</el-button>
           <el-button type="primary" @click="handleAddMo" style="margin-left:10px">添加后台人员</el-button>
         </div>
         <div class="manager-search-wrapper">
@@ -52,7 +52,7 @@
           <el-table-column header-align="center" align="center" label="label">
             <template slot-scope="scope">
               <el-button type="primary" @click="handleInfo(scope.row)">查看</el-button>
-              <el-button
+              <!-- <el-button
                 type="warning"
                 @click="handleWrittenOff(scope.row,scope.$index)"
                 v-permission="['manager']"
@@ -64,7 +64,7 @@
                 @click="handleDisWrittenOff(scope.row,scope.$index)"
                 v-permission="['manager']"
                 v-if="mo_type!='manager'&&scope.row.usable!='1'&&scope.row.role!='manager'"
-              >恢复</el-button>
+              >恢复</el-button> -->
             </template>
           </el-table-column>
         </el-table>

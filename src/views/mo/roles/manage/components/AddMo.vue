@@ -36,13 +36,10 @@ export default {
       user_id: this.$store.state.user.user_id,
       dialogVisible: false,
       options: [
-        {
-          value: "admin",
-          label: "监督者"
-        },
+       
         {
           value: "manager",
-          label: "管理者"
+          label: "管理员"
         }
       ],
       value: "",

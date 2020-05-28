@@ -40,3 +40,12 @@ export function deleteDetectObject(moId,unusableId) {
         data:param
     })
 }
+export function deleteDetectAllObject(moId) {
+    let param = new URLSearchParams()
+    param.append('moId', moId)
+    return request({
+        url: '/bili-api/detectManager/deleteAllUnusableObject',
+        method: 'post',
+        data:param
+    })
+}
