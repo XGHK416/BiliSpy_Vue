@@ -5,7 +5,7 @@
       <div class="manager-option-wrapper">
         <div class="manager-kind-wrapper">
           <!-- <el-button type="primary" plain @click="mo_type='admin'">监督者 {{}}</el-button> -->
-          <el-button type="success" plain @click="mo_type='manager'">管理员 {{admin_count}}</el-button>
+          <el-button type="success" plain @click="mo_type='manager'">管理员 {{manager_count}}</el-button>
           <el-button type="primary" @click="handleAddMo" style="margin-left:10px">添加后台人员</el-button>
         </div>
         <div class="manager-search-wrapper">
@@ -34,7 +34,7 @@
           </el-table-column>
           <el-table-column header-align="center" align="center" label="角色">
             <template slot-scope="scope">
-              <el-tag v-if="scope.row.role=='manager'" type="success">管理者</el-tag>
+              <el-tag v-if="scope.row.role=='manager'" type="success">管理员</el-tag>
               <el-tag v-else type="primary">监督者</el-tag>
             </template>
           </el-table-column>
@@ -110,7 +110,7 @@ export default {
   directives: { permission },
   data() {
     return {
-      mo_type: "admin",
+      mo_type: "manager",
       manager_count: 0,
       admin_count: 0,
       page_size:10,
