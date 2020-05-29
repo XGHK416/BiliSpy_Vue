@@ -83,7 +83,7 @@ export default {
           { required: true, trigger: 'blur', validator: validatePassword }
         ]
       },
-      passwordType: false,
+      passwordType: 'password',
       loading: false
     }
   },

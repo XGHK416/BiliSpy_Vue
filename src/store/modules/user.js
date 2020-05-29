@@ -70,11 +70,17 @@ const actions = {
       register({ nickname: nickname.trim(), password: password }).then(response => {
         // 解构赋值，相当于const data = response.data
         const { data } = response
+        var loginForm={
+          identityId: data.userId,
+          credential: password,
+          identityType:'ORIGIN'
+        }
         // 模拟设置token
         commit('SET_TOKEN', data.token)
         commit('SET_USER_ID', data.userId)
         setToken(data.token)
         setId(data.userId)
+        login(loginForm)
         resolve()
       }).catch(error => {
         reject(error)
