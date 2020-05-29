@@ -123,6 +123,7 @@ export default {
     handleSearch() {
       this.flag = 0;
       this.loading = true;
+      this.allDelete = false;
       selectUploader(this.search_input, this.current_page, this.page_size).then(
         Response => {
           this.tableData = Response.data.result;

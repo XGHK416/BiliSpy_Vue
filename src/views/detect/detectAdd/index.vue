@@ -185,7 +185,14 @@ export default {
             (jobInfo.auths_id = this.object_list[0].auths_id);
           jobInfo.auths_profile = this.object_list[0].auths_profile;
         }
-        addJob(jobInfo).then(Response => {});
+        addJob(jobInfo).then(Response => {
+          if(Response.code==20000){
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+          }
+        });
       }
     },
 

@@ -31,7 +31,7 @@
             <template slot-scope="scope">
               <el-tag type="success" v-if="scope.row.usable=='1'&&scope.row.isCold==0">正常</el-tag>
               <el-tag type="warning" v-else-if="scope.row.usable=='0'">注销</el-tag>
-              <el-tag type="info" v-if="scope.row.isCold==1">冻结</el-tag>
+              <!-- <el-tag type="info" v-if="scope.row.isCold==1">冻结</el-tag> -->
             </template>
           </el-table-column>
           <el-table-column header-align="center" prop="latest_login" align="center" label="最后登录时间">
@@ -53,8 +53,8 @@
                 v-permission="['manager']"
                 v-if="scope.row.usable!='1'"
               >恢复</el-button>
-              <el-button type="info" v-if="scope.row.isCold==0" @click="handleCold(scope.row,scope.$index)">冻结</el-button>
-              <el-button type="info" v-else plain @click="handleDisCold(scope.row,scope.$index)">解冻</el-button>
+              <!-- <el-button type="info" v-if="scope.row.isCold==0" @click="handleCold(scope.row,scope.$index)">冻结</el-button> -->
+              <!-- <el-button type="info" v-else plain @click="handleDisCold(scope.row,scope.$index)">解冻</el-button> -->
             </template>
           </el-table-column>
         </el-table>

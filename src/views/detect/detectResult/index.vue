@@ -157,38 +157,7 @@ export default {
       total_size:0,
       current_table_data:[],
       tableData: [
-        {
-          date: "2016-05-02",
-          view: 1,
-          like: 2231,
-          coins: 13123,
-          favorite: 43434,
-          share: 2312312
-        },
-        {
-          date: "2016-05-02",
-          view: 1,
-          like: 2231,
-          coins: 13123,
-          favorite: 43434,
-          share: 2312312
-        },
-         {
-          date: "2016-05-02",
-          view: 1,
-          like: 2231,
-          coins: 13123,
-          favorite: 43434,
-          share: 2312312
-        },
-         {
-          date: "2016-05-02",
-          view: 1,
-          like: 2231,
-          coins: 13123,
-          favorite: 43434,
-          share: 2312312
-        },
+        
       ]
     };
   },
