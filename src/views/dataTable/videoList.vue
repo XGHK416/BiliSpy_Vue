@@ -46,7 +46,7 @@
       </el-table-column>
       <el-table-column label="观看数" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.video.videoView }}</span>
+          <span>{{ row.video.videoView }} 次</span>
         </template>
       </el-table-column>
       <el-table-column label="点赞">
@@ -57,7 +57,7 @@
             icon-class="star"
             class="meta-item__icon"
           />-->
-          <span>{{ row.videoLike }} 人</span>
+          <span>{{ row.video.videoLike }} 次</span>
         </template>
       </el-table-column>
       <el-table-column label="硬币" align="center">
@@ -68,7 +68,7 @@
             @click="handleFetchPv(row.pageviews)"
           >{{ row.pageviews }}</span>
           <span v-else>0</span>-->
-          <span>{{row.video.coins}} 人</span>
+          <span>{{row.video.coins}} 枚</span>
         </template>
       </el-table-column>
       <el-table-column label="收藏" align="center">

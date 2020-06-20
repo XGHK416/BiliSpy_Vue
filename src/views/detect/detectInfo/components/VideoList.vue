@@ -11,7 +11,8 @@
     <div class="list-contain">
       <el-row :gutter="10">
         <el-col :span="4" v-for="item in list" :key="item.detectId">
-          <el-card :body-style="{ padding: '0px' }">
+          <div style="margin-top:10px">
+             <el-card :body-style="{ padding: '0px'}">
             <div class="card-head" slot="header">
               <span >{{item.auths}}</span>
               <el-button
@@ -37,6 +38,8 @@
               </div>
             </div>
           </el-card>
+          </div>
+         
         </el-col>
       </el-row>
       <div class="pagination">

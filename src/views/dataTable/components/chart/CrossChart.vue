@@ -96,10 +96,10 @@ export default {
             type: "value",
             splitNumber: 10,
             min: function(value) {
-              return parseInt(value.min*0.8);
+              return value.min;
             },
             max: function(value) {
-              return parseInt(value.max*1.2);
+              return value.max;
             }
           }
         ],

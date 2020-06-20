@@ -9,11 +9,6 @@
             <div>{{ row.nickname}}</div>
           </template>
         </el-table-column>
-        <el-table-column label="排名" align="center">
-          <template slot-scope="{row}">
-            <span>{{ row.rank }} 位</span>
-          </template>
-        </el-table-column>
         <el-table-column label="粉丝数" align="center">
           <template slot-scope="{row}">
             <span>{{ row.fans }} 名</span>

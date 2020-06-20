@@ -93,15 +93,15 @@ export default {
           table_item.title = element.title;
           table_item.profile = element.pic;
           ///评论和播放处理
-          if (element.video_review / 10000 > 1) {
-            table_item.metric_view = (element.play / 10000).toFixed(1);
+          if (element.play / 10000 > 1) {
+            table_item.metric_view = (element.play / 10000).toFixed(1)+'万 ';
           } else {
             table_item.metric_view = element.play;
           }
           if (element.video_review / 10000 > 1) {
             table_item.metric_comment = (element.video_review / 10000).toFixed(
               1
-            );
+            )+'万 ';
           } else {
             table_item.metric_comment = element.video_review;
           }
