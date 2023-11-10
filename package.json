@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@tinymce/tinymce-vue": "^3.2.0",
-    "axios": "0.18.1",
+    "axios": "1.6.0",
     "babel-polyfill": "^6.26.0",
     "bmap": "^1.0.1",
     "echarts": "^4.6.0",
